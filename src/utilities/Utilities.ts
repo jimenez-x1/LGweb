@@ -1,4 +1,5 @@
-import { TypeUtilities, TypeGenericResponse, INIT } from "./TypeUtilities";
+import type { TypeUtilities, TypeGenericResponse } from "./TypeUtilities";
+import { INIT } from "./TypeUtilities";
 import axios from "axios";
 import { config } from "./axiosConfig";
 import { isEmpty } from "lodash";
