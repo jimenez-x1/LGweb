@@ -9,13 +9,17 @@ import '/public/css/style.css'
 import './index.css'
 import App from './App.jsx'
 import { EduorProvider } from './context/EduorContext'
+import { ProviderStore } from './storeConfig'
+import { Store } from './store'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <BrowserRouter>
-      <EduorProvider>
-        <App />
-      </EduorProvider>
-    </BrowserRouter>
+    <ProviderStore store={Store}>
+      <BrowserRouter>
+        <EduorProvider>
+          <App />
+        </EduorProvider>
+      </BrowserRouter>
+    </ProviderStore>
   </StrictMode>,
 )
