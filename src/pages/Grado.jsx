@@ -1,16 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { getGrados, getClases, insertGrado, updateGrado, deleteGrado } from "../store/slices/Grado/fetchers";
+import { useDispatch, useSelector } from "../store";
+import fetchers from "../store/slices/Grado/fetchers";
+import Selector from "../store/slices/Grado/selectors";
 
 const Grado = () => {
-  const [grados, setGrados] = useState([]);
+  const dispatch = useDispatch();
+  const grados = useSelector(Selector.getGrados);
   const [clases, setClases] = useState([]);
   const [form, setForm] = useState({ ID_Clase: "", Nombre_Grado: "", Seccion: "", Anio: "" });
   const [editando, setEditando] = useState(false);
   const [idEditar, setIdEditar] = useState(null);
 
   useEffect(() => {
-    getGrados().then((data) => setGrados(data)).catch(console.error);
-    getClases().then((data) => setClases(data)).catch(console.error);
+    dispatch(fetchers.getGrados({ url: "/grados" }));
+  dispatch(fetchers.getClases({ url: "/clases" })).then((res) => {
+      setClases(res.payload?.clasesInfo ?? []);
+    });
   }, []);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
@@ -19,18 +24,18 @@ const Grado = () => {
     e.preventDefault();
     try {
       if (editando) {
-        await updateGrado({ ...form, ID_Grado: idEditar });
+        await dispatch(fetchers.updateGrado({ url: "/grados", data: { ...form, ID_Grado: idEditar } }));
         alert("Grado actualizado");
       } else {
-        await insertGrado(form);
+        await dispatch(fetchers.insertGrado({ url: "/grados", data: form }));
         alert("Grado registrado");
       }
       setForm({ ID_Clase: "", Nombre_Grado: "", Seccion: "", Anio: "" });
       setEditando(false);
       setIdEditar(null);
-      getGrados().then((data) => setGrados(data));
+      dispatch(fetchers.getGrados({ url: "/grados" }));
     } catch (error) {
-      alert(error?.response?.data?.error || "Error al guardar");
+      alert("Error al guardar");
     }
   };
 
@@ -43,11 +48,11 @@ const Grado = () => {
   const eliminar = async (id) => {
     if (!window.confirm("¿Eliminar este grado?")) return;
     try {
-      await deleteGrado(id);
+      await dispatch(fetchers.deleteGrado({ url: `/grados/${id}` }));
       alert("Eliminado correctamente");
-      getGrados().then((data) => setGrados(data));
+      dispatch(fetchers.getGrados({ url: "/grados" }));
     } catch (error) {
-      alert(error?.response?.data?.error || "Error al eliminar");
+      alert("Error al eliminar");
     }
   };
 
@@ -82,7 +87,12 @@ const Grado = () => {
                 </div>
                 <div className="mb-3">
                   <label className="form-label">Sección</label>
-                  <input type="text" className="form-control" name="Seccion" placeholder="Ej: A" value={form.Seccion} onChange={handleChange} required />
+                  <select className="form-control" name="Seccion" value={form.Seccion} onChange={handleChange} required>
+                    <option value="">Seleccione una Sección...</option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                  </select>
                 </div>
                 <div className="mb-3">
                   <label className="form-label">Año</label>
