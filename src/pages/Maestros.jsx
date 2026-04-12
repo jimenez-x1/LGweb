@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getMaestros, deleteMaestro, getGrados } from "../store/slices/Maestros/fetchers";
+import fetchers from "../store/slices/Maestros/fetchers";
 
 const Maestros = () => {
   const [maestros, setMaestros] = useState([]);
@@ -11,11 +11,14 @@ const Maestros = () => {
   }, []);
 
   const cargarDatos = () => {
-    getMaestros()
+    fetchers.getMaestros.fulfilled
+    fetch("http://localhost:3000/api/maestros")
+      .then((res) => res.json())
       .then((data) => setMaestros(data ?? []))
       .catch((error) => console.error(error));
 
-    getGrados()
+    fetch("http://localhost:3000/api/grados")
+      .then((res) => res.json())
       .then((data) => setGrados(data ?? []))
       .catch((error) => console.error(error));
   };
@@ -28,7 +31,7 @@ const Maestros = () => {
   const handleEliminar = async (id) => {
     if (!window.confirm("¿Seguro que deseas eliminar este maestro?")) return;
     try {
-      await deleteMaestro(id);
+      await fetch(`http://localhost:3000/api/deleteMaestro/${id}`, { method: "DELETE" });
       alert("Maestro eliminado correctamente");
       cargarDatos();
     } catch (error) {

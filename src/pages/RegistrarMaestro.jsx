@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { insertMaestro, getGrados } from "../store/slices/Maestros/fetchers";
 
 const RegistrarMaestro = () => {
   const [form, setForm] = useState({
@@ -13,7 +12,8 @@ const RegistrarMaestro = () => {
   const [grados, setGrados] = useState([]);
 
   useEffect(() => {
-    getGrados()
+    fetch("http://localhost:3000/api/grados")
+      .then((res) => res.json())
       .then((data) => setGrados(data ?? []))
       .catch((error) => console.error(error));
   }, []);
@@ -25,7 +25,11 @@ const RegistrarMaestro = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await insertMaestro(form);
+      await fetch("http://localhost:3000/api/insertMaestro", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
       alert("Maestro registrado correctamente");
       setForm({ Nombre: "", Apellido: "", Telefono: "", Correo: "", ID_Grado: "" });
     } catch (error) {

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { getMaestros, updateMaestro, getGrados } from "../store/slices/Maestros/fetchers";
 
 const EditarMaestro = () => {
   const { id } = useParams();
@@ -16,14 +15,16 @@ const EditarMaestro = () => {
   const [grados, setGrados] = useState([]);
 
   useEffect(() => {
-    getMaestros()
+    fetch("http://localhost:3000/api/maestros")
+      .then((res) => res.json())
       .then((data) => {
         const maestro = (data ?? []).find((m) => m.ID_Maestro === parseInt(id));
         if (maestro) setForm(maestro);
       })
       .catch((error) => console.error(error));
 
-    getGrados()
+    fetch("http://localhost:3000/api/grados")
+      .then((res) => res.json())
       .then((data) => setGrados(data ?? []))
       .catch((error) => console.error(error));
   }, [id]);
@@ -35,7 +36,11 @@ const EditarMaestro = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await updateMaestro(form);
+      await fetch("http://localhost:3000/api/updateMaestro", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
       alert("Maestro actualizado correctamente");
       navigate("/maestros");
     } catch (error) {
