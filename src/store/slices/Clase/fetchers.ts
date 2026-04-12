@@ -1,5 +1,5 @@
 import { CreateFetchers } from "../../../storeConfig";
-import { NAME } from "../Grado/namespace";
+import { NAME } from "./namespace";
 import { getData, saveData, deleteData } from "../../../utilities/Utilities";
 import { isError } from "../../../Api/utilsError";
 
