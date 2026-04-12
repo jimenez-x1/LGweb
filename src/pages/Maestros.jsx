@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import fetchers from "../store/slices/Maestros/fetchers";
 
 const Maestros = () => {
   const [maestros, setMaestros] = useState([]);
@@ -10,17 +9,18 @@ const Maestros = () => {
     cargarDatos();
   }, []);
 
-  const cargarDatos = () => {
-    fetchers.getMaestros.fulfilled
-    fetch("http://localhost:3000/api/maestros")
-      .then((res) => res.json())
-      .then((data) => setMaestros(data ?? []))
-      .catch((error) => console.error(error));
+  const cargarDatos = async () => {
+    try {
+      const resMaestros = await fetch("http://localhost:3000/api/maestros");
+      const dataMaestros = await resMaestros.json();
+      setMaestros(dataMaestros ?? []);
 
-    fetch("http://localhost:3000/api/grados")
-      .then((res) => res.json())
-      .then((data) => setGrados(data ?? []))
-      .catch((error) => console.error(error));
+      const resGrados = await fetch("http://localhost:3000/api/grados");
+      const dataGrados = await resGrados.json();
+      setGrados(dataGrados ?? []);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const nombreGrado = (id) => {
@@ -31,10 +31,16 @@ const Maestros = () => {
   const handleEliminar = async (id) => {
     if (!window.confirm("¿Seguro que deseas eliminar este maestro?")) return;
     try {
-      await fetch(`http://localhost:3000/api/deleteMaestro/${id}`, { method: "DELETE" });
-      alert("Maestro eliminado correctamente");
-      cargarDatos();
+      const res = await fetch(`http://localhost:3000/api/deleteMaestro/${id}`, { method: "DELETE" });
+      const data = await res.json();
+      if (res.ok) {
+        alert("Maestro eliminado correctamente");
+        await cargarDatos();
+      } else {
+        alert(data.message || "Error al eliminar");
+      }
     } catch (error) {
+      console.error(error);
       alert("Error al eliminar maestro");
     }
   };
