@@ -236,6 +236,7 @@ function getToken() {
         return false
     }
 }
+
 export {
     getData,
     getSingleData,

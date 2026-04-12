@@ -1,6 +1,6 @@
 import { CreateFetchers } from "../../../storeConfig";
 import { NAME } from "./namespace";
-import { getData, saveData, deleteData, updateData } from "../../../utilities/Utilities"; 
+import { getData, saveData, deleteData } from "../../../utilities/Utilities";
 import { isError } from "../../../Api/utilsError";
 
 export default CreateFetchers(NAME, {
@@ -19,7 +19,7 @@ export default CreateFetchers(NAME, {
         return { clasesInfo: response?.data };
     },
     async updateClase(params: any) {
-        const response = await updateData(params); 
+        const response = await saveData(params);
         if (isError<any>(response?.error)) {
             return { error: response?.error };
         }

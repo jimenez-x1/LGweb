@@ -12,11 +12,11 @@ const Maestros = () => {
 
   const cargarDatos = () => {
     getMaestros()
-      .then((data) => setMaestros(data))
+      .then((data) => setMaestros(data ?? []))
       .catch((error) => console.error(error));
 
     getGrados()
-      .then((data) => setGrados(data))
+      .then((data) => setGrados(data ?? []))
       .catch((error) => console.error(error));
   };
 
