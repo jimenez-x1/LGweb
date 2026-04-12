@@ -22,9 +22,7 @@ const NavigationSection = ({ position, navRef }) => {
         <li className="nav-item">
           <Navlink href="/alumnos">Alumnos</Navlink>
         </li>
-        <li className="nav-item">
-          <Navlink href="/registrar-alumno">Registrar Alumno</Navlink>
-        </li>
+        
 
         <li className="nav-item">
           <Navlink href="/maestros">Maestros</Navlink>
@@ -32,6 +30,9 @@ const NavigationSection = ({ position, navRef }) => {
         <li className="nav-item">
           <Navlink href="/pagos">Pagos</Navlink>
         </li>
+        <li className="nav-item">
+  <Navlink href="/archivos">Archivos</Navlink>
+</li>
 
         
 

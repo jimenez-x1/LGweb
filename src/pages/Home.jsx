@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { getAlumnos } from "../store/slices/Alumnos/fetchers";
-import NavbarSection from "../components/navbar/NavbarSection.jsx";
 import BannerSection from "../components/banner/BannerSection.jsx";
 
 const Home = () => {
@@ -14,7 +13,6 @@ const Home = () => {
 
   return (
     <>
-      <NavbarSection style="" logo="/images/logo.png" />
       <BannerSection />
 
       <section className="pt_100 pb_100">
