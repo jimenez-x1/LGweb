@@ -6,7 +6,7 @@ import Selector from "../store/slices/Clase/selectors";
 const Clase = () => {
   const dispatch = useDispatch();
   const clases = useSelector(Selector.getClases);
-  const [form, setForm] = useState({ ID_Clase: "", Nombre_Clase: "" });
+  const [form, setForm] = useState({ Nombre_Clase: "" });
   const [editando, setEditando] = useState(false);
   const [idEditar, setIdEditar] = useState(null);
 
@@ -23,10 +23,10 @@ const Clase = () => {
         await dispatch(fetchers.updateClase({ url: "/updateClase", data: { ...form, ID_Clase: idEditar } }));
         alert("Clase actualizada");
       } else {
-        await dispatch(fetchers.insertClase({ url: "/insertClase", data: form }));
+        await dispatch(fetchers.insertClase({ url: "/insertClase", data: { Nombre_Clase: form.Nombre_Clase } }));
         alert("Clase registrada");
       }
-      setForm({ ID_Clase: "", Nombre_Clase: "" });
+      setForm({ Nombre_Clase: "" });
       setEditando(false);
       setIdEditar(null);
       dispatch(fetchers.getClases({ url: "/clases" }));
@@ -36,7 +36,7 @@ const Clase = () => {
   };
 
   const editar = (clase) => {
-    setForm({ ID_Clase: String(clase.ID_Clase), Nombre_Clase: clase.Nombre_Clase });
+    setForm({ Nombre_Clase: clase.Nombre_Clase });
     setEditando(true);
     setIdEditar(clase.ID_Clase);
   };
@@ -88,7 +88,7 @@ const Clase = () => {
                     <button
                       type="button"
                       className="btn btn-secondary"
-                      onClick={() => { setEditando(false); setForm({ ID_Clase: "", Nombre_Clase: "" }); }}
+                      onClick={() => { setEditando(false); setForm({ Nombre_Clase: "" }); }}
                     >
                       Cancelar
                     </button>
