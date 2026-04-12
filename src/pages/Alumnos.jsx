@@ -21,20 +21,28 @@ const Alumnos = () => {
     if (!confirmar) return;
 
     try {
-      await fetch(`http://localhost:3000/alumnos/${id}`, {
+      const response = await fetch(`http://localhost:3000/api/deleteAlumno/${id}`, {
         method: "DELETE",
       });
 
-      cargarAlumnos(); // refresca lista
+      const result = await response.text();
+      console.log("Respuesta servidor:", result);
+
+      if (!response.ok) {
+        throw new Error("No se pudo eliminar el alumno");
+      }
+
+      alert("Alumno eliminado correctamente");
+      cargarAlumnos();
     } catch (error) {
       console.error(error);
+      alert("Error al eliminar alumno");
     }
   };
 
   return (
     <section className="pt_100 pb_100">
       <div className="container">
-
         <div className="d-flex justify-content-between align-items-center mb_40">
           <div>
             <h5>Listado</h5>
@@ -54,15 +62,15 @@ const Alumnos = () => {
             <div className="col-md-6 col-lg-4 mb_30" key={alumno.ID_Alumno}>
               <div className="tf__single_courses">
                 <div className="tf__single_courses_text">
-
-                  <h3>{alumno.Nombre} {alumno.Apellido}</h3>
+                  <h3>
+                    {alumno.Nombre} {alumno.Apellido}
+                  </h3>
 
                   <p><strong>Dirección:</strong> {alumno.Direccion}</p>
                   <p><strong>Género:</strong> {alumno.Genero}</p>
                   <p><strong>Grado:</strong> {alumno.ID_Grado}</p>
 
                   <div className="mt-3 d-flex gap-2">
-
                     <button
                       className="btn btn-warning btn-sm"
                       onClick={() => navigate(`/editar-alumno/${alumno.ID_Alumno}`)}
@@ -76,15 +84,12 @@ const Alumnos = () => {
                     >
                       Eliminar
                     </button>
-
                   </div>
-
                 </div>
               </div>
             </div>
           ))}
         </div>
-
       </div>
     </section>
   );
