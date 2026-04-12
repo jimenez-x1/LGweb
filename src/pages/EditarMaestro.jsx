@@ -18,13 +18,13 @@ const EditarMaestro = () => {
   useEffect(() => {
     getMaestros()
       .then((data) => {
-        const maestro = data.find((m) => m.ID_Maestro === parseInt(id));
+        const maestro = (data ?? []).find((m) => m.ID_Maestro === parseInt(id));
         if (maestro) setForm(maestro);
       })
       .catch((error) => console.error(error));
 
     getGrados()
-      .then((data) => setGrados(data))
+      .then((data) => setGrados(data ?? []))
       .catch((error) => console.error(error));
   }, [id]);
 
