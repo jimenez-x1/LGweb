@@ -12,6 +12,7 @@ import Maestros from "./pages/Maestros";
 import RegistrarMaestro from "./pages/RegistrarMaestro";
 import EditarMaestro from "./pages/EditarMaestro";
 import Pagos from "./pages/Pagos";
+import RegistrarPago from "./pages/RegistrarPago";
 
 
 function App() {
@@ -31,6 +32,10 @@ function App() {
       <Route path="/registrar-maestro" element={<RegistrarMaestro />} />
       <Route path="/editar-maestro/:id" element={<EditarMaestro />} />
       <Route path="/pagos" element={<Pagos />} />
+      <Route path="/registrar-pago" element={<RegistrarPago />} />
+
+    <Route path="/registrar-pago/:id" element={<RegistrarPago />} />
+      
     </Routes>
   );
 }
