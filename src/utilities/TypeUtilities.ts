@@ -7,7 +7,7 @@ export type TypeUtilities = {
 }
 
 export type TypeGenericResponse = {
-    singleData: object;
+    singleData: any;
     data: Array<object>;
     status: number;
     error: TypeError.ErrorSchema;
