@@ -14,7 +14,7 @@ const RegistrarMaestro = () => {
 
   useEffect(() => {
     getGrados()
-      .then((data) => setGrados(data))
+      .then((data) => setGrados(data ?? []))
       .catch((error) => console.error(error));
   }, []);
 
