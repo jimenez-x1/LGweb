@@ -1,4 +1,6 @@
-import type { Type as TypeError } from "../Api/namespaces/errorService";export type TypeUtilities = {
+import type { Type as TypeError } from "../Api/namespaces/errorService";
+
+export type TypeUtilities = {
     url: string;
     data?: Array<object> | object;
     key?: string;
@@ -6,7 +8,7 @@ import type { Type as TypeError } from "../Api/namespaces/errorService";export t
 
 export type TypeGenericResponse = {
     singleData: object;
-    data: Array<object>
+    data: Array<object>;
     status: number;
     error: TypeError.ErrorSchema;
 }
