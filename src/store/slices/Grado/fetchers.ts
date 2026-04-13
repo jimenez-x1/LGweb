@@ -1,6 +1,6 @@
 import { CreateFetchers } from "../../../storeConfig";
 import { NAME } from "./namespace";
-import { getData, saveData, deleteData } from "../../../utilities/Utilities";
+import { getData, saveData, deleteData, updateData } from "../../../utilities/Utilities";
 import { isError } from "../../../Api/utilsError";
 
 export default CreateFetchers(NAME, {
@@ -25,13 +25,13 @@ export default CreateFetchers(NAME, {
         }
         return { gradosInfo: response?.data };
     },
-    async updateGrado(params: any) {
-        const response = await saveData(params);
-        if (isError<any>(response?.error)) {
-            return { error: response?.error };
-        }
-        return { gradosInfo: response?.data };
-    },
+  async updateGrado(params: any) {
+    const response = await updateData(params);
+    if (isError<any>(response?.error)) {
+        return { error: response?.error };
+    }
+    return { gradosInfo: response?.data };
+},
     async deleteGrado(params: any) {
         const response = await deleteData(params);
         if (isError<any>(response?.error)) {
