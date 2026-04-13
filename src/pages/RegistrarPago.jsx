@@ -135,7 +135,7 @@ const RegistrarPago = () => {
                 </div>
 
                 <div className="mb-3">
-                  <label className="form-label fw-semibold">Padre (opcional)</label>
+                  <label className="form-label fw-semibold">Padre</label>
                   <select
                     name="ID_Padre"
                     value={form.ID_Padre}
