@@ -16,8 +16,7 @@ import RegistrarPago from "./pages/RegistrarPago";
 function App() {
   return (
     <>
-      <NavbarSection style="" logo="/images/logo.png" />
-
+<NavbarSection style="" logo="/images/logo-escuela-luis-gamero.png" />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/clase" element={<Clase />} />

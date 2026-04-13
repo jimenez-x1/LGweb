@@ -39,9 +39,17 @@ const NavbarSection = ({ style, logo }) => {
       }`}
       ref={navMenuRef}
     >
-      <div className="container">
-        <Link className="navbar-brand" to="/">
-          <img src={logo} alt="Eduor" className="img-fluid w-100" />
+      <div className="container-fluid custom-navbar-container">
+        <Link className="navbar-brand custom-brand" to="/">
+          <img
+            src={logo}
+            alt="Escuela Luis Gamero"
+            className="brand-logo"
+          />
+          <div className="brand-text">
+            <h4>ESCUELA LUIS GAMERO</h4>
+            <span>Sistema Escolar</span>
+          </div>
         </Link>
 
         {isMobileNavOpen ? (

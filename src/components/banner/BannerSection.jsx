@@ -1,59 +1,61 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const BannerSection = () => {
+const BannerSection = ({ stats }) => {
   return (
-    <section style={{ padding: "60px 0 30px 0", background: "#f8fafc" }}>
-      <div className="container">
+    <section className="dashboard-hero-section">
+      <div className="container-fluid banner-full">
         <div
+          className="dashboard-hero-card"
           style={{
-            background: "white",
-            borderRadius: "16px",
-            padding: "50px 40px",
-            boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: "40px",
           }}
         >
-          <h5 style={{ color: "#2563eb", marginBottom: "10px" }}>
-            SISTEMA ESCOLAR
-          </h5>
+          <div className="dashboard-hero-left" style={{ maxWidth: "700px" }}>
+            <div className="dashboard-badge">🎓 Módulo académico</div>
 
-          <h1
-            style={{
-              fontSize: "48px",
-              fontWeight: "700",
-              color: "#0f172a",
-              marginBottom: "15px",
-            }}
-          >
-            Gestión de Alumnos
-          </h1>
+            <h1>Gestión de Alumnos</h1>
 
-          <p
-            style={{
-              fontSize: "18px",
-              color: "#475569",
-              maxWidth: "700px",
-              marginBottom: "25px",
-            }}
-          >
-            Visualiza y administra la información de los alumnos de forma clara,
-            rápida y ordenada.
-          </p>
+            <p>
+              Administra, consulta y organiza la información de los estudiantes
+              de forma clara, rápida y ordenada.
+            </p>
 
-          <Link
-            to="/alumnos"
-            style={{
-              display: "inline-block",
-              background: "#f97316",
-              color: "white",
-              textDecoration: "none",
-              padding: "12px 24px",
-              borderRadius: "10px",
-              fontWeight: "600",
-            }}
-          >
-            Ver alumnos
-          </Link>
+            <div className="dashboard-hero-actions">
+              <Link to="/alumnos" className="hero-btn hero-btn-primary">
+                Ver alumnos
+              </Link>
+
+              <Link to="/registrar-alumno" className="hero-btn hero-btn-outline">
+                + Registrar alumno
+              </Link>
+            </div>
+          </div>
+
+          <div className="dashboard-hero-right" style={{ minWidth: "260px" }}>
+            <h3>Resumen del módulo</h3>
+
+            <div className="summary-item">
+              <div className="summary-icon blue">👥</div>
+              <div>
+                <h4>{stats?.totalAlumnos || 0}</h4>
+                <p>Total alumnos</p>
+                <span>Registrados en el sistema</span>
+              </div>
+            </div>
+
+            <div className="summary-item">
+              <div className="summary-icon orange">🎓</div>
+              <div>
+                <h4>{stats?.gradosRegistrados || 0}</h4>
+                <p>Grados registrados</p>
+                <span>Con alumnos asociados</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>

@@ -51,8 +51,6 @@ const RegistrarAlumno = () => {
         ID_Grado: parseInt(form.ID_Grado, 10),
       };
 
-      console.log("Datos enviados:", alumnoData);
-
       const response = await fetch("http://localhost:3000/api/insertAlumno", {
         method: "POST",
         headers: {
@@ -80,86 +78,113 @@ const RegistrarAlumno = () => {
   return (
     <section className="pt_100 pb_100">
       <div className="container">
-        <h2 className="mb_40">Registrar Alumno</h2>
+        <div className="row justify-content-center">
+          <div className="col-lg-8">
+            <div className="tf__heading_area text-center mb_40">
+              <h5>Formulario</h5>
+              <h2>Registrar Alumno</h2>
+            </div>
 
-        <form onSubmit={guardarAlumno}>
-          <input
-            type="text"
-            name="Nombre"
-            placeholder="Nombre"
-            className="form-control mb-3"
-            value={form.Nombre}
-            onChange={handleChange}
-            required
-          />
+            <div className="card shadow-sm border-0 p-4 rounded-4">
+              <form onSubmit={guardarAlumno}>
+                <div className="mb-3">
+                  <label className="form-label">Nombre</label>
+                  <input
+                    type="text"
+                    name="Nombre"
+                    placeholder="Ej: Cristofer"
+                    className="form-control"
+                    value={form.Nombre}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
 
-          <input
-            type="text"
-            name="Apellido"
-            placeholder="Apellido"
-            className="form-control mb-3"
-            value={form.Apellido}
-            onChange={handleChange}
-            required
-          />
+                <div className="mb-3">
+                  <label className="form-label">Apellido</label>
+                  <input
+                    type="text"
+                    name="Apellido"
+                    placeholder="Ej: Cerrato"
+                    className="form-control"
+                    value={form.Apellido}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
 
-          <input
-            type="date"
-            name="Fecha_Nacimiento"
-            className="form-control mb-3"
-            value={form.Fecha_Nacimiento}
-            onChange={handleChange}
-            required
-          />
+                <div className="mb-3">
+                  <label className="form-label">Fecha de nacimiento</label>
+                  <input
+                    type="date"
+                    name="Fecha_Nacimiento"
+                    className="form-control"
+                    value={form.Fecha_Nacimiento}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
 
-          <input
-            type="text"
-            name="Direccion"
-            placeholder="Dirección"
-            className="form-control mb-3"
-            value={form.Direccion}
-            onChange={handleChange}
-          />
+                <div className="mb-3">
+                  <label className="form-label">Dirección</label>
+                  <input
+                    type="text"
+                    name="Direccion"
+                    placeholder="Ej: Danlí"
+                    className="form-control"
+                    value={form.Direccion}
+                    onChange={handleChange}
+                  />
+                </div>
 
-          <select
-            name="Genero"
-            className="form-control mb-3"
-            value={form.Genero}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Seleccione género</option>
-            <option value="M">Masculino</option>
-            <option value="F">Femenino</option>
-          </select>
+                <div className="mb-3">
+                  <label className="form-label">Género</label>
+                  <select
+                    name="Genero"
+                    className="form-control"
+                    value={form.Genero}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">Seleccione género</option>
+                    <option value="M">Masculino</option>
+                    <option value="F">Femenino</option>
+                  </select>
+                </div>
 
-          <select
-            name="ID_Grado"
-            className="form-control mb-3"
-            value={form.ID_Grado}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Seleccione grado</option>
-            {grados.map((grado) => (
-              <option key={grado.ID_Grado} value={grado.ID_Grado}>
-                {grado.Nombre_Grado}
-              </option>
-            ))}
-          </select>
+                <div className="mb-4">
+                  <label className="form-label">Grado</label>
+                  <select
+                    name="ID_Grado"
+                    className="form-control"
+                    value={form.ID_Grado}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">Seleccione grado</option>
+                    {grados.map((grado) => (
+                      <option key={grado.ID_Grado} value={grado.ID_Grado}>
+                        {grado.Nombre_Grado}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-          <button type="submit" className="common_btn">
-            Guardar
-          </button>
+                <button type="submit" className="common_btn">
+                  Guardar Alumno
+                </button>
 
-          <button
-            type="button"
-            className="btn btn-secondary ms-3"
-            onClick={() => navigate("/alumnos")}
-          >
-            Cancelar
-          </button>
-        </form>
+                <button
+                  type="button"
+                  className="btn btn-secondary ms-3"
+                  onClick={() => navigate("/alumnos")}
+                >
+                  Cancelar
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );

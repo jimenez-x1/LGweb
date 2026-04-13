@@ -43,10 +43,29 @@ const Alumnos = () => {
   return (
     <section className="pt_100 pb_100">
       <div className="container">
-        <div className="d-flex justify-content-between align-items-center mb_40">
+        <div className="d-flex justify-content-between align-items-center mb_40 flex-wrap gap-3">
           <div>
-            <h5>Listado</h5>
-            <h2>Alumnos registrados</h2>
+            <span
+  style={{
+    color: "#2563eb",
+    fontWeight: "600",
+    fontSize: "14px",
+    letterSpacing: "1px",
+  }}
+>
+  ● LISTADO
+</span>
+
+<h2
+  style={{
+    marginTop: "8px",
+    fontWeight: "700",
+    color: "#0f172a",
+  }}
+>
+  Alumnos registrados
+</h2>
+          
           </div>
 
           <button

@@ -11,12 +11,23 @@ const Home = () => {
       .catch((error) => console.error(error));
   }, []);
 
+  const totalAlumnos = alumnos.length;
+
+  const gradosRegistrados = new Set(
+    alumnos.map((alumno) => alumno.ID_Grado).filter(Boolean)
+  ).size;
+
+  const stats = {
+    totalAlumnos,
+    gradosRegistrados,
+  };
+
   return (
     <>
-      <BannerSection />
+      <BannerSection stats={stats} />
 
       <section className="pt_100 pb_100">
-        <div className="container">
+        <div className="container-fluid px-5">
           <div className="row mb_40">
             <div className="col-12 text-center">
               <div className="tf__heading_area">
