@@ -13,7 +13,8 @@ const Grado = () => {
 
   useEffect(() => {
     dispatch(fetchers.getGrados({ url: "/grados" }));
-  dispatch(fetchers.getClases({ url: "/clases" })).then((res) => {
+    dispatch(fetchers.getClases({ url: "/clases" })).then((res) => {
+      console.log("clases payload:", res.payload);
       setClases(res.payload?.clasesInfo ?? []);
     });
   }, []);
@@ -90,8 +91,6 @@ const Grado = () => {
                   <select className="form-control" name="Seccion" value={form.Seccion} onChange={handleChange} required>
                     <option value="">Seleccione una Sección...</option>
                     <option value="A">A</option>
-                    <option value="B">B</option>
-                    <option value="C">C</option>
                   </select>
                 </div>
                 <div className="mb-3">

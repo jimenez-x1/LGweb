@@ -14,7 +14,7 @@ const NavigationSection = ({ position, navRef }) => {
           <Navlink href="/">Inicio</Navlink>
         </li>
         <li className="nav-item">
-          <Navlink href="/clase">Clase</Navlink>  {/* 👈 agregar esto */}
+          <Navlink href="/clase">Clase</Navlink> 
         </li>
         <li className="nav-item">
           <Navlink href="/grado">Grado</Navlink>
