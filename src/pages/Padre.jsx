@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "../store";
 import fetchers from "../store/slices/Padre/fetchers";
 import Selector from "../store/slices/Padre/selectors";
+import axios from "axios";
 
 const Padre = () => {
   const dispatch = useDispatch();
@@ -53,15 +54,24 @@ const Padre = () => {
   };
 
   const eliminar = async (id) => {
-    if (!window.confirm("¿Eliminar este padre?")) return;
-    try {
-      await dispatch(fetchers.deletePadre({ url: `/padres/${id}` }));
+  if (!window.confirm("¿Eliminar este padre?")) return;
+
+  try {
+    const res = await axios.delete(`http://localhost:3000/api/padres/${id}`);
+
+    if (res.status === 200) {
       alert("Eliminado correctamente");
       dispatch(fetchers.getPadres({ url: "/padres" }));
-    } catch (error) {
-      alert("Error al eliminar");
     }
-  };
+  } catch (error) {
+    console.error("Error al eliminar:", error);
+    alert(
+      error.response?.data?.message ||
+      error.response?.data?.error ||
+      "No se pudo eliminar el padre"
+    );
+  }
+};
 
   return (
     <section className="pt_100 pb_100">

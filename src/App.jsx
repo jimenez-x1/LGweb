@@ -37,7 +37,7 @@ function App() {
         <Route path="/padre" element={<Padre />} />
 
         <Route path="/archivos" element={<Archivos />} />
- origin/Ari
+ 
       </Routes>
     </>
   );
