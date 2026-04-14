@@ -4,6 +4,7 @@ import Navlink from "./Navlink";
 
 const NavigationSection = ({ position, navRef }) => {
   const { isMobileNavOpen } = useEduorContext();
+
   return (
     <div
       ref={navRef}
@@ -33,8 +34,8 @@ const NavigationSection = ({ position, navRef }) => {
           <Navlink href="/padre">Padres</Navlink>
         </li>
         <li className="nav-item">
-  <Navlink href="/archivos">Archivos</Navlink>
-</li>
+          <Navlink href="/archivos">Archivos</Navlink>
+        </li>
       </ul>
     </div>
   );

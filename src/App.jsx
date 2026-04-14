@@ -3,14 +3,16 @@ import NavbarSection from "./components/navbar/NavbarSection.jsx";
 import Home from "./pages/Home";
 import Clase from "./pages/Clase";
 import Alumnos from "./pages/Alumnos";
-import RegistrarAlumno from "./pages/RegistrarAlumno";
-import EditarAlumno from "./pages/EditarAlumno";
 import Grado from "./pages/Grado";
 import Maestros from "./pages/Maestros";
 import RegistrarMaestro from "./pages/RegistrarMaestro";
 import EditarMaestro from "./pages/EditarMaestro";
 import Pagos from "./pages/Pagos";
 import RegistrarPago from "./pages/RegistrarPago";
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/carolina
 import Padre from "./pages/Padre";
 
 import Archivos from "./pages/Archivos";
@@ -24,8 +26,6 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/clase" element={<Clase />} />
         <Route path="/alumnos" element={<Alumnos />} />
-        <Route path="/registrar-alumno" element={<RegistrarAlumno />} />
-        <Route path="/editar-alumno/:id" element={<EditarAlumno />} />
         <Route path="/grado" element={<Grado />} />
         <Route path="/maestros" element={<Maestros />} />
         <Route path="/registrar-maestro" element={<RegistrarMaestro />} />
@@ -35,9 +35,15 @@ function App() {
         <Route path="/registrar-pago/:id" element={<RegistrarPago />} />
 
         <Route path="/padre" element={<Padre />} />
+<<<<<<< HEAD
 
         <Route path="/archivos" element={<Archivos />} />
  
+=======
+=======
+        <Route path="/archivos" element={<Archivos />} />
+
+>>>>>>> origin/carolina
       </Routes>
     </>
   );
