@@ -1,6 +1,5 @@
 import { Routes, Route } from "react-router-dom";
 import NavbarSection from "./components/navbar/NavbarSection.jsx";
-
 import Home from "./pages/Home";
 import Clase from "./pages/Clase";
 import Alumnos from "./pages/Alumnos";
@@ -12,11 +11,12 @@ import RegistrarMaestro from "./pages/RegistrarMaestro";
 import EditarMaestro from "./pages/EditarMaestro";
 import Pagos from "./pages/Pagos";
 import RegistrarPago from "./pages/RegistrarPago";
+import Padre from "./pages/Padre";
 
 function App() {
   return (
     <>
-<NavbarSection style="" logo="/images/logo-escuela-luis-gamero.png" />
+      <NavbarSection style="" logo="/images/logo-escuela-luis-gamero.png" />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/clase" element={<Clase />} />
@@ -30,6 +30,7 @@ function App() {
         <Route path="/pagos" element={<Pagos />} />
         <Route path="/registrar-pago" element={<RegistrarPago />} />
         <Route path="/registrar-pago/:id" element={<RegistrarPago />} />
+        <Route path="/padre" element={<Padre />} />
       </Routes>
     </>
   );
