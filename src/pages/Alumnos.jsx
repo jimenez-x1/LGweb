@@ -45,6 +45,9 @@ const Alumnos = () => {
       1: "Primero",
       4: "Segundo",
       6: "Tercero",
+      8: "Cuarto",
+      10: "Quinto",
+      12: "Sexto",
     };
 
     return grados[idGrado] || idGrado;
