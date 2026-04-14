@@ -11,7 +11,11 @@ import RegistrarMaestro from "./pages/RegistrarMaestro";
 import EditarMaestro from "./pages/EditarMaestro";
 import Pagos from "./pages/Pagos";
 import RegistrarPago from "./pages/RegistrarPago";
+<<<<<<< HEAD
 import Padre from "./pages/Padre";
+=======
+import Archivos from "./pages/Archivos";
+>>>>>>> origin/Ari
 
 function App() {
   return (
@@ -30,7 +34,11 @@ function App() {
         <Route path="/pagos" element={<Pagos />} />
         <Route path="/registrar-pago" element={<RegistrarPago />} />
         <Route path="/registrar-pago/:id" element={<RegistrarPago />} />
+<<<<<<< HEAD
         <Route path="/padre" element={<Padre />} />
+=======
+        <Route path="/archivos" element={<Archivos />} />
+>>>>>>> origin/Ari
       </Routes>
     </>
   );
