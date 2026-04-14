@@ -11,6 +11,16 @@ const Home = () => {
       .catch((error) => console.error(error));
   }, []);
 
+  const obtenerNombreGrado = (idGrado) => {
+    const grados = {
+      1: "Primero",
+      4: "Segundo",
+      6: "Tercero",
+    };
+
+    return grados[idGrado] || idGrado;
+  };
+
   const totalAlumnos = alumnos.length;
 
   const gradosRegistrados = new Set(
@@ -47,7 +57,7 @@ const Home = () => {
                     </h3>
                     <p><strong>Dirección:</strong> {alumno.Direccion}</p>
                     <p><strong>Género:</strong> {alumno.Genero}</p>
-                    <p><strong>Grado:</strong> {alumno.ID_Grado}</p>
+                    <p><strong>Grado:</strong> {obtenerNombreGrado(alumno.ID_Grado)}</p>
                   </div>
                 </div>
               </div>

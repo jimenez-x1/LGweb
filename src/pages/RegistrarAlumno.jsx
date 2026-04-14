@@ -22,10 +22,16 @@ const RegistrarAlumno = () => {
   const obtenerGrados = async () => {
     try {
       const response = await fetch("http://localhost:3000/api/grados");
+
+      if (!response.ok) {
+        throw new Error("No se pudieron obtener los grados");
+      }
+
       const data = await response.json();
       setGrados(data);
     } catch (error) {
       console.error("Error al obtener grados:", error);
+      alert("Error al cargar los grados");
     }
   };
 
@@ -41,16 +47,21 @@ const RegistrarAlumno = () => {
   const guardarAlumno = async (e) => {
     e.preventDefault();
 
-    try {
-      const alumnoData = {
-        Nombre: form.Nombre.trim(),
-        Apellido: form.Apellido.trim(),
-        Fecha_Nacimiento: form.Fecha_Nacimiento,
-        Direccion: form.Direccion.trim(),
-        Genero: form.Genero,
-        ID_Grado: parseInt(form.ID_Grado, 10),
-      };
+    if (!form.ID_Grado) {
+      alert("Seleccione un grado");
+      return;
+    }
 
+    const alumnoData = {
+      Nombre: form.Nombre.trim(),
+      Apellido: form.Apellido.trim(),
+      Fecha_Nacimiento: form.Fecha_Nacimiento,
+      Direccion: form.Direccion.trim(),
+      Genero: form.Genero,
+      ID_Grado: Number(form.ID_Grado),
+    };
+
+    try {
       const response = await fetch("http://localhost:3000/api/insertAlumno", {
         method: "POST",
         headers: {
@@ -92,7 +103,7 @@ const RegistrarAlumno = () => {
                   <input
                     type="text"
                     name="Nombre"
-                    placeholder="Ej: Cristofer"
+                    placeholder="Ej: Sofía"
                     className="form-control"
                     value={form.Nombre}
                     onChange={handleChange}
@@ -105,7 +116,7 @@ const RegistrarAlumno = () => {
                   <input
                     type="text"
                     name="Apellido"
-                    placeholder="Ej: Cerrato"
+                    placeholder="Ej: Maradiaga"
                     className="form-control"
                     value={form.Apellido}
                     onChange={handleChange}
@@ -130,7 +141,7 @@ const RegistrarAlumno = () => {
                   <input
                     type="text"
                     name="Direccion"
-                    placeholder="Ej: Danlí"
+                    placeholder="Ej: Col. El Zarzal"
                     className="form-control"
                     value={form.Direccion}
                     onChange={handleChange}
