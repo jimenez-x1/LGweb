@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
-
+//guarda la inforacion que llega del api 
 const RegistrarPago = () => {
   const [alumnos, setAlumnos] = useState([]);
   const [padres, setPadres] = useState([]);
   const { id } = useParams();
-
+//formulario para registrar o actualizar un pago, con campos para seleccionar el alumno y el padre, ingresar la fecha de pago, monto, método de pago y estado del pago.
   const [form, setForm] = useState({
     ID_Alumno: "",
     ID_Padre: "",
@@ -15,7 +15,7 @@ const RegistrarPago = () => {
     Metodo_Pago: "",
     Estado: ""
   });
-
+//Esta función inserta un nuevo pago en la base de datos utilizando los datos proporcionados en el formulario.
   const getAlumnos = async () => {
     try {
       const res = await axios.get("http://localhost:3000/api/alumnos");
@@ -24,7 +24,7 @@ const RegistrarPago = () => {
       console.error("Error al obtener alumnos:", error);
     }
   };
-
+//Esta función obtiene la lista de padres registrados en la base de datos para mostrarla en el formulario y permitir la selección del padre asociado al pago.
   const getPadres = async () => {
     try {
       const res = await axios.get("http://localhost:3000/api/padres");
@@ -33,7 +33,7 @@ const RegistrarPago = () => {
       console.error("Error al obtener padres:", error);
     }
   };
-
+//Esta función maneja los cambios en los campos del formulario, actualizando el estado del formulario con los valores ingresados por el usuario.
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({
@@ -41,7 +41,7 @@ const RegistrarPago = () => {
       [name]: value
     });
   };
-
+//El useEffect se utiliza para cargar los datos de alumnos y padres al montar el componente, y si se proporciona un ID en la URL, también carga los datos del pago correspondiente para permitir su edición.
   useEffect(() => {
     getAlumnos();
     getPadres();
@@ -64,10 +64,10 @@ const RegistrarPago = () => {
         });
     }
   }, [id]);
-
+//esto evita que el formulario recargue la pagina
   const insertPago = async (e) => {
     e.preventDefault();
-
+//actualiza el pago
     try {
       if (id) {
         await axios.put("http://localhost:3000/api/updatePago", {
@@ -99,7 +99,7 @@ const RegistrarPago = () => {
       alert("Error al guardar pago");
     }
   };
-
+//El formulario incluye campos para seleccionar el alumno y el padre, ingresar la fecha de pago, monto, método de pago y estado del pago. Al enviar el formulario, se llama a la función insertPago para guardar los datos en la base de datos.
   return (
     <section className="container py-5" style={{ marginLeft: "250px" }}>
       <div className="row justify-content-center">

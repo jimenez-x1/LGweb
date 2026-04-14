@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 
 const Pagos = () => {
-  const [pagos, setPagos] = useState([]);
-
+  const [pagos, setPagos] = useState([]);//aqui guarda los pagos que viene del backend.
+//llama al backedn y trae todos los pagos.
   const getPagos = async () => {
     try {
       const res = await axios.get("http://localhost:3000/api/pagos");
@@ -27,7 +27,7 @@ const Pagos = () => {
       alert("Error al eliminar el pago");
     }
   };
-
+//se ejecuta al abrur la pantalla y trae los pagos del backend para mostrarlos en la tabla.
   useEffect(() => {
     getPagos();
   }, []);
