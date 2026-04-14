@@ -11,7 +11,6 @@ import RegistrarMaestro from "./pages/RegistrarMaestro";
 import EditarMaestro from "./pages/EditarMaestro";
 import Pagos from "./pages/Pagos";
 import RegistrarPago from "./pages/RegistrarPago";
-import Padre from "./pages/Padre";
 
 function App() {
   return (
@@ -30,7 +29,6 @@ function App() {
         <Route path="/pagos" element={<Pagos />} />
         <Route path="/registrar-pago" element={<RegistrarPago />} />
         <Route path="/registrar-pago/:id" element={<RegistrarPago />} />
-        <Route path="/padre" element={<Padre />} />
       </Routes>
     </>
   );
