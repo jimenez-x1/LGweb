@@ -13,6 +13,9 @@ import Pagos from "./pages/Pagos";
 import RegistrarPago from "./pages/RegistrarPago";
 import Padre from "./pages/Padre";
 
+import Archivos from "./pages/Archivos";
+
+
 function App() {
   return (
     <>
@@ -30,7 +33,11 @@ function App() {
         <Route path="/pagos" element={<Pagos />} />
         <Route path="/registrar-pago" element={<RegistrarPago />} />
         <Route path="/registrar-pago/:id" element={<RegistrarPago />} />
+
         <Route path="/padre" element={<Padre />} />
+
+        <Route path="/archivos" element={<Archivos />} />
+ origin/Ari
       </Routes>
     </>
   );
