@@ -1,21 +1,28 @@
 import React, { useEffect, useState } from "react";
-import { getAlumnos } from "../store/slices/Alumnos/fetchers";
+import { useDispatch } from "../store";
+import fetchers from "../store/slices/Alumnos/fetchers";
 import BannerSection from "../components/banner/BannerSection.jsx";
 
 const Home = () => {
+  const dispatch = useDispatch();
   const [alumnos, setAlumnos] = useState([]);
 
   useEffect(() => {
-    getAlumnos()
-      .then((data) => setAlumnos(data))
+    dispatch(fetchers.getAlumnos({ url: "/alumnos" }))
+      .then((res) => {
+        setAlumnos(res.payload?.alumnosInfo ?? []);
+      })
       .catch((error) => console.error(error));
-  }, []);
+  }, [dispatch]);
 
   const obtenerNombreGrado = (idGrado) => {
     const grados = {
       1: "Primero",
       4: "Segundo",
       6: "Tercero",
+      8: "Cuarto",
+      10: "Quinto",
+      12: "Sexto",
     };
 
     return grados[idGrado] || idGrado;
