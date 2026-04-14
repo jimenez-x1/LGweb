@@ -14,7 +14,6 @@ const Grado = () => {
   useEffect(() => {
     dispatch(fetchers.getGrados({ url: "/grados" }));
     dispatch(fetchers.getClases({ url: "/clases" })).then((res) => {
-      console.log("clases payload:", res.payload);
       setClases(res.payload?.clasesInfo ?? []);
     });
   }, []);
