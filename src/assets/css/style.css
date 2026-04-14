@@ -1,174 +1,169 @@
 * {
-  margin: 0px;
-  padding: 0px;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p {
-  margin-top: 0px;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body,
 html {
   height: 100%;
-}
-
-a:hover,
-a:focus {
-  outline: none;
-  text-decoration: none;
-}
-
-.body {
-  font-size: 14px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 img {
   max-width: 100%;
-  padding-top: 30px;
+  padding-top: 0 !important;
 }
 
-.wrapper {
+.main_menu {
+  background: #ffffff !important;
+  border-bottom: 1px solid #e9edf5;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
   position: relative;
-  height: 100%;
+  z-index: 10;
 }
 
-.left-side {
-  position: fixed;
-  left: 0px;
-  top: 0px;
-  width: 300px;
-  height: 100%;
-  background-color: #f8f8f8;
+.main_menu .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.logo {
-  background-color: #f1f1f1;
-  text-align: center;
-}
-
-.logo img {
-  width: auto;
-  max-width: 65%;
-  height: auto;
-  margin: 20px auto;
-}
-
-.left-content {
-  text-align: center;
-}
-
-.left-content ul li {
-  border-bottom-color: #ccc;
-  border-bottom-style: solid;
-  border-bottom-width: 1px;
-  display: block;
-  height: 50px;
-}
-
-.left-content ul li.active {
-  background-color: #222;
-}
-
-.left-content ul li.active a {
-  color: #f8f8f8;
-}
-
-.left-content ul li a {
-  color: #222;
-  line-height: 50px;
-  padding-right: 30px;
-  display: block;
+.custom-brand {
+  display: flex !important;
+  align-items: center;
+  gap: 14px;
   text-decoration: none;
-  text-transform: uppercase;
+  min-width: 420px;
+  padding: 10px 0 !important;
+  margin: 0 !important;
 }
 
-.copyright {
-  background-color: #222;
-  border-top: 1px solid #999;
-  bottom: 0;
-  color: #ffffff;
-  left: 0;
-  padding: 20px;
-  position: absolute;
-  text-align: center;
-  width: 100%;
+.brand-logo {
+  width: 75px !important;
+  height: 75px !important;
+  object-fit: contain;
+  display: block;
 }
 
-.copyright p {
-  margin-bottom: 0px;
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  line-height: 1.1;
 }
 
-.copyright p a {
+.brand-text h4 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  color: #16244c;
+}
+
+.brand-text span {
+  margin-top: 6px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.main_menu ul {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+.main_menu ul li {
+  list-style: none;
+}
+
+.main_menu ul li a {
+  color: #1c2340;
+  font-weight: 500;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.main_menu ul li a:hover {
+  color: #ff6b00;
+}
+
+.main_menu ul li.active a {
+  color: #ff6b00;
+  border-bottom: 2px solid #ff6b00;
+  padding-bottom: 5px;
+}
+
+.btn {
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+.btn-primary {
+  background: #ff6b00;
   color: #fff;
-  font-weight: 700;
-  transition: all 0.2s;
+  border: none;
 }
 
-.copyright p a:hover {
-  color: #ff6d3c;
+.btn-primary:hover {
+  background: #e55d00;
 }
 
-.right-side {
-  padding-left: 300px;
+.pt_100 {
+  padding-top: 100px;
 }
 
-.right-content {
-  padding: 50px;
+.pb_100 {
+  padding-bottom: 100px;
 }
 
-.content {
-  display: none;
+.card {
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
 }
 
-.content.active {
-  display: block;
+table {
+  width: 100%;
+  border-collapse: collapse;
 }
 
-pre {
-  background: url(../img/pre_bg.png);
-  line-height: 19px;
+table th {
+  background: #f4f6fa;
+  padding: 15px;
   text-align: left;
-  padding: 0px;
-  margin-top: 35px;
-  font-size: 13px;
-  margin-bottom: 35px;
 }
 
-.content a {
-  color: #ff7f46;
-  margin-right: 15px;
+table td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
 }
 
-.content h1 {
+.tf__heading_area h2 {
+  font-size: 40px;
   font-weight: 700;
-  padding-bottom: 35px;
-  margin-bottom: 35px;
-  border-bottom: 1px solid #ddd;
+  color: #16244c;
 }
 
-#one > h1 span {
-  color: #ff7f46;
+.tf__heading_area h5 {
+  color: #4c7cf3;
+  font-weight: 600;
 }
 
-.content#source > ul li span {
-  font-weight: 700;
-  display: block;
-}
+@media (max-width: 768px) {
+  .custom-brand {
+    min-width: auto;
+  }
 
-.content#source > ul li > ul {
-  padding-left: 25px;
-}
+  .brand-text h4 {
+    font-size: 18px;
+  }
 
-.satisfication-area.color-bg::after {
-  background: red none repeat scroll 0 0 !important;
+  .brand-logo {
+    width: 60px;
+    height: 60px;
+  }
 }
-
-#two img {
-  width: 357px;
+.banner-full {
+  padding-left: 50px;
+  padding-right: 50px;
 }

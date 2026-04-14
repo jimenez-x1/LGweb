@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { getAlumnos } from "../store/slices/Alumnos/fetchers";
-import NavbarSection from "../components/navbar/NavbarSection.jsx";
 import BannerSection from "../components/banner/BannerSection.jsx";
 
 const Home = () => {
@@ -12,13 +11,23 @@ const Home = () => {
       .catch((error) => console.error(error));
   }, []);
 
+  const totalAlumnos = alumnos.length;
+
+  const gradosRegistrados = new Set(
+    alumnos.map((alumno) => alumno.ID_Grado).filter(Boolean)
+  ).size;
+
+  const stats = {
+    totalAlumnos,
+    gradosRegistrados,
+  };
+
   return (
     <>
-      <NavbarSection style="" logo="/images/logo.png" />
-      <BannerSection />
+      <BannerSection stats={stats} />
 
       <section className="pt_100 pb_100">
-        <div className="container">
+        <div className="container-fluid px-5">
           <div className="row mb_40">
             <div className="col-12 text-center">
               <div className="tf__heading_area">
