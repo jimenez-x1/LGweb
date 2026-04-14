@@ -40,32 +40,41 @@ const Alumnos = () => {
     }
   };
 
+  const obtenerNombreGrado = (idGrado) => {
+    const grados = {
+      1: "Primero",
+      4: "Segundo",
+      6: "Tercero",
+    };
+
+    return grados[idGrado] || idGrado;
+  };
+
   return (
     <section className="pt_100 pb_100">
       <div className="container">
         <div className="d-flex justify-content-between align-items-center mb_40 flex-wrap gap-3">
           <div>
             <span
-  style={{
-    color: "#2563eb",
-    fontWeight: "600",
-    fontSize: "14px",
-    letterSpacing: "1px",
-  }}
->
-  ● LISTADO
-</span>
+              style={{
+                color: "#2563eb",
+                fontWeight: "600",
+                fontSize: "14px",
+                letterSpacing: "1px",
+              }}
+            >
+              ● LISTADO
+            </span>
 
-<h2
-  style={{
-    marginTop: "8px",
-    fontWeight: "700",
-    color: "#0f172a",
-  }}
->
-  Alumnos registrados
-</h2>
-          
+            <h2
+              style={{
+                marginTop: "8px",
+                fontWeight: "700",
+                color: "#0f172a",
+              }}
+            >
+              Alumnos registrados
+            </h2>
           </div>
 
           <button
@@ -87,7 +96,7 @@ const Alumnos = () => {
 
                   <p><strong>Dirección:</strong> {alumno.Direccion}</p>
                   <p><strong>Género:</strong> {alumno.Genero}</p>
-                  <p><strong>Grado:</strong> {alumno.ID_Grado}</p>
+                  <p><strong>Grado:</strong> {obtenerNombreGrado(alumno.ID_Grado)}</p>
 
                   <div className="mt-3 d-flex gap-2">
                     <button
