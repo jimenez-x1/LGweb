@@ -3,11 +3,11 @@ import { useDispatch } from "../store";
 import fetchers from "../store/slices/Alumnos/fetchers";
 
 const Alumnos = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch(); // Hook para ejecutar acciones de Redux
 
-  const [alumnos, setAlumnos] = useState([]);
-  const [grados, setGrados] = useState([]);
-  const [form, setForm] = useState({
+  const [alumnos, setAlumnos] = useState([]); // Guarda lista de alumnos
+  const [grados, setGrados] = useState([]); // Guarda lista de grados
+  const [form, setForm] = useState({ // Estado del formulario
     ID_Grado: "",
     Nombre: "",
     Apellido: "",
@@ -16,31 +16,35 @@ const Alumnos = () => {
     Genero: "",
   });
 
-  const [editando, setEditando] = useState(false);
-  const [idEditar, setIdEditar] = useState(null);
+  const [editando, setEditando] = useState(false); // Indica si está en modo editar
+  const [idEditar, setIdEditar] = useState(null); // Guarda ID del alumno que se edita
 
   const cargarAlumnos = () => {
+    // Llama al backend para obtener alumnos
     dispatch(fetchers.getAlumnos({ url: "/alumnos" }))
       .then((res) => {
-        setAlumnos(res.payload?.alumnosInfo ?? []);
+        setAlumnos(res.payload?.alumnosInfo ?? []); // Guarda los alumnos en el estado
       })
       .catch((error) => console.error(error));
   };
 
   const cargarGrados = () => {
+    // Llama al backend para obtener grados
     dispatch(fetchers.getGrados({ url: "/grados" }))
       .then((res) => {
-        setGrados(res.payload?.gradosInfo ?? []);
+        setGrados(res.payload?.gradosInfo ?? []); // Guarda los grados
       })
       .catch((error) => console.error(error));
   };
 
   useEffect(() => {
+    // Se ejecuta al cargar la página
     cargarAlumnos();
     cargarGrados();
   }, []);
 
   const limpiarFormulario = () => {
+    // Reinicia el formulario y sale del modo edición
     setForm({
       ID_Grado: "",
       Nombre: "",
@@ -54,6 +58,7 @@ const Alumnos = () => {
   };
 
   const handleChange = (e) => {
+    // Actualiza los valores del formulario según lo que escribe el usuario
     setForm({
       ...form,
       [e.target.name]: e.target.value,
@@ -61,10 +66,11 @@ const Alumnos = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Evita recargar la página
 
     try {
       if (editando) {
+        // Si está editando, actualiza el alumno
         await dispatch(
           fetchers.updateAlumno({
             url: "/updateAlumno",
@@ -77,6 +83,7 @@ const Alumnos = () => {
         );
         alert("Alumno actualizado correctamente");
       } else {
+        // Si no, crea un nuevo alumno
         await dispatch(
           fetchers.insertAlumno({
             url: "/insertAlumno",
@@ -89,8 +96,8 @@ const Alumnos = () => {
         alert("Alumno registrado correctamente");
       }
 
-      limpiarFormulario();
-      cargarAlumnos();
+      limpiarFormulario(); // Limpia el form
+      cargarAlumnos(); // Recarga lista
     } catch (error) {
       console.error(error);
       alert("Error al guardar alumno");
@@ -98,6 +105,7 @@ const Alumnos = () => {
   };
 
   const editar = (alumno) => {
+    // Carga los datos del alumno en el formulario
     setForm({
       ID_Grado: alumno.ID_Grado ? String(alumno.ID_Grado) : "",
       Nombre: alumno.Nombre || "",
@@ -109,15 +117,17 @@ const Alumnos = () => {
       Genero: alumno.Genero || "",
     });
 
-    setEditando(true);
-    setIdEditar(alumno.ID_Alumno);
+    setEditando(true); // Activa modo edición
+    setIdEditar(alumno.ID_Alumno); // Guarda ID del alumno
   };
 
   const eliminar = async (id) => {
+    // Pregunta confirmación antes de eliminar
     const confirmar = window.confirm("¿Eliminar este alumno?");
     if (!confirmar) return;
 
     try {
+      // Llama al backend para eliminar
       await dispatch(
         fetchers.deleteAlumno({
           url: `/deleteAlumno/${id}`,
@@ -125,7 +135,7 @@ const Alumnos = () => {
       );
 
       alert("Alumno eliminado correctamente");
-      cargarAlumnos();
+      cargarAlumnos(); // Recarga lista
     } catch (error) {
       console.error(error);
       alert("Error al eliminar alumno");
@@ -133,6 +143,7 @@ const Alumnos = () => {
   };
 
   const obtenerNombreGrado = (alumno) => {
+    // Busca el nombre del grado según el ID del alumno
     const gradoEncontrado = grados.find(
       (g) => String(g.ID_Grado) === String(alumno.ID_Grado)
     );
@@ -161,12 +172,13 @@ const Alumnos = () => {
           <div className="col-lg-8">
             <div className="p-4 border rounded bg-white shadow-sm">
               <form onSubmit={handleSubmit}>
+                {/* Inputs del formulario */}
+                
                 <div className="mb-3">
                   <label className="form-label">Nombre</label>
                   <input
                     type="text"
                     name="Nombre"
-                    placeholder="Ej: Sofía"
                     className="form-control"
                     value={form.Nombre}
                     onChange={handleChange}
@@ -179,7 +191,6 @@ const Alumnos = () => {
                   <input
                     type="text"
                     name="Apellido"
-                    placeholder="Ej: Maradiaga"
                     className="form-control"
                     value={form.Apellido}
                     onChange={handleChange}
@@ -204,7 +215,6 @@ const Alumnos = () => {
                   <input
                     type="text"
                     name="Direccion"
-                    placeholder="Ej: Col. El Zarzal"
                     className="form-control"
                     value={form.Direccion}
                     onChange={handleChange}
@@ -264,6 +274,7 @@ const Alumnos = () => {
           </div>
         </div>
 
+        {/* Listado de alumnos */}
         <div className="row mt_50">
           <div className="col-12">
             <div className="tf__heading_area mb_30">

@@ -53,15 +53,29 @@ const Padre = () => {
   };
 
   const eliminar = async (id) => {
-    if (!window.confirm("¿Eliminar este padre?")) return;
-    try {
-      await dispatch(fetchers.deletePadre({ url: `/padres/${id}` }));
-      alert("Eliminado correctamente");
-      dispatch(fetchers.getPadres({ url: "/padres" }));
-    } catch (error) {
-      alert("Error al eliminar");
+  if (!window.confirm("¿Eliminar este padre?")) return;
+
+  try {
+    const response = await fetch(`http://localhost:3000/api/padres/${id}`, {
+      method: "DELETE",
+    });
+
+    const result = await response.json();
+    console.log("DELETE:", result);
+
+    if (!response.ok) {
+      throw new Error(result?.message || "No se pudo eliminar");
     }
-  };
+
+    alert("Eliminado correctamente");
+
+    // recargar lista
+    dispatch(fetchers.getPadres({ url: "/padres" }));
+  } catch (error) {
+    console.error(error);
+    alert("Error al eliminar");
+  }
+};
 
   return (
     <section className="pt_100 pb_100">
