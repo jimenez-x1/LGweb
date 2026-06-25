@@ -1,0 +1,204 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body,
+html {
+  height: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+img {
+  max-width: 100%;
+  padding-top: 0 !important;
+}
+
+.main_menu {
+  background: #ffffff !important;
+  border-bottom: 1px solid #e9edf5;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  position: relative;
+  z-index: 10;
+}
+
+.main_menu .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.custom-brand {
+  display: flex !important;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+  min-width: 420px;
+  padding: 10px 0 !important;
+  margin: 0 !important;
+}
+
+.brand-logo {
+  width: 75px !important;
+  height: 75px !important;
+  object-fit: contain;
+  display: block;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  line-height: 1.1;
+}
+
+.brand-text h4 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  color: #16244c;
+}
+
+.brand-text span {
+  margin-top: 6px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.main_menu ul {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+.main_menu ul li {
+  list-style: none;
+}
+
+.main_menu ul li a {
+  color: #1c2340;
+  font-weight: 500;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.main_menu ul li a:hover {
+  color: #ff6b00;
+}
+
+.main_menu ul li.active a {
+  color: #ff6b00;
+  border-bottom: 2px solid #ff6b00;
+  padding-bottom: 5px;
+}
+
+/* ---------------- BOTONES ---------------- */
+
+.btn {
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+.btn-primary {
+  background: #ff6b00;
+  color: white;
+  border: none;
+}
+
+.btn-primary:hover {
+  background: #e55d00;
+}
+
+/* ---------------- ESPACIADO ---------------- */
+
+.pt_100{
+    padding-top:20px;
+}
+
+.pb_100{
+    padding-bottom:20px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: auto;
+}
+
+.row {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* ---------------- TARJETAS ---------------- */
+
+.card {
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* ---------------- TABLAS ---------------- */
+
+.table {
+  margin-bottom: 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table th {
+  background: #f4f6fa;
+  padding: 15px;
+  text-align: left;
+}
+
+table td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+/* ---------------- TITULOS ---------------- */
+
+.tf__heading_area {
+  margin-bottom: 25px;
+}
+
+.tf__heading_area h2 {
+  font-size: 40px;
+  font-weight: 700;
+  color: #16244c;
+  margin-bottom: 10px;
+}
+
+.tf__heading_area h5 {
+  color: #4c7cf3;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+/* ---------------- RESPONSIVE ---------------- */
+
+@media (max-width: 768px) {
+  .custom-brand {
+    min-width: auto;
+  }
+
+  .brand-text h4 {
+    font-size: 18px;
+  }
+
+  .brand-logo {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+/* ---------------- BANNER ---------------- */
+
+.banner-full {
+  padding-left: 50px;
+  padding-right: 50px;
+}

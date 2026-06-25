@@ -1,0 +1,82 @@
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "../store";
+import fetchers from "../store/slices/Alumnos/fetchers";
+import BannerSection from "../components/banner/BannerSection.jsx";
+
+const Home = () => {
+  const dispatch = useDispatch(); // Hook de Redux para enviar acciones
+  const [alumnos, setAlumnos] = useState([]); // Estado para guardar los alumnos
+
+  useEffect(() => {
+    // Se ejecuta al cargar el componente
+    dispatch(fetchers.getAlumnos({ url: "/alumnos" })) // Llama al backend para obtener alumnos
+      .then((res) => {
+        setAlumnos(res.payload?.alumnosInfo ?? []); // Guarda los alumnos en el estado
+      })
+      .catch((error) => console.error(error));
+  }, [dispatch]); // Dependencia: se ejecuta cuando cambia dispatch
+
+  const obtenerNombreGrado = (idGrado) => {
+    // Convierte el ID del grado en un nombre
+    const grados = {
+      1: "Primero",
+      4: "Segundo",
+      6: "Tercero",
+      8: "Cuarto",
+      10: "Quinto",
+      12: "Sexto",
+    };
+
+    return grados[idGrado] || idGrado; // Si no encuentra, devuelve el ID
+  };
+
+  const totalAlumnos = alumnos.length; // Cantidad total de alumnos
+
+  const gradosRegistrados = new Set(
+    alumnos.map((alumno) => alumno.ID_Grado).filter(Boolean)
+  ).size; // Cuenta cuántos grados diferentes hay
+
+  const stats = {
+    totalAlumnos, // Total de alumnos
+    gradosRegistrados, // Total de grados únicos
+  };
+
+  return (
+    <>
+      <BannerSection stats={stats} /> {/* Componente que muestra estadísticas */}
+
+      <section className="pt_100 pb_100">
+        <div className="container-fluid px-5">
+          <div className="row mb_40">
+            <div className="col-12 text-center">
+              <div className="tf__heading_area">
+                <h5>Listado</h5>
+                <h2>Alumnos registrados</h2>
+              </div>
+            </div>
+          </div>
+
+          <div className="row">
+            {alumnos.map((alumno) => (
+              // Recorre todos los alumnos y los muestra en tarjetas
+              <div className="col-md-6 col-lg-4 mb_30" key={alumno.ID_Alumno}>
+                <div className="tf__single_courses">
+                  <div className="tf__single_courses_text">
+                    <h3>
+                      {alumno.Nombre} {alumno.Apellido} {/* Nombre completo */}
+                    </h3>
+                    <p><strong>Dirección:</strong> {alumno.Direccion}</p>
+                    <p><strong>Género:</strong> {alumno.Genero}</p>
+                    <p><strong>Grado:</strong> {obtenerNombreGrado(alumno.ID_Grado)}</p> {/* Muestra nombre del grado */}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </>
+  );
+};
+
+export default Home;
