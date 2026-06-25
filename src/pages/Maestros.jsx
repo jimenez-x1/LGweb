@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Maestros = () => {
   const [maestros, setMaestros] = useState([]);
   const [grados, setGrados] = useState([]);
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     cargarDatos();
@@ -32,14 +30,9 @@ const Maestros = () => {
 
   const handleEliminar = async (id) => {
     if (!window.confirm("¿Seguro que deseas eliminar este maestro?")) return;
-
     try {
-      const res = await fetch(`http://localhost:3000/api/deleteMaestro/${id}`, {
-        method: "DELETE",
-      });
-
+      const res = await fetch(`http://localhost:3000/api/deleteMaestro/${id}`, { method: "DELETE" });
       const data = await res.json();
-
       if (res.ok) {
         alert("Maestro eliminado correctamente");
         await cargarDatos();
@@ -53,7 +46,7 @@ const Maestros = () => {
   };
 
   return (
-   <section style={{ paddingTop: "20px", paddingBottom: "20px" }}>
+    <section className="pt_100 pb_100">
       <div className="container">
         <div className="row mb_40">
           <div className="col-12 text-center">
@@ -78,34 +71,17 @@ const Maestros = () => {
               <div className="col-md-6 col-lg-4 mb_30" key={maestro.ID_Maestro}>
                 <div className="tf__single_courses">
                   <div className="tf__single_courses_text">
-                    <h3>
-                      {maestro.Nombre} {maestro.Apellido}
-                    </h3>
-
-                    <p>
-                      <strong>Grado:</strong> {nombreGrado(maestro.ID_Grado)}
-                    </p>
-
-                    <p>
-                      <strong>Teléfono:</strong> {maestro.Telefono || "—"}
-                    </p>
-
-                    <p>
-                      <strong>Correo:</strong> {maestro.Correo || "—"}
-                    </p>
-
+                    <h3>{maestro.Nombre} {maestro.Apellido}</h3>
+                    <p><strong>Grado:</strong> {nombreGrado(maestro.ID_Grado)}</p>
+                    <p><strong>Teléfono:</strong> {maestro.Telefono || "—"}</p>
+                    <p><strong>Correo:</strong> {maestro.Correo || "—"}</p>
                     <div className="d-flex gap-2 mt-2">
-                      <button
+                      <Link
+                        to={`/editar-maestro/${maestro.ID_Maestro}`}
                         className="btn btn-warning btn-sm"
-                        onClick={() =>
-                          navigate("/editar-maestro", {
-                            state: { maestro },
-                          })
-                        }
                       >
                         Editar
-                      </button>
-
+                      </Link>
                       <button
                         className="btn btn-danger btn-sm"
                         onClick={() => handleEliminar(maestro.ID_Maestro)}

@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 
 const EditarMaestro = () => {
-  const location = useLocation();
+  const { id } = useParams();
   const navigate = useNavigate();
-
-  const maestroRecibido = location.state?.maestro;
-
   const [form, setForm] = useState({
     ID_Maestro: "",
     Nombre: "",
@@ -15,23 +12,22 @@ const EditarMaestro = () => {
     Correo: "",
     ID_Grado: "",
   });
-
   const [grados, setGrados] = useState([]);
 
   useEffect(() => {
-    if (!maestroRecibido) {
-      alert("No se recibió el maestro a editar");
-      navigate("/maestros");
-      return;
-    }
-
-    setForm(maestroRecibido);
+    fetch("http://localhost:3000/api/maestros")
+      .then((res) => res.json())
+      .then((data) => {
+        const maestro = (data ?? []).find((m) => m.ID_Maestro === parseInt(id));
+        if (maestro) setForm(maestro);
+      })
+      .catch((error) => console.error(error));
 
     fetch("http://localhost:3000/api/grados")
       .then((res) => res.json())
       .then((data) => setGrados(data ?? []))
       .catch((error) => console.error(error));
-  }, [maestroRecibido, navigate]);
+  }, [id]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -39,20 +35,14 @@ const EditarMaestro = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      const res = await fetch("http://localhost:3000/api/updateMaestro", {
+      await fetch("http://localhost:3000/api/updateMaestro", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
-
-      if (res.ok) {
-        alert("Maestro actualizado correctamente");
-        navigate("/maestros");
-      } else {
-        alert("Error al actualizar maestro");
-      }
+      alert("Maestro actualizado correctamente");
+      navigate("/maestros");
     } catch (error) {
       console.error(error);
       alert("Error al actualizar maestro");
@@ -75,16 +65,6 @@ const EditarMaestro = () => {
           <div className="col-lg-8">
             <div className="p-4 border rounded bg-white shadow-sm">
               <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                  <label className="form-label">Código Maestro</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="ID_Maestro"
-                    value={form.ID_Maestro}
-                    disabled
-                  />
-                </div>
 
                 <div className="mb-3">
                   <label className="form-label">Nombre</label>
@@ -154,11 +134,11 @@ const EditarMaestro = () => {
                   <button type="submit" className="btn btn-warning">
                     Actualizar Maestro
                   </button>
-
                   <Link to="/maestros" className="btn btn-secondary">
                     Cancelar
                   </Link>
                 </div>
+
               </form>
             </div>
           </div>
