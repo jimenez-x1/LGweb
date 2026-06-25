@@ -7,7 +7,15 @@ const Padre = () => {
   const dispatch = useDispatch();
   const padres = useSelector(Selector.getPadres);
   const [alumnos, setAlumnos] = useState([]);
-  const [form, setForm] = useState({ ID_Alumno: "", Nombre: "", Apellido: "", Telefono: "", Correo: "", Direccion: "" });
+ const [form, setForm] = useState({
+  ID_Alumno: "",
+  Identidad: "",
+  Nombre: "",
+  Apellido: "",
+  Telefono: "",
+  Correo: "",
+  Direccion: ""
+});
   const [editando, setEditando] = useState(false);
   const [idEditar, setIdEditar] = useState(null);
 
@@ -30,7 +38,15 @@ const Padre = () => {
         await dispatch(fetchers.insertPadre({ url: "/insertPadre", data: form }));
         alert("Padre registrado");
       }
-      setForm({ ID_Alumno: "", Nombre: "", Apellido: "", Telefono: "", Correo: "", Direccion: "" });
+      setForm({ 
+        ID_Alumno: "",
+         Identidad: "",
+         Nombre: "", 
+         Apellido: "", 
+         Telefono: "",
+          Correo: "", 
+          Direccion: "" 
+        });
       setEditando(false);
       setIdEditar(null);
       dispatch(fetchers.getPadres({ url: "/padres" }));
@@ -40,9 +56,10 @@ const Padre = () => {
   };
 
   const editar = (padre) => {
-    setForm({
-      ID_Alumno: String(padre.ID_Alumno),
-      Nombre: padre.Nombre,
+   setForm({
+  ID_Alumno: String(padre.ID_Alumno),
+  Identidad: padre.Identidad || "",
+  Nombre: padre.Nombre,
       Apellido: padre.Apellido,
       Telefono: padre.Telefono ?? "",
       Correo: padre.Correo ?? "",
@@ -87,6 +104,27 @@ const Padre = () => {
                       <option key={a.ID_Alumno} value={a.ID_Alumno}>{a.Nombre} {a.Apellido}</option>
                     ))}
                   </select>
+
+                  <div className="mb-3">
+  <label className="form-label">Número de Identidad</label>
+  <input
+    type="text"
+    className="form-control"
+    name="Identidad"
+    placeholder="Ej: 0801200512345"
+    value={form.Identidad}
+    onChange={(e) => {
+      const valor = e.target.value.replace(/\D/g, "");
+      setForm({
+        ...form,
+        Identidad: valor,
+      });
+    }}
+    maxLength={13}
+    required
+  />
+</div>
+
                 </div>
                 <div className="mb-3">
                   <label className="form-label">Nombre</label>
@@ -129,6 +167,7 @@ const Padre = () => {
                 <tr>
                   <th>ID</th>
                   <th>Alumno</th>
+                  <th>Identidad</th>
                   <th>Nombre</th>
                   <th>Apellido</th>
                   <th>Teléfono</th>
@@ -142,6 +181,7 @@ const Padre = () => {
                   <tr key={p.ID_Padre}>
                     <td>{p.ID_Padre}</td>
                     <td>{p.ID_Alumno ?? "Sin asignar"}</td>
+                    <td>{p.Identidad}</td>
                     <td>{p.Nombre}</td>
                     <td>{p.Apellido}</td>
                     <td>{p.Telefono}</td>

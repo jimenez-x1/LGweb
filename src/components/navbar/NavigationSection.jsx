@@ -32,6 +32,9 @@ const NavigationSection = ({ position, navRef }) => {
         <li className="nav-item">
           <Navlink href="/padre">Padres</Navlink>
         </li>
+        <li className="nav-item">
+          <Navlink href="/archivos">Archivos</Navlink>
+        </li>
       </ul>
     </div>
   );
