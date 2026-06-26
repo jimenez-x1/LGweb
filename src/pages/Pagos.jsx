@@ -48,6 +48,8 @@ const Pagos = () => {
                 <thead className="table-dark">
                   <tr>
                     <th>ID</th>
+                    <th>DNI Alumno</th>
+                    <th>DNI Padre</th>
                     <th>Monto</th>
                     <th>Método</th>
                     <th>Estado</th>
@@ -58,9 +60,10 @@ const Pagos = () => {
                 <tbody>
                   {pagos.map((pago) => (
                     <tr key={pago.ID_Pagos}>
-                      <td>{pago.ID_Pagos}</td>
-                      <td>{pago.Monto}</td>
-                      <td>{pago.Metodo_Pago}</td>
+                        <td>{pago.ID_Pagos}</td>
+                        <td>{pago.DNI_Alumno}</td>
+                        <td>{pago.DNI_Padre}</td>
+                        <td>{pago.Monto}</td>
                       <td>
                         {String(pago.Estado).toLowerCase() === "pagado" ? (
                           <span className="badge bg-success">Pagado</span>

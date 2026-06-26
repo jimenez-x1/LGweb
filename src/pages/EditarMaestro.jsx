@@ -5,7 +5,7 @@ const EditarMaestro = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [form, setForm] = useState({
-    ID_Maestro: "",
+    DNI: "",
     Nombre: "",
     Apellido: "",
     Telefono: "",
@@ -18,7 +18,7 @@ const EditarMaestro = () => {
     fetch("http://localhost:3000/api/maestros")
       .then((res) => res.json())
       .then((data) => {
-        const maestro = (data ?? []).find((m) => m.ID_Maestro === parseInt(id));
+        const maestro = (data ?? []).find((m) => m.DNI === parseInt(id));
         if (maestro) setForm(maestro);
       })
       .catch((error) => console.error(error));

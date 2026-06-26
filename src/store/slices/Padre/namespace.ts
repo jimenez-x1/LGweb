@@ -5,8 +5,8 @@ export const NAME = "padres";
 
 export declare namespace Type {
     export type PadreInfo = {
-        ID_Padre: number;
-        ID_Alumno: number;
+        DNI: number;
+        DNI_Alumno: number;
         Nombre: string;
         Apellido: string;
         Telefono: string;

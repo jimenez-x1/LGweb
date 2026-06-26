@@ -5,17 +5,9 @@ const BannerSection = ({ stats }) => {
   return (
     <section className="dashboard-hero-section">
       <div className="container-fluid banner-full">
-        <div
-          className="dashboard-hero-card"
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            gap: "40px",
-          }}
-        >
-          <div className="dashboard-hero-left" style={{ maxWidth: "700px" }}>
-            <div className="dashboard-badge">🎓 Módulo académico</div>
+        <div className="dashboard-hero-card">
+        <div className="dashboard-hero-left">           
+         <div className="dashboard-badge">🎓 Módulo académico</div>
 
             <h1>Gestión de Alumnos</h1>
 
@@ -35,8 +27,8 @@ const BannerSection = ({ stats }) => {
             </div>
           </div>
 
-          <div className="dashboard-hero-right" style={{ minWidth: "260px" }}>
-            <h3>Resumen del módulo</h3>
+          <div className="dashboard-hero-right">            
+          <h3>Resumen del módulo</h3>
 
             <div className="summary-item">
               <div className="summary-icon blue">👥</div>

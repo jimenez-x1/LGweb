@@ -8,8 +8,8 @@ const RegistrarPago = () => {
   const { id } = useParams();
 //formulario para registrar o actualizar un pago, con campos para seleccionar el alumno y el padre, ingresar la fecha de pago, monto, método de pago y estado del pago.
   const [form, setForm] = useState({
-    ID_Alumno: "",
-    ID_Padre: "",
+    DNI_Alumno: "",
+    DNI_Padre: "",
     Fecha_Pago: "",
     Monto: "",
     Metodo_Pago: "",
@@ -51,8 +51,8 @@ const RegistrarPago = () => {
         .get(`http://localhost:3000/api/pagos/${id}`)
         .then((res) => {
           setForm({
-            ID_Alumno: res.data.ID_Alumno || "",
-            ID_Padre: res.data.ID_Padre || "",
+            DNI_Alumno: res.data.DNI_Alumno || "",
+            DNI_Padre: res.data.DNI_Padre || "",
             Fecha_Pago: res.data.Fecha_Pago || "",
             Monto: res.data.Monto || "",
             Metodo_Pago: res.data.Metodo_Pago || "",
@@ -68,27 +68,33 @@ const RegistrarPago = () => {
   const insertPago = async (e) => {
     e.preventDefault();
 //actualiza el pago
-    try {
-      if (id) {
-        await axios.put("http://localhost:3000/api/updatePago", {
-          ...form,
-          ID_Pagos: id,
-          ID_Padre: form.ID_Padre || null
-        });
+   try {
+        if (id) {
 
-        alert("Pago actualizado correctamente");
-      } else {
-        await axios.post("http://localhost:3000/api/insertPago", {
-          ...form,
-          ID_Padre: form.ID_Padre || null
-        });
+          await axios.put("http://localhost:3000/api/updatePago", {
+            ...form,
+            ID_Pagos: id,
+            DNI_Alumno: form.DNI_Alumno,
+            DNI_Padre: form.DNI_Padre || null
+          });
 
-        alert("Pago registrado correctamente");
-      }
+          alert("Pago actualizado correctamente");
 
-      setForm({
-        ID_Alumno: "",
-        ID_Padre: "",
+        } else {
+
+          await axios.post("http://localhost:3000/api/insertPago", {
+            ...form,
+            DNI_Alumno: form.DNI_Alumno,
+            DNI_Padre: form.DNI_Padre || null
+          });
+
+          alert("Pago registrado correctamente");
+
+        }
+
+     setForm({
+        DNI_Alumno: "",
+        DNI_Padre: "",
         Fecha_Pago: "",
         Monto: "",
         Metodo_Pago: "",
@@ -119,35 +125,39 @@ const RegistrarPago = () => {
                 <div className="mb-3">
                   <label className="form-label fw-semibold">Alumno</label>
                   <select
-                    name="ID_Alumno"
-                    value={form.ID_Alumno}
-                    onChange={handleChange}
-                    required
-                    className="form-control"
-                  >
-                    <option value="">Seleccione un alumno</option>
-                    {alumnos.map((alumno) => (
-                      <option key={alumno.ID_Alumno} value={alumno.ID_Alumno}>
-                        {alumno.Nombre} {alumno.Apellido}
-                      </option>
-                    ))}
-                  </select>
+                      name="DNI_Alumno"
+                      value={form.DNI_Alumno}
+                      onChange={handleChange}
+                      required
+                      className="form-control"
+                    >
+                      <option value="">Seleccione un alumno</option>
+
+                      {alumnos.map((alumno) => (
+                        <option key={alumno.DNI} value={alumno.DNI}>
+                          {alumno.Nombre} {alumno.Apellido} - {alumno.DNI}
+                        </option>
+                      ))}
+
+                    </select>
                 </div>
 
                 <div className="mb-3">
                   <label className="form-label fw-semibold">Padre</label>
-                  <select
-                    name="ID_Padre"
-                    value={form.ID_Padre}
+                 <select
+                    name="DNI_Padre"
+                    value={form.DNI_Padre}
                     onChange={handleChange}
                     className="form-control"
                   >
                     <option value="">Seleccione un padre</option>
+
                     {padres.map((padre) => (
-                      <option key={padre.ID_Padre} value={padre.ID_Padre}>
-                        {padre.Nombre} {padre.Apellido}
+                      <option key={padre.DNI} value={padre.DNI}>
+                        {padre.Nombre} {padre.Apellido} - {padre.DNI}
                       </option>
                     ))}
+
                   </select>
                 </div>
 

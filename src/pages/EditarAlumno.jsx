@@ -8,7 +8,8 @@ const EditarAlumno = () => {
   const [grados, setGrados] = useState([]);
 
   const [form, setForm] = useState({
-    ID_Alumno: "",
+    DNI: "",
+    DNI_Padre: "",
     Nombre: "",
     Apellido: "",
     Fecha_Nacimiento: "",
@@ -28,12 +29,13 @@ const EditarAlumno = () => {
       const data = await response.json();
 
       const alumnoEncontrado = data.find(
-        (alumno) => String(alumno.ID_Alumno) === String(id)
+        (alumno) => String(alumno.DNI) === id
       );
 
       if (alumnoEncontrado) {
         setForm({
-          ID_Alumno: alumnoEncontrado.ID_Alumno || "",
+          DNI: alumnoEncontrado.DNI || "",
+          DNI_Padre: alumnoEncontrado.DNI_Padre || "",
           Nombre: alumnoEncontrado.Nombre || "",
           Apellido: alumnoEncontrado.Apellido || "",
           Fecha_Nacimiento: alumnoEncontrado.Fecha_Nacimiento
@@ -76,13 +78,14 @@ const EditarAlumno = () => {
     e.preventDefault();
 
     const datosActualizados = {
-      ID_Alumno: parseInt(form.ID_Alumno, 10),
+      DNI: form.DNI,
+      DNI_Padre: form.DNI_Padre,
       Nombre: form.Nombre.trim(),
       Apellido: form.Apellido.trim(),
       Fecha_Nacimiento: form.Fecha_Nacimiento,
       Direccion: form.Direccion.trim(),
       Genero: form.Genero,
-      ID_Grado: parseInt(form.ID_Grado, 10),
+      ID_Grado: Number(form.ID_Grado),
     };
 
     console.log("Datos enviados:", datosActualizados);
@@ -118,6 +121,15 @@ const EditarAlumno = () => {
         <h2 className="mb_40">Editar Alumno</h2>
 
         <form onSubmit={actualizarAlumno}>
+          <div className="mb-3">
+          <label className="form-label">DNI</label>
+          <input
+            type="text"
+            className="form-control"
+            value={form.DNI}
+            disabled
+          />
+        </div>
           <input
             type="text"
             name="Nombre"
@@ -167,6 +179,21 @@ const EditarAlumno = () => {
             <option value="M">Masculino</option>
             <option value="F">Femenino</option>
           </select>
+
+          <div className="mb-3">
+            <label className="form-label">Padre</label>
+
+            <input
+              type="text"
+              name="DNI_Padre"
+              value={form.DNI_Padre}
+              onChange={handleChange}
+              className="form-control"
+              placeholder="DNI del padre"
+              maxLength={13}
+              required
+            />
+          </div>
 
           <select
             name="ID_Grado"

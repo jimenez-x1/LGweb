@@ -5,6 +5,7 @@ const RegistrarAlumno = () => {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
+    DNI: "",
     Nombre: "",
     Apellido: "",
     Fecha_Nacimiento: "",
@@ -43,6 +44,7 @@ const RegistrarAlumno = () => {
 
     try {
       const alumnoData = {
+        DNI: form.DNI.trim(),
         Nombre: form.Nombre.trim(),
         Apellido: form.Apellido.trim(),
         Fecha_Nacimiento: form.Fecha_Nacimiento,
@@ -85,8 +87,22 @@ const RegistrarAlumno = () => {
               <h2>Registrar Alumno</h2>
             </div>
 
+            
             <div className="card shadow-sm border-0 p-4 rounded-4">
               <form onSubmit={guardarAlumno}>
+              <div className="mb-3">
+                <label className="form-label">DNI</label>
+                <input
+                  type="text"
+                  name="DNI"
+                  placeholder="Ej: 0801199912345"
+                  className="form-control"
+                  value={form.DNI}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
                 <div className="mb-3">
                   <label className="form-label">Nombre</label>
                   <input
