@@ -51,8 +51,9 @@ const Pagos = () => {
                     <th>DNI Alumno</th>
                     <th>DNI Padre</th>
                     <th>Monto</th>
-                    <th>Método</th>
-                    <th>Estado</th>
+                    <th>Mes</th>
+                    <th>Año</th>
+                    <th>Referencia</th>
                     <th>Fecha</th>
                     <th>Acciones</th>
                   </tr>
@@ -64,21 +65,11 @@ const Pagos = () => {
                         <td>{pago.DNI_Alumno}</td>
                         <td>{pago.DNI_Padre}</td>
                         <td>{pago.Monto}</td>
-                      <td>
-                        {String(pago.Estado).toLowerCase() === "pagado" ? (
-                          <span className="badge bg-success">Pagado</span>
-                        ) : (
-                          <span className="badge bg-danger">Pendiente</span>
-                        )}
-                      </td>
-                      <td>{pago.Fecha_Pago}</td>
-                      <td>
-                        <Link to={`/registrar-pago/${pago.ID_Pagos}`}>
-                          <button className="btn btn-warning btn-sm me-2">
-                            Editar
-                          </button>
-                        </Link>
-
+                     <td>{pago.Mes_Correspondiente}</td>
+                    <td>{pago.Anio_Correspondiente}</td>
+                    <td>{pago.Numero_Referencia}</td>
+                    <td>{pago.Fecha_Pago}</td>
+                      <td>                        
                         <button
                           className="btn btn-danger btn-sm"
                           onClick={() => deletePago(pago.ID_Pagos)}
