@@ -9,10 +9,10 @@ import RegistrarMaestro from "./pages/RegistrarMaestro";
 import EditarMaestro from "./pages/EditarMaestro";
 import Pagos from "./pages/Pagos";
 import RegistrarPago from "./pages/RegistrarPago";
-<<<<<<< HEAD
-=======
 
->>>>>>> origin/carolina
+
+
+
 import Padre from "./pages/Padre";
 
 import Archivos from "./pages/Archivos";
@@ -35,15 +35,15 @@ function App() {
         <Route path="/registrar-pago/:id" element={<RegistrarPago />} />
 
         <Route path="/padre" element={<Padre />} />
-<<<<<<< HEAD
+
 
         <Route path="/archivos" element={<Archivos />} />
  
-=======
-=======
+
+
         <Route path="/archivos" element={<Archivos />} />
 
->>>>>>> origin/carolina
+
       </Routes>
     </>
   );
