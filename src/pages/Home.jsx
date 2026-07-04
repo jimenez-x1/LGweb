@@ -56,7 +56,7 @@ const Home = () => {
 
           <div className="row">
             {alumnos.map((alumno) => (
-              <div className="col-md-6 col-lg-4 mb_30" key={alumno.ID_Alumno}>
+              <div className="col-md-6 col-lg-4 mb_30" key={alumno.DNI}>
                 <div className="tf__single_courses">
                   <div className="tf__single_courses_text">
                     <h3>

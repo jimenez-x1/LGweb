@@ -2,13 +2,19 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "../store";
 import fetchers from "../store/slices/Padre/fetchers";
 import Selector from "../store/slices/Padre/selectors";
-import axios from "axios";
 
 const Padre = () => {
   const dispatch = useDispatch();
   const padres = useSelector(Selector.getPadres);
   const [alumnos, setAlumnos] = useState([]);
-  const [form, setForm] = useState({ ID_Alumno: "", Nombre: "", Apellido: "", Telefono: "", Correo: "", Direccion: "" });
+ const [form, setForm] = useState({
+  DNI: "",
+  Nombre: "",
+  Apellido: "",
+  Telefono: "",
+  Correo: "",
+  Direccion: ""
+});
   const [editando, setEditando] = useState(false);
   const [idEditar, setIdEditar] = useState(null);
 
@@ -25,13 +31,20 @@ const Padre = () => {
     e.preventDefault();
     try {
       if (editando) {
-        await dispatch(fetchers.updatePadre({ url: "/updatePadre", data: { ...form, ID_Padre: idEditar } }));
+        await dispatch(fetchers.updatePadre({ url: "/updatePadre", data: { ...form, DNI: idEditar } }));
         alert("Padre actualizado");
       } else {
         await dispatch(fetchers.insertPadre({ url: "/insertPadre", data: form }));
         alert("Padre registrado");
       }
-      setForm({ ID_Alumno: "", Nombre: "", Apellido: "", Telefono: "", Correo: "", Direccion: "" });
+      setForm({ 
+         DNI: "",
+         Nombre: "", 
+         Apellido: "", 
+         Telefono: "",
+          Correo: "", 
+          Direccion: "" 
+        });
       setEditando(false);
       setIdEditar(null);
       dispatch(fetchers.getPadres({ url: "/padres" }));
@@ -41,8 +54,8 @@ const Padre = () => {
   };
 
   const editar = (padre) => {
-    setForm({
-      ID_Alumno: String(padre.ID_Alumno),
+   setForm({
+      DNI: padre.DNI || "",
       Nombre: padre.Nombre,
       Apellido: padre.Apellido,
       Telefono: padre.Telefono ?? "",
@@ -50,26 +63,29 @@ const Padre = () => {
       Direccion: padre.Direccion ?? "",
     });
     setEditando(true);
-    setIdEditar(padre.ID_Padre);
+    setIdEditar(padre.DNI);
   };
 
   const eliminar = async (id) => {
   if (!window.confirm("¿Eliminar este padre?")) return;
 
   try {
-    const res = await axios.delete(`http://localhost:3000/api/padres/${id}`);
+    await dispatch(fetchers.deletePadre({
+      url: `/deletePadre/${id}`
+    }));
 
-    if (res.status === 200) {
-      alert("Eliminado correctamente");
-      dispatch(fetchers.getPadres({ url: "/padres" }));
-    }
+    await dispatch(fetchers.getPadres({
+      url: "/padres"
+    }));
+    alert("Eliminado correctamente");
+
+    dispatch(fetchers.getPadres({ url: "/padres" }))
+      .then((res) => {
+        setPadres(res.payload?.padresInfo ?? []);
+      });
+
   } catch (error) {
-    console.error("Error al eliminar:", error);
-    alert(
-      error.response?.data?.message ||
-      error.response?.data?.error ||
-      "No se pudo eliminar el padre"
-    );
+    alert("Error al eliminar");
   }
 };
 
@@ -90,13 +106,26 @@ const Padre = () => {
             <div className="p-4 border rounded bg-white shadow-sm">
               <form onSubmit={handleSubmit}>
                 <div className="mb-3">
-                  <label className="form-label">Alumno</label>
-                  <select className="form-control" name="ID_Alumno" value={form.ID_Alumno} onChange={handleChange} required>
-                    <option value="">Seleccione un Alumno...</option>
-                    {alumnos.map((a) => (
-                      <option key={a.ID_Alumno} value={a.ID_Alumno}>{a.Nombre} {a.Apellido}</option>
-                    ))}
-                  </select>
+                  <div className="mb-3">
+  <label className="form-label">Número de Identidad</label>
+  <input
+    type="text"
+    className="form-control"
+    name="DNI"
+    placeholder="Ej: 0801200512345"
+    value={form.DNI}
+    onChange={(e) => {
+      const valor = e.target.value.replace(/\D/g, "");
+      setForm({
+        ...form,
+        DNI: valor,
+      });
+    }}
+    maxLength={13}
+    required
+  />
+</div>
+
                 </div>
                 <div className="mb-3">
                   <label className="form-label">Nombre</label>
@@ -121,8 +150,24 @@ const Padre = () => {
                 <div className="d-flex gap-3">
                   <button type="submit" className="btn btn-primary">{editando ? "Actualizar Padre" : "Guardar Padre"}</button>
                   {editando && (
-                    <button type="button" className="btn btn-secondary" onClick={() => { setEditando(false); setForm({ ID_Alumno: "", Nombre: "", Apellido: "", Telefono: "", Correo: "", Direccion: "" }); }}>Cancelar</button>
-                  )}
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={() => {
+                        setEditando(false);
+                        setIdEditar(null);
+                        setForm({
+                          DNI: "",
+                          Nombre: "",
+                          Apellido: "",
+                          Telefono: "",
+                          Correo: "",
+                          Direccion: ""
+                        });
+                      }}
+                    >
+                      Cancelar
+                    </button>                  )}
                 </div>
               </form>
             </div>
@@ -130,43 +175,71 @@ const Padre = () => {
         </div>
 
         <div className="row mt_50">
-          <div className="col-12">
-            <div className="tf__heading_area mb_30">
-              <h2>Padres Registrados</h2>
-            </div>
-            <table className="table table-bordered table-striped">
-              <thead className="table-dark">
-                <tr>
-                  <th>ID</th>
-                  <th>Alumno</th>
-                  <th>Nombre</th>
-                  <th>Apellido</th>
-                  <th>Teléfono</th>
-                  <th>Correo</th>
-                  <th>Dirección</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {padres.map((p) => (
-                  <tr key={p.ID_Padre}>
-                    <td>{p.ID_Padre}</td>
-                    <td>{p.ID_Alumno ?? "Sin asignar"}</td>
-                    <td>{p.Nombre}</td>
-                    <td>{p.Apellido}</td>
-                    <td>{p.Telefono}</td>
-                    <td>{p.Correo}</td>
-                    <td>{p.Direccion}</td>
-                    <td>
-                      <button className="btn btn-warning btn-sm me-2" onClick={() => editar(p)}>Editar</button>
-                      <button className="btn btn-danger btn-sm" onClick={() => eliminar(p.ID_Padre)}>Eliminar</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+  <div className="col-12">
+    <div className="tf__heading_area mb_30">
+      <h2>Padres Registrados</h2>
+    </div>
+
+    <table className="table table-bordered table-striped">
+
+      <thead className="table-dark">
+        <tr>
+          <th>DNI</th>
+          <th>Nombre</th>
+          <th>Apellido</th>
+          <th>Teléfono</th>
+          <th>Correo</th>
+          <th>Dirección</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        {padres.map((p) => (
+
+          <tr key={p.DNI}>
+
+            <td>{p.DNI}</td>
+
+            <td>{p.Nombre}</td>
+
+            <td>{p.Apellido}</td>
+
+            <td>{p.Telefono}</td>
+
+            <td>{p.Correo}</td>
+
+            <td>{p.Direccion}</td>
+
+            <td>
+
+              <button
+                className="btn btn-warning btn-sm me-2"
+                onClick={() => editar(p)}
+              >
+                Editar
+              </button>
+
+              <button
+                className="btn btn-danger btn-sm"
+                onClick={() => eliminar(p.DNI)}
+              >
+                Eliminar
+              </button>
+
+            </td>
+
+          </tr>
+
+        ))}
+
+      </tbody>
+
+    </table>
+
+  </div>
+</div>
       </div>
     </section>
   );
