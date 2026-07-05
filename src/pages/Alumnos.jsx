@@ -7,11 +7,7 @@ const Alumnos = () => {
 
   const [alumnos, setAlumnos] = useState([]); // Guarda lista de alumnos
   const [grados, setGrados] = useState([]); // Guarda lista de grados
-  const [form, setForm] = useState({ // Estado del formulario
-    ID_Grado: "",
-    Nombre: "",
-    Apellido: "",
-    Fecha_Nacimiento: "",
+  const [form, setForm] = useState({ // Estado del formularioq
     Direccion: "",
     Genero: "",
   });
