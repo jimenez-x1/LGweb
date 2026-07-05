@@ -62,65 +62,93 @@ const Alumnos = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      if (editando) {
-        await dispatch(
-          fetchers.updateAlumno({
-            url: "/updateAlumno",
-            data: {
-              ...form,
-              DNI: idEditar,
-              ID_Grado: Number(form.ID_Grado),
-            },
-          })
+  try {
+    let res;
+
+    if (editando) {
+      res = await dispatch(
+        fetchers.updateAlumno({
+          url: "/updateAlumno",
+          data: {
+            DNI: idEditar,
+            DNI_Padre: form.DNI_Padre || null,
+            ID_Grado: Number(form.ID_Grado),
+            Nombre: form.Nombre,
+            Apellido: form.Apellido,
+            Fecha_Nacimiento: form.Fecha_Nacimiento,
+            Direccion: form.Direccion,
+            Genero: form.Genero,
+          },
+        })
+      );
+
+      if (res.payload?.error) {
+        throw new Error(
+          res.payload.error.message || "Error al actualizar alumno"
         );
-        alert("Alumno actualizado correctamente");
-      } else {
-        await dispatch(
-          fetchers.insertAlumno({
-            url: "/insertAlumno",
-            data: {
-              ...form,
-              ID_Grado: Number(form.ID_Grado),
-            },
-          })
-        );
-        alert("Alumno registrado correctamente");
       }
 
-      limpiarFormulario();
-      cargarAlumnos();
-    } catch (error) {
-      console.error(error);
-      alert("Error al guardar alumno");
+      alert("Alumno actualizado correctamente");
+    } else {
+      res = await dispatch(
+        fetchers.insertAlumno({
+          url: "/insertAlumno",
+          data: {
+            DNI: form.DNI,
+            DNI_Padre: form.DNI_Padre || null,
+            ID_Grado: Number(form.ID_Grado),
+            Nombre: form.Nombre,
+            Apellido: form.Apellido,
+            Fecha_Nacimiento: form.Fecha_Nacimiento,
+            Direccion: form.Direccion,
+            Genero: form.Genero,
+          },
+        })
+      );
+
+      if (res.payload?.error) {
+        throw new Error(
+          res.payload.error.message || "Error al registrar alumno"
+        );
+      }
+
+      alert("Alumno registrado correctamente");
     }
-  };
 
-  const editar = (alumno) => {
-    setForm({
-  ID_Grado: alumno.ID_Grado ? String(alumno.ID_Grado) : "",
-  DNI: alumno.DNI || "",
-  Nombre: alumno.Nombre || "",
-  Apellido: alumno.Apellido || "",
-      Fecha_Nacimiento: alumno.Fecha_Nacimiento
-        ? String(alumno.Fecha_Nacimiento).slice(0, 10)
-        : "",
-      Direccion: alumno.Direccion || "",
-      Genero: alumno.Genero || "",
+    limpiarFormulario();
+    cargarAlumnos();
+  } catch (error) {
+    console.error("Error:", error);
+    alert(error.message || "Error al guardar alumno");
+  }
+};
+
+ const editar = (alumno) => {
+  setForm({
+    ID_Grado: alumno.ID_Grado ? String(alumno.ID_Grado) : "",
+    DNI: alumno.DNI || "",
+    DNI_Padre: alumno.DNI_Padre || "",
+    Nombre: alumno.Nombre || "",
+    Apellido: alumno.Apellido || "",
+    Fecha_Nacimiento: alumno.Fecha_Nacimiento
+      ? String(alumno.Fecha_Nacimiento).slice(0, 10)
+      : "",
+    Direccion: alumno.Direccion || "",
+    Genero: alumno.Genero || "",
+  });
+
+  setEditando(true);
+  setIdEditar(alumno.DNI);
+
+  setTimeout(() => {
+    formularioRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
     });
-
-    setEditando(true);
-    setIdEditar(alumno.DNI);
-
-    setTimeout(() => {
-      formularioRef.current?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }, 100);
-  };
+  }, 100);
+};
 
   const eliminar = async (id) => {
     const confirmar = window.confirm("¿Eliminar este alumno?");

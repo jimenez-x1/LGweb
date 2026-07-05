@@ -12,7 +12,7 @@ const RegistrarPago = () => {
     DNI_Alumno: "",
     DNI_Padre: "",
     Fecha_Pago: "",
-    Monto: "",
+    Monto: "1500",
     Numero_Referencia: "",
     Mes_Correspondiente: "",
     Anio_Correspondiente: "2026"
@@ -20,20 +20,6 @@ const RegistrarPago = () => {
 
   const CLOUD_NAME = "xfzydzcs";
   const UPLOAD_PRESET = "comprobantes_pagos";
-
-  const getEstadoCuenta = async (dniPadre, dniAlumno) => {
-    try {
-      const res = await axios.get(
-        `http://localhost:3000/api/estado-cuenta/${dniPadre}/2026`
-      );
-
-      const alumno = res.data.alumnos.find(a => a.DNI === dniAlumno);
-      setEstadoCuenta(alumno?.estadoCuenta || null);
-    } catch (error) {
-      console.error("Error al obtener estado de cuenta:", error);
-      setEstadoCuenta(null);
-    }
-  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -44,15 +30,31 @@ const RegistrarPago = () => {
     });
   };
 
-  const handleAlumnoSeleccionado = (alumno) => {
+ const handleAlumnoSeleccionado = async (alumno) => {
+  try {
+    const res = await axios.get(
+      `http://localhost:3000/api/estado-cuenta/${alumno.Padre.DNI}/2026`
+    );
+
+    const alumnoEstado = res.data.alumnos.find(a => a.DNI === alumno.DNI);
+    const estado = alumnoEstado?.estadoCuenta || null;
+
+    setEstadoCuenta(estado);
+
     setForm(prev => ({
       ...prev,
       DNI_Alumno: alumno.DNI,
-      DNI_Padre: alumno.Padre.DNI
+      DNI_Padre: alumno.Padre.DNI,
+      Monto: "2000",
+      Mes_Correspondiente: estado?.siguienteMensualidad?.mes || "",
+      Anio_Correspondiente: estado?.siguienteMensualidad?.anio || "2026"
     }));
 
-    getEstadoCuenta(alumno.Padre.DNI, alumno.DNI);
-  };
+  } catch (error) {
+    console.error("Error al obtener estado de cuenta:", error);
+    setEstadoCuenta(null);
+  }
+};
 
   const handleComprobante = (e) => {
     setComprobante(e.target.files[0]);
@@ -81,6 +83,11 @@ const RegistrarPago = () => {
         return;
       }
 
+      if (!form.Mes_Correspondiente) {
+        alert("El alumno no tiene mensualidades pendientes");
+        return;
+      }
+
       if (!comprobante) {
         alert("Debe subir el comprobante de pago");
         return;
@@ -88,26 +95,34 @@ const RegistrarPago = () => {
 
       const urlComprobante = await subirComprobanteCloudinary();
 
-      await axios.post("http://localhost:3000/api/insertPago", {
+      const datosPago = {
         ...form,
+        Monto: Number(form.Monto),
         Metodo_Pago: "Transferencia",
         Comprobante: urlComprobante
-      });
+      };
+
+      console.log("Datos que se enviarán:", datosPago);
+
+      await axios.post("http://localhost:3000/api/insertPago", datosPago);
 
       alert("Pago registrado correctamente");
 
-      setForm({
-        DNI_Alumno: "",
-        DNI_Padre: "",
-        Fecha_Pago: "",
-        Monto: "",
-        Numero_Referencia: "",
-        Mes_Correspondiente: "",
-        Anio_Correspondiente: "2026"
-      });
+      await handleAlumnoSeleccionado({
+  DNI: form.DNI_Alumno,
+  Padre: {
+    DNI: form.DNI_Padre
+  }
+});
 
-      setComprobante(null);
-      setEstadoCuenta(null);
+setForm(prev => ({
+  ...prev,
+  Fecha_Pago: "",
+  Numero_Referencia: "",
+  Monto: "2000"
+}));
+
+setComprobante(null);
 
     } catch (error) {
       console.error(error);
@@ -188,7 +203,7 @@ const RegistrarPago = () => {
                     type="number"
                     name="Monto"
                     value={form.Monto}
-                    onChange={handleChange}
+                    readOnly
                     required
                     className="form-control"
                     placeholder="Ingrese el monto"
@@ -214,27 +229,18 @@ const RegistrarPago = () => {
                   <label className="form-label fw-semibold">
                     Mes correspondiente
                   </label>
-                  <select
-                    name="Mes_Correspondiente"
-                    value={form.Mes_Correspondiente}
-                    onChange={handleChange}
+                  <input
+                    type="text"
+                    value={
+                      estadoCuenta?.siguienteMensualidad
+                        ? `${estadoCuenta.siguienteMensualidad.nombre} ${estadoCuenta.siguienteMensualidad.anio}`
+                        : ""
+                    }
+                    readOnly
                     required
                     className="form-control"
-                  >
-                    <option value="">Seleccione un mes</option>
-                    <option value="1">Enero</option>
-                    <option value="2">Febrero</option>
-                    <option value="3">Marzo</option>
-                    <option value="4">Abril</option>
-                    <option value="5">Mayo</option>
-                    <option value="6">Junio</option>
-                    <option value="7">Julio</option>
-                    <option value="8">Agosto</option>
-                    <option value="9">Septiembre</option>
-                    <option value="10">Octubre</option>
-                    <option value="11">Noviembre</option>
-                    <option value="12">Diciembre</option>
-                  </select>
+                    placeholder="Se selecciona automáticamente"
+                  />
                 </div>
 
                 <div className="mb-4">
@@ -242,12 +248,13 @@ const RegistrarPago = () => {
                     Comprobante de pago
                   </label>
                   <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleComprobante}
-                    required
-                    className="form-control"
-                  />
+                        key={comprobante ? "con-archivo" : "sin-archivo"}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleComprobante}
+                        required
+                        className="form-control"
+                      />
                   <small className="text-muted">
                     Suba una foto del recibo o comprobante de la mensualidad.
                   </small>
