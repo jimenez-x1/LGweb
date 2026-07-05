@@ -309,6 +309,9 @@ const Alumnos = () => {
                       <h3>
                         {alumno.Nombre} {alumno.Apellido}
                       </h3>
+                      <p>
+                        <strong>Identidad:</strong> {alumno.Identidad}
+                      </p>
 
                       <p><strong>DNI:</strong> {alumno.DNI}</p>
                       <p><strong>Dirección:</strong> {alumno.Direccion}</p>
