@@ -8,13 +8,14 @@ const Alumnos = () => {
   const [alumnos, setAlumnos] = useState([]);
   const [grados, setGrados] = useState([]);
   const [form, setForm] = useState({
-    ID_Grado: "",
-    Nombre: "",
-    Apellido: "",
-    Fecha_Nacimiento: "",
-    Direccion: "",
-    Genero: "",
-  });
+  ID_Grado: "",
+  Identidad: "",
+  Nombre: "",
+  Apellido: "",
+  Fecha_Nacimiento: "",
+  Direccion: "",
+  Genero: "",
+});
 
   const [editando, setEditando] = useState(false);
   const [idEditar, setIdEditar] = useState(null);
@@ -42,13 +43,14 @@ const Alumnos = () => {
 
   const limpiarFormulario = () => {
     setForm({
-      ID_Grado: "",
-      Nombre: "",
-      Apellido: "",
-      Fecha_Nacimiento: "",
-      Direccion: "",
-      Genero: "",
-    });
+  ID_Grado: "",
+  Identidad: "",
+  Nombre: "",
+  Apellido: "",
+  Fecha_Nacimiento: "",
+  Direccion: "",
+  Genero: "",
+});
     setEditando(false);
     setIdEditar(null);
   };
@@ -99,9 +101,10 @@ const Alumnos = () => {
 
   const editar = (alumno) => {
     setForm({
-      ID_Grado: alumno.ID_Grado ? String(alumno.ID_Grado) : "",
-      Nombre: alumno.Nombre || "",
-      Apellido: alumno.Apellido || "",
+  ID_Grado: alumno.ID_Grado ? String(alumno.ID_Grado) : "",
+  Identidad: alumno.Identidad || "",
+  Nombre: alumno.Nombre || "",
+  Apellido: alumno.Apellido || "",
       Fecha_Nacimiento: alumno.Fecha_Nacimiento
         ? String(alumno.Fecha_Nacimiento).slice(0, 10)
         : "",
@@ -161,6 +164,20 @@ const Alumnos = () => {
           <div className="col-lg-8">
             <div className="p-4 border rounded bg-white shadow-sm">
               <form onSubmit={handleSubmit}>
+
+              <div className="mb-3">
+  <label className="form-label">Número de Identidad</label>
+  <input
+    type="text"
+    name="Identidad"
+    placeholder="Ej: 0801200512345"
+    className="form-control"
+    value={form.Identidad}
+    onChange={handleChange}
+    maxLength={13}
+    required
+  />
+</div>
                 <div className="mb-3">
                   <label className="form-label">Nombre</label>
                   <input
@@ -278,6 +295,9 @@ const Alumnos = () => {
                       <h3>
                         {alumno.Nombre} {alumno.Apellido}
                       </h3>
+                      <p>
+                        <strong>Identidad:</strong> {alumno.Identidad}
+                      </p>
 
                       <p><strong>Dirección:</strong> {alumno.Direccion}</p>
                       <p><strong>Género:</strong> {alumno.Genero}</p>
