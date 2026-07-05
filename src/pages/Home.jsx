@@ -15,18 +15,6 @@ const Home = () => {
       .catch((error) => console.error(error));
   }, [dispatch]);
 
-  const obtenerNombreGrado = (idGrado) => {
-    const grados = {
-      1: "Primero",
-      4: "Segundo",
-      6: "Tercero",
-      8: "Cuarto",
-      10: "Quinto",
-      12: "Sexto",
-    };
-
-    return grados[idGrado] || idGrado;
-  };
 
   const obtenerNombreGrado = (idGrado) => {
     // Convierte el ID del grado en un nombre

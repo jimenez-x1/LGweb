@@ -3,8 +3,9 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 
 const Pagos = () => {
-  const [pagos, setPagos] = useState([]);//aqui guarda los pagos que viene del backend.
-//llama al backedn y trae todos los pagos.
+  const [pagos, setPagos] = useState([]);
+
+  // Trae todos los pagos
   const getPagos = async () => {
     try {
       const res = await axios.get("http://localhost:3000/api/pagos");
@@ -14,6 +15,7 @@ const Pagos = () => {
     }
   };
 
+  // Elimina un pago
   const deletePago = async (id) => {
     const confirmar = window.confirm("¿Seguro que quieres eliminar este pago?");
     if (!confirmar) return;
@@ -27,7 +29,7 @@ const Pagos = () => {
       alert("Error al eliminar el pago");
     }
   };
-//se ejecuta al abrur la pantalla y trae los pagos del backend para mostrarlos en la tabla.
+
   useEffect(() => {
     getPagos();
   }, []);
@@ -55,21 +57,41 @@ const Pagos = () => {
                     <th>Año</th>
                     <th>Referencia</th>
                     <th>Fecha</th>
+                    <th>Comprobante</th>
                     <th>Acciones</th>
                   </tr>
                 </thead>
+
                 <tbody>
                   {pagos.map((pago) => (
                     <tr key={pago.ID_Pagos}>
-                        <td>{pago.ID_Pagos}</td>
-                        <td>{pago.DNI_Alumno}</td>
-                        <td>{pago.DNI_Padre}</td>
-                        <td>{pago.Monto}</td>
-                     <td>{pago.Mes_Correspondiente}</td>
-                    <td>{pago.Anio_Correspondiente}</td>
-                    <td>{pago.Numero_Referencia}</td>
-                    <td>{pago.Fecha_Pago}</td>
-                      <td>                        
+                      <td>{pago.ID_Pagos}</td>
+                      <td>{pago.DNI_Alumno}</td>
+                      <td>{pago.DNI_Padre}</td>
+                      <td>L. {pago.Monto}</td>
+                      <td>{pago.Mes_Correspondiente}</td>
+                      <td>{pago.Anio_Correspondiente}</td>
+                      <td>{pago.Numero_Referencia}</td>
+                      <td>{pago.Fecha_Pago}</td>
+
+                      <td>
+                        {pago.Comprobante ? (
+                          <a
+                            href={pago.Comprobante}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="btn btn-info btn-sm"
+                          >
+                            Ver comprobante
+                          </a>
+                        ) : (
+                          <span className="text-muted">
+                            Sin comprobante
+                          </span>
+                        )}
+                      </td>
+
+                      <td>
                         <button
                           className="btn btn-danger btn-sm"
                           onClick={() => deletePago(pago.ID_Pagos)}
@@ -80,6 +102,7 @@ const Pagos = () => {
                     </tr>
                   ))}
                 </tbody>
+
               </table>
             </div>
           )}

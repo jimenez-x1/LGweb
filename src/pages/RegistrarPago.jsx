@@ -4,120 +4,125 @@ import axios from "axios";
 
 import AlumnoAutocomplete from "../components/AlumnoAutocomplete";
 
-//guarda la inforacion que llega del api 
 const RegistrarPago = () => {
   const [estadoCuenta, setEstadoCuenta] = useState(null);
+  const [comprobante, setComprobante] = useState(null);
 
-  // Formulario para registrar un pago con alumno, padre, fecha, monto y número de referencia.
   const [form, setForm] = useState({
     DNI_Alumno: "",
     DNI_Padre: "",
     Fecha_Pago: "",
     Monto: "",
-    Numero_Referencia: ""
+    Numero_Referencia: "",
+    Mes_Correspondiente: "",
+    Anio_Correspondiente: "2026"
   });
 
-  // Obtiene el estado de cuenta del padre y del alumno seleccionado.
+  const CLOUD_NAME = "xfzydzcs";
+  const UPLOAD_PRESET = "comprobantes_pagos";
+
   const getEstadoCuenta = async (dniPadre, dniAlumno) => {
-
     try {
-
       const res = await axios.get(
         `http://localhost:3000/api/estado-cuenta/${dniPadre}/2026`
       );
 
-      const alumno = res.data.alumnos.find(
-        a => a.DNI === dniAlumno
-      );
-
+      const alumno = res.data.alumnos.find(a => a.DNI === dniAlumno);
       setEstadoCuenta(alumno?.estadoCuenta || null);
-
     } catch (error) {
-
       console.error("Error al obtener estado de cuenta:", error);
       setEstadoCuenta(null);
-
     }
-
   };
 
-
-// Actualiza los campos del formulario.
-const handleChange = (e) => {
-
-  const { name, value } = e.target;
-
-  setForm({
-    ...form,
-    [name]: value
-  });
-
-};
-
-// Recibe el alumno seleccionado desde el componente de búsqueda.
-const handleAlumnoSeleccionado = (alumno) => {
-
-  setForm(prev => ({
-    ...prev,
-    DNI_Alumno: alumno.DNI,
-    DNI_Padre: alumno.Padre.DNI
-  }));
-
-  getEstadoCuenta(alumno.Padre.DNI, alumno.DNI);
-
-};
-
-// Esta función registra un nuevo pago.
-const insertPago = async (e) => {
-
-  e.preventDefault();
-
-  try {
-
-    await axios.post(
-      "http://localhost:3000/api/insertPago",
-      {
-        ...form,
-        DNI_Alumno: form.DNI_Alumno,
-        DNI_Padre: form.DNI_Padre
-      }
-    );
-
-    alert("Pago registrado correctamente");
+  const handleChange = (e) => {
+    const { name, value } = e.target;
 
     setForm({
-      DNI_Alumno: "",
-      DNI_Padre: "",
-      Fecha_Pago: "",
-      Monto: "",
-      Numero_Referencia: ""
+      ...form,
+      [name]: value
     });
+  };
 
-    setEstadoCuenta(null);
+  const handleAlumnoSeleccionado = (alumno) => {
+    setForm(prev => ({
+      ...prev,
+      DNI_Alumno: alumno.DNI,
+      DNI_Padre: alumno.Padre.DNI
+    }));
 
-  } catch (error) {
+    getEstadoCuenta(alumno.Padre.DNI, alumno.DNI);
+  };
 
-    console.error(error);
+  const handleComprobante = (e) => {
+    setComprobante(e.target.files[0]);
+  };
 
-    alert(
-      error.response?.data?.message || "Error al guardar pago"
+  const subirComprobanteCloudinary = async () => {
+    const data = new FormData();
+
+    data.append("file", comprobante);
+    data.append("upload_preset", UPLOAD_PRESET);
+
+    const res = await axios.post(
+      `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+      data
     );
 
-  }
+    return res.data.secure_url;
+  };
 
-};
+  const insertPago = async (e) => {
+    e.preventDefault();
 
-// Formulario para registrar un pago con alumno, fecha, monto y número de referencia.
-return (
-    <section className="container py-5">      
+    try {
+      if (!form.DNI_Alumno || !form.DNI_Padre) {
+        alert("Debe seleccionar un alumno");
+        return;
+      }
+
+      if (!comprobante) {
+        alert("Debe subir el comprobante de pago");
+        return;
+      }
+
+      const urlComprobante = await subirComprobanteCloudinary();
+
+      await axios.post("http://localhost:3000/api/insertPago", {
+        ...form,
+        Metodo_Pago: "Transferencia",
+        Comprobante: urlComprobante
+      });
+
+      alert("Pago registrado correctamente");
+
+      setForm({
+        DNI_Alumno: "",
+        DNI_Padre: "",
+        Fecha_Pago: "",
+        Monto: "",
+        Numero_Referencia: "",
+        Mes_Correspondiente: "",
+        Anio_Correspondiente: "2026"
+      });
+
+      setComprobante(null);
+      setEstadoCuenta(null);
+
+    } catch (error) {
+      console.error(error);
+      alert(error.response?.data?.message || "Error al guardar pago");
+    }
+  };
+
+  return (
+    <section className="container py-5">
       <div className="row justify-content-center">
         <div className="col-lg-7 col-md-9 col-12">
           <div className="card shadow-sm border-0 rounded-4">
             <div className="card-body p-4 p-md-5">
               <div className="text-center mb-4">
-                <h2 className="fw-bold">
-                  Registrar Pago
-                </h2>
+                <h2 className="fw-bold">Registrar Pago</h2>
                 <p className="text-muted mb-0">
                   Complete la información del pago
                 </p>
@@ -125,15 +130,8 @@ return (
 
               <form onSubmit={insertPago}>
                 <div className="mb-3">
-
-                  <label className="form-label fw-semibold">
-                    Alumno
-                  </label>
-
-                  <AlumnoAutocomplete
-                    onSelect={handleAlumnoSeleccionado}
-                  />
-
+                  <label className="form-label fw-semibold">Alumno</label>
+                  <AlumnoAutocomplete onSelect={handleAlumnoSeleccionado} />
                 </div>
 
                 {estadoCuenta && (
@@ -143,7 +141,6 @@ return (
                     </div>
 
                     <div className="card-body">
-
                       <p>
                         <strong>Solvente hasta:</strong>{" "}
                         {estadoCuenta.solventeHasta
@@ -169,7 +166,6 @@ return (
                           </li>
                         ))}
                       </ul>
-
                     </div>
                   </div>
                 )}
@@ -203,7 +199,6 @@ return (
                   <label className="form-label fw-semibold">
                     Número de referencia
                   </label>
-
                   <input
                     type="text"
                     name="Numero_Referencia"
@@ -214,7 +209,50 @@ return (
                     placeholder="Ingrese el número de referencia"
                   />
                 </div>
-               
+
+                <div className="mb-3">
+                  <label className="form-label fw-semibold">
+                    Mes correspondiente
+                  </label>
+                  <select
+                    name="Mes_Correspondiente"
+                    value={form.Mes_Correspondiente}
+                    onChange={handleChange}
+                    required
+                    className="form-control"
+                  >
+                    <option value="">Seleccione un mes</option>
+                    <option value="1">Enero</option>
+                    <option value="2">Febrero</option>
+                    <option value="3">Marzo</option>
+                    <option value="4">Abril</option>
+                    <option value="5">Mayo</option>
+                    <option value="6">Junio</option>
+                    <option value="7">Julio</option>
+                    <option value="8">Agosto</option>
+                    <option value="9">Septiembre</option>
+                    <option value="10">Octubre</option>
+                    <option value="11">Noviembre</option>
+                    <option value="12">Diciembre</option>
+                  </select>
+                </div>
+
+                <div className="mb-4">
+                  <label className="form-label fw-semibold">
+                    Comprobante de pago
+                  </label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleComprobante}
+                    required
+                    className="form-control"
+                  />
+                  <small className="text-muted">
+                    Suba una foto del recibo o comprobante de la mensualidad.
+                  </small>
+                </div>
+
                 <div className="d-flex flex-column flex-sm-row gap-2 justify-content-center">
                   <button type="submit" className="btn btn-primary px-4">
                     Guardar Pago
@@ -225,6 +263,7 @@ return (
                   </Link>
                 </div>
               </form>
+
             </div>
           </div>
         </div>
