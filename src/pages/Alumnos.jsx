@@ -41,15 +41,15 @@ const Alumnos = () => {
 
   const limpiarFormulario = () => {
     setForm({
-      DNI: "",
-      DNI_Padre: "",
-      ID_Grado: "",
-      Nombre: "",
-      Apellido: "",
-      Fecha_Nacimiento: "",
-      Direccion: "",
-      Genero: "",
-    });
+  ID_Grado: "",
+  DNI: "",
+  DNI_Padre: "",
+  Nombre: "",
+  Apellido: "",
+  Fecha_Nacimiento: "",
+  Direccion: "",
+  Genero: "",
+});
     setEditando(false);
     setIdEditar(null);
   };
@@ -100,11 +100,10 @@ const Alumnos = () => {
 
   const editar = (alumno) => {
     setForm({
-      DNI: alumno.DNI || "",
-      DNI_Padre: alumno.DNI_Padre || "",
-      ID_Grado: alumno.ID_Grado ? String(alumno.ID_Grado) : "",
-      Nombre: alumno.Nombre || "",
-      Apellido: alumno.Apellido || "",
+  ID_Grado: alumno.ID_Grado ? String(alumno.ID_Grado) : "",
+  DNI: alumno.DNI || "",
+  Nombre: alumno.Nombre || "",
+  Apellido: alumno.Apellido || "",
       Fecha_Nacimiento: alumno.Fecha_Nacimiento
         ? String(alumno.Fecha_Nacimiento).slice(0, 10)
         : "",
