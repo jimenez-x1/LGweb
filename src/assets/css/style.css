@@ -12,7 +12,8 @@ html {
 
 img {
   max-width: 100%;
-  padding-top: 0 !important;
+  height: auto;
+  display: block;
 }
 
 .main_menu {
@@ -23,7 +24,8 @@ img {
   z-index: 10;
 }
 
-.main_menu .container {
+.main_menu .container, 
+.main_menu .container-fluid {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -70,6 +72,8 @@ img {
   display: flex;
   align-items: center;
   gap: 25px;
+  margin: 0;
+  padding: 0;
 }
 
 .main_menu ul li {
@@ -164,6 +168,189 @@ table td {
   }
 }
 .banner-full {
-  padding-left: 50px;
-  padding-right: 50px;
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
+/* RESPONSIVE */
+.dashboard-hero-card{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:40px;
+    flex-wrap:wrap;
+}
+
+.dashboard-hero-left{
+    flex:1;
+    min-width:320px;
+}
+
+.dashboard-hero-right{
+    width:320px;
+}
+
+/*================== TABLET ==================*/
+
+@media (max-width:991px){
+
+    .banner-full{
+        padding-left:25px;
+        padding-right:25px;
+    }
+
+    .dashboard-hero-card{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .dashboard-hero-left,
+    .dashboard-hero-right{
+        width:100%;
+        max-width:100%;
+    }
+
+}
+
+/*================== CELULAR ==================*/
+
+@media (max-width:768px){
+
+    .banner-full{
+        padding-left:15px;
+        padding-right:15px;
+    }
+
+    .dashboard-hero-left h1{
+        font-size:2rem;
+        line-height:1.2;
+    }
+
+    .dashboard-hero-left p{
+        font-size:15px;
+    }
+
+    .dashboard-hero-actions{
+        display:flex;
+        flex-direction:column;
+        gap:12px;
+        width:100%;
+    }
+
+    .dashboard-hero-actions .hero-btn{
+        width:100%;
+        justify-content:center;
+    }
+
+    .dashboard-badge{
+        font-size:14px;
+    }
+
+}
+
+/*================ CELULAR PEQUEÑO ================*/
+
+@media (max-width:480px){
+
+    .dashboard-hero-left h1{
+        font-size:1.7rem;
+    }
+
+    .brand-text{
+        display:none;
+    }
+
+    .brand-logo{
+        width:55px !important;
+        height:55px !important;
+    }
+
+}
+
+/*=====================================
+        NAVBAR RESPONSIVE
+======================================*/
+
+@media (max-width: 991px){
+
+    .custom-navbar-container{
+        align-items:center;
+    }
+
+    .navbar-collapse{
+
+        width:100%;
+
+        margin-top:15px;
+
+        background:#fff;
+
+        border-radius:12px;
+
+        border:1px solid #ececec;
+
+        box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+        overflow:hidden;
+
+    }
+
+    .navbar-nav{
+
+        display:flex;
+
+        flex-direction:column;
+
+        align-items:stretch !important;
+
+        width:100%;
+
+        gap:0 !important;
+
+    }
+
+    .navbar-nav .nav-item{
+
+        width:100%;
+
+    }
+
+    .navbar-nav .nav-link{
+
+        display:block;
+
+        width:100%;
+
+        padding:16px 22px;
+
+        text-align:left;
+
+        color:#16244c;
+
+        font-weight:600;
+
+        border-bottom:1px solid #f2f2f2;
+
+    }
+
+    .navbar-nav .nav-item:last-child .nav-link{
+
+        border-bottom:none;
+
+    }
+
+    .navbar-nav .nav-link.active{
+
+        color:#ff6b00;
+
+        background:#fff5ef;
+
+    }
+
+    .navbar-nav .nav-link:hover{
+
+        background:#f8f9fc;
+
+    }
+
 }

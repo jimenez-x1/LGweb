@@ -11,8 +11,11 @@ import RegistrarMaestro from "./pages/RegistrarMaestro";
 import EditarMaestro from "./pages/EditarMaestro";
 import Pagos from "./pages/Pagos";
 import RegistrarPago from "./pages/RegistrarPago";
+
 import Padre from "./pages/Padre";
+
 import Archivos from "./pages/Archivos";
+
 
 function App() {
   return (
@@ -36,6 +39,7 @@ function App() {
 
         <Route path="/padre" element={<Padre />} />
         <Route path="/archivos" element={<Archivos />} />
+
       </Routes>
     </>
   );

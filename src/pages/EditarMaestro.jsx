@@ -8,7 +8,7 @@ const EditarMaestro = () => {
   const maestroRecibido = location.state?.maestro;
 
   const [form, setForm] = useState({
-    ID_Maestro: "",
+    DNI: "",
     Nombre: "",
     Apellido: "",
     Telefono: "",
@@ -19,13 +19,13 @@ const EditarMaestro = () => {
   const [grados, setGrados] = useState([]);
 
   useEffect(() => {
-    if (!maestroRecibido) {
-      alert("No se recibió el maestro a editar");
-      navigate("/maestros");
-      return;
-    }
-
-    setForm(maestroRecibido);
+    fetch("http://localhost:3000/api/maestros")
+      .then((res) => res.json())
+      .then((data) => {
+        const maestro = (data ?? []).find((m) => m.DNI === parseInt(id));
+        if (maestro) setForm(maestro);
+      })
+      .catch((error) => console.error(error));
 
     fetch("http://localhost:3000/api/grados")
       .then((res) => res.json())

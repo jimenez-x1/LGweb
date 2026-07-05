@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+
 // Función de Redux Toolkit para crear un slice (parte del estado global)
 
 const initialState = {
@@ -6,16 +7,16 @@ const initialState = {
 };
 
 const alumnosSlice = createSlice({
-  name: "alumnos", 
+  name: "alumnos",
+
   // Nombre del slice dentro de Redux
+  initialState,
 
-  initialState, 
   // Estado inicial definido arriba
-
   reducers: {
     setAlumnos: (state, action) => {
       // Función que actualiza el estado
-      state.alumnos = action.payload; 
+      state.alumnos = action.payload;
       // Guarda los alumnos que vienen en la acción
     },
   },

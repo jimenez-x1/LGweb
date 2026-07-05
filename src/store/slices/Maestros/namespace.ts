@@ -5,7 +5,7 @@ export const NAME = "maestros";
 
 export declare namespace Type {
     export type MaestroInfo = {
-        ID_Maestro: number;
+        DNI: number;
         ID_Grado: number;
         Nombre: string;
         Apellido: string;
