@@ -39,4 +39,11 @@ export default CreateFetchers(NAME, {
         }
         return { gradosInfo: response?.data };
     },
+    async asignarClases(params: any) {
+    const response = await saveData(params);
+    if (isError<any>(response?.error)) {
+        return { error: response?.error };
+    }
+    return { asignarClasesInfo: response?.data };
+},
 });
