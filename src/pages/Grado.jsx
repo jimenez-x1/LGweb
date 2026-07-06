@@ -1,4 +1,8 @@
+ HEAD
 import React, { useEffect, useRef, useState } from "react";
+
+import React, { useEffect, useState } from "react";
+
 import { useDispatch, useSelector } from "../store";
 import fetchers from "../store/slices/Grado/fetchers";
 import Selector from "../store/slices/Grado/selectors";
@@ -8,6 +12,7 @@ import MaestroSelector from "../store/slices/Maestros/selectors";
 const Grado = () => {
   const dispatch = useDispatch();
   const grados = useSelector(Selector.getGrados);
+
   const clases = useSelector(Selector.getClases);
   const maestros = useSelector(MaestroSelector.getMaestros);
 
@@ -19,14 +24,23 @@ const [form, setForm] = useState({
   clases: [],
 });
 
+
+  const [clases, setClases] = useState([]);
+  const [form, setForm] = useState({ ID_Clase: "", Nombre_Grado: "", Seccion: "", Anio: "" });
+ origin/carolina
   const [editando, setEditando] = useState(false);
   const [idEditar, setIdEditar] = useState(null);
-  const formularioRef = useRef(null);
 
   useEffect(() => {
     dispatch(fetchers.getGrados({ url: "/grados" }));
+HEAD
     dispatch(fetchers.getClases({ url: "/clases" }));
     dispatch(maestroFetchers.getMaestros({ url: "/maestros" }));
+
+    dispatch(fetchers.getClases({ url: "/clases" })).then((res) => {
+      setClases(res.payload?.clasesInfo ?? []);
+    });
+origin/carolina
   }, []);
 
   const handleChange = (e) =>
@@ -78,6 +92,7 @@ const [form, setForm] = useState({
         idGrado = res?.payload?.gradosInfo?.ID_Grado;
         alert("Grado registrado");
       }
+ HEAD
 
       if (idGrado) {
   await dispatch(
@@ -108,6 +123,9 @@ const [form, setForm] = useState({
   DNI_Maestro: "",
   clases: [],
 });
+
+      setForm({ ID_Clase: "", Nombre_Grado: "", Seccion: "", Anio: "" });
+
       setEditando(false);
       setIdEditar(null);
       dispatch(fetchers.getGrados({ url: "/grados" }));
@@ -117,6 +135,7 @@ const [form, setForm] = useState({
   };
 
   const editar = (grado) => {
+
     setForm({
       Nombre_Grado: grado.Nombre_Grado,
       Seccion: grado.Seccion,
@@ -134,6 +153,11 @@ clases: grado.Clases ? grado.Clases.map((c) => c.ID_Clase) : [],
         block: "start",
       });
     }, 100);
+
+    setForm({ ID_Clase: String(grado.ID_Clase), Nombre_Grado: grado.Nombre_Grado, Seccion: grado.Seccion, Anio: String(grado.Anio) });
+    setEditando(true);
+    setIdEditar(grado.ID_Grado);
+ origin/carolina
   };
 
   const eliminar = async (id) => {
@@ -160,7 +184,7 @@ clases: grado.Clases ? grado.Clases.map((c) => c.ID_Clase) : [],
           </div>
         </div>
 
-        <div className="row justify-content-center" ref={formularioRef}>
+        <div className="row justify-content-center">
           <div className="col-lg-8">
             <div className="p-4 border rounded bg-white shadow-sm">
               <form onSubmit={handleSubmit}>
@@ -236,6 +260,7 @@ clases: grado.Clases ? grado.Clases.map((c) => c.ID_Clase) : [],
           
 
                 <div className="mb-3">
+
                   <label className="form-label">Clases</label>
 
                   <div className="row">
@@ -255,6 +280,30 @@ clases: grado.Clases ? grado.Clases.map((c) => c.ID_Clase) : [],
                       </div>
                     ))}
                   </div>
+
+                  <label className="form-label">Clase</label>
+                  <select className="form-control" name="ID_Clase" value={form.ID_Clase} onChange={handleChange} required>
+                    <option value="">Seleccione una Clase...</option>
+                    {clases.map((c) => (
+                      <option key={c.ID_Clase} value={c.ID_Clase}>{c.Nombre_Clase}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Nombre Grado</label>
+                  <input type="text" className="form-control" name="Nombre_Grado" placeholder="Ej: Primero" value={form.Nombre_Grado} onChange={handleChange} required />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Sección</label>
+                  <select className="form-control" name="Seccion" value={form.Seccion} onChange={handleChange} required>
+                    <option value="">Seleccione una Sección...</option>
+                    <option value="A">A</option>
+                  </select>
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Año</label>
+                  <input type="number" className="form-control" name="Anio" placeholder="Ej: 2024" value={form.Anio} onChange={handleChange} required />
+
                 </div>
 
                 <div className="d-flex gap-3">
@@ -277,7 +326,7 @@ clases: grado.Clases ? grado.Clases.map((c) => c.ID_Clase) : [],
                         });
                       }}
                     >
-                      Cancelar
+                    
                     </button>
                   )}
                 </div>
@@ -296,6 +345,7 @@ clases: grado.Clases ? grado.Clases.map((c) => c.ID_Clase) : [],
               <thead className="table-dark">
                 <tr>
                   <th>ID</th>
+                  <th>Clase</th>
                   <th>Nombre Grado</th>
                   <th>Sección</th>
                   <th>Año</th>
@@ -309,6 +359,7 @@ clases: grado.Clases ? grado.Clases.map((c) => c.ID_Clase) : [],
                 {grados.map((g) => (
                   <tr key={g.ID_Grado}>
                     <td>{g.ID_Grado}</td>
+                    <td>{g.Clase ? g.Clase.Nombre_Clase : "Sin asignar"}</td>
                     <td>{g.Nombre_Grado}</td>
                     <td>{g.Seccion}</td>
                     <td>{g.Anio}</td>

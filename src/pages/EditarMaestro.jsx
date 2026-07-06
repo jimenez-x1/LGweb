@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const EditarMaestro = () => {
-  const { id } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
+
+  const maestroRecibido = location.state?.maestro;
+
   const [form, setForm] = useState({
     DNI: "",
     Nombre: "",
@@ -12,6 +15,7 @@ const EditarMaestro = () => {
     Correo: "",
     ID_Grado: "",
   });
+
   const [grados, setGrados] = useState([]);
 
   useEffect(() => {
@@ -27,7 +31,7 @@ const EditarMaestro = () => {
       .then((res) => res.json())
       .then((data) => setGrados(data ?? []))
       .catch((error) => console.error(error));
-  }, [id]);
+  }, [maestroRecibido, navigate]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -35,14 +39,20 @@ const EditarMaestro = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      await fetch("http://localhost:3000/api/updateMaestro", {
+      const res = await fetch("http://localhost:3000/api/updateMaestro", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
-      alert("Maestro actualizado correctamente");
-      navigate("/maestros");
+
+      if (res.ok) {
+        alert("Maestro actualizado correctamente");
+        navigate("/maestros");
+      } else {
+        alert("Error al actualizar maestro");
+      }
     } catch (error) {
       console.error(error);
       alert("Error al actualizar maestro");
@@ -65,6 +75,16 @@ const EditarMaestro = () => {
           <div className="col-lg-8">
             <div className="p-4 border rounded bg-white shadow-sm">
               <form onSubmit={handleSubmit}>
+                <div className="mb-3">
+                  <label className="form-label">Código Maestro</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="ID_Maestro"
+                    value={form.ID_Maestro}
+                    disabled
+                  />
+                </div>
 
                 <div className="mb-3">
                   <label className="form-label">Nombre</label>
@@ -134,11 +154,11 @@ const EditarMaestro = () => {
                   <button type="submit" className="btn btn-warning">
                     Actualizar Maestro
                   </button>
+
                   <Link to="/maestros" className="btn btn-secondary">
                     Cancelar
                   </Link>
                 </div>
-
               </form>
             </div>
           </div>
