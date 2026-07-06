@@ -8,8 +8,7 @@ const Padre = () => {
   const padres = useSelector(Selector.getPadres);
   const [alumnos, setAlumnos] = useState([]);
  const [form, setForm] = useState({
-  ID_Alumno: "",
-  Identidad: "",
+  DNI: "",
   Nombre: "",
   Apellido: "",
   Telefono: "",
@@ -32,15 +31,14 @@ const Padre = () => {
     e.preventDefault();
     try {
       if (editando) {
-        await dispatch(fetchers.updatePadre({ url: "/updatePadre", data: { ...form, ID_Padre: idEditar } }));
+        await dispatch(fetchers.updatePadre({ url: "/updatePadre", data: { ...form, DNI: idEditar } }));
         alert("Padre actualizado");
       } else {
         await dispatch(fetchers.insertPadre({ url: "/insertPadre", data: form }));
         alert("Padre registrado");
       }
       setForm({ 
-        ID_Alumno: "",
-         Identidad: "",
+         DNI: "",
          Nombre: "", 
          Apellido: "", 
          Telefono: "",
@@ -57,28 +55,39 @@ const Padre = () => {
 
   const editar = (padre) => {
    setForm({
-  ID_Alumno: String(padre.ID_Alumno),
-  Identidad: padre.Identidad || "",
-  Nombre: padre.Nombre,
+      DNI: padre.DNI || "",
+      Nombre: padre.Nombre,
       Apellido: padre.Apellido,
       Telefono: padre.Telefono ?? "",
       Correo: padre.Correo ?? "",
       Direccion: padre.Direccion ?? "",
     });
     setEditando(true);
-    setIdEditar(padre.ID_Padre);
+    setIdEditar(padre.DNI);
   };
 
   const eliminar = async (id) => {
-    if (!window.confirm("¿Eliminar este padre?")) return;
-    try {
-      await dispatch(fetchers.deletePadre({ url: `/padres/${id}` }));
-      alert("Eliminado correctamente");
-      dispatch(fetchers.getPadres({ url: "/padres" }));
-    } catch (error) {
-      alert("Error al eliminar");
-    }
-  };
+  if (!window.confirm("¿Eliminar este padre?")) return;
+
+  try {
+    await dispatch(fetchers.deletePadre({
+      url: `/deletePadre/${id}`
+    }));
+
+    await dispatch(fetchers.getPadres({
+      url: "/padres"
+    }));
+    alert("Eliminado correctamente");
+
+    dispatch(fetchers.getPadres({ url: "/padres" }))
+      .then((res) => {
+        setPadres(res.payload?.padresInfo ?? []);
+      });
+
+  } catch (error) {
+    alert("Error al eliminar");
+  }
+};
 
   return (
     <section className="pt_100 pb_100">
@@ -97,27 +106,19 @@ const Padre = () => {
             <div className="p-4 border rounded bg-white shadow-sm">
               <form onSubmit={handleSubmit}>
                 <div className="mb-3">
-                  <label className="form-label">Alumno</label>
-                  <select className="form-control" name="ID_Alumno" value={form.ID_Alumno} onChange={handleChange} required>
-                    <option value="">Seleccione un Alumno...</option>
-                    {alumnos.map((a) => (
-                      <option key={a.ID_Alumno} value={a.ID_Alumno}>{a.Nombre} {a.Apellido}</option>
-                    ))}
-                  </select>
-
                   <div className="mb-3">
   <label className="form-label">Número de Identidad</label>
   <input
     type="text"
     className="form-control"
-    name="Identidad"
+    name="DNI"
     placeholder="Ej: 0801200512345"
-    value={form.Identidad}
+    value={form.DNI}
     onChange={(e) => {
       const valor = e.target.value.replace(/\D/g, "");
       setForm({
         ...form,
-        Identidad: valor,
+        DNI: valor,
       });
     }}
     maxLength={13}
@@ -149,8 +150,24 @@ const Padre = () => {
                 <div className="d-flex gap-3">
                   <button type="submit" className="btn btn-primary">{editando ? "Actualizar Padre" : "Guardar Padre"}</button>
                   {editando && (
-                    <button type="button" className="btn btn-secondary" onClick={() => { setEditando(false); setForm({ ID_Alumno: "", Nombre: "", Apellido: "", Telefono: "", Correo: "", Direccion: "" }); }}>Cancelar</button>
-                  )}
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={() => {
+                        setEditando(false);
+                        setIdEditar(null);
+                        setForm({
+                          DNI: "",
+                          Nombre: "",
+                          Apellido: "",
+                          Telefono: "",
+                          Correo: "",
+                          Direccion: ""
+                        });
+                      }}
+                    >
+                      Cancelar
+                    </button>                  )}
                 </div>
               </form>
             </div>
@@ -158,45 +175,71 @@ const Padre = () => {
         </div>
 
         <div className="row mt_50">
-          <div className="col-12">
-            <div className="tf__heading_area mb_30">
-              <h2>Padres Registrados</h2>
-            </div>
-            <table className="table table-bordered table-striped">
-              <thead className="table-dark">
-                <tr>
-                  <th>ID</th>
-                  <th>Alumno</th>
-                  <th>Identidad</th>
-                  <th>Nombre</th>
-                  <th>Apellido</th>
-                  <th>Teléfono</th>
-                  <th>Correo</th>
-                  <th>Dirección</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {padres.map((p) => (
-                  <tr key={p.ID_Padre}>
-                    <td>{p.ID_Padre}</td>
-                    <td>{p.ID_Alumno ?? "Sin asignar"}</td>
-                    <td>{p.Identidad}</td>
-                    <td>{p.Nombre}</td>
-                    <td>{p.Apellido}</td>
-                    <td>{p.Telefono}</td>
-                    <td>{p.Correo}</td>
-                    <td>{p.Direccion}</td>
-                    <td>
-                      <button className="btn btn-warning btn-sm me-2" onClick={() => editar(p)}>Editar</button>
-                      <button className="btn btn-danger btn-sm" onClick={() => eliminar(p.ID_Padre)}>Eliminar</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+  <div className="col-12">
+    <div className="tf__heading_area mb_30">
+      <h2>Padres Registrados</h2>
+    </div>
+
+    <table className="table table-bordered table-striped">
+
+      <thead className="table-dark">
+        <tr>
+          <th>DNI</th>
+          <th>Nombre</th>
+          <th>Apellido</th>
+          <th>Teléfono</th>
+          <th>Correo</th>
+          <th>Dirección</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        {padres.map((p) => (
+
+          <tr key={p.DNI}>
+
+            <td>{p.DNI}</td>
+
+            <td>{p.Nombre}</td>
+
+            <td>{p.Apellido}</td>
+
+            <td>{p.Telefono}</td>
+
+            <td>{p.Correo}</td>
+
+            <td>{p.Direccion}</td>
+
+            <td>
+
+              <button
+                className="btn btn-warning btn-sm me-2"
+                onClick={() => editar(p)}
+              >
+                Editar
+              </button>
+
+              <button
+                className="btn btn-danger btn-sm"
+                onClick={() => eliminar(p.DNI)}
+              >
+                Eliminar
+              </button>
+
+            </td>
+
+          </tr>
+
+        ))}
+
+      </tbody>
+
+    </table>
+
+  </div>
+</div>
       </div>
     </section>
   );

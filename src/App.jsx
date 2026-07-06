@@ -9,16 +9,15 @@ import RegistrarMaestro from "./pages/RegistrarMaestro";
 import EditarMaestro from "./pages/EditarMaestro";
 import Pagos from "./pages/Pagos";
 import RegistrarPago from "./pages/RegistrarPago";
-
+import Calificaciones from "./pages/Calificaciones";
 import Padre from "./pages/Padre";
-
 import Archivos from "./pages/Archivos";
-
 
 function App() {
   return (
     <>
       <NavbarSection style="" logo="/images/logo-escuela-luis-gamero.png" />
+
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/clase" element={<Clase />} />
@@ -28,13 +27,14 @@ function App() {
         <Route path="/registrar-maestro" element={<RegistrarMaestro />} />
         <Route path="/editar-maestro/:id" element={<EditarMaestro />} />
         <Route path="/pagos" element={<Pagos />} />
+
+        <Route path="/calificaciones" element={<Calificaciones />} />
+
         <Route path="/registrar-pago" element={<RegistrarPago />} />
         <Route path="/registrar-pago/:id" element={<RegistrarPago />} />
 
         <Route path="/padre" element={<Padre />} />
-=======
         <Route path="/archivos" element={<Archivos />} />
-
       </Routes>
     </>
   );

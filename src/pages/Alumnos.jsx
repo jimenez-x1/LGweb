@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useDispatch } from "../store";
 import fetchers from "../store/slices/Alumnos/fetchers";
 
@@ -8,14 +8,16 @@ const Alumnos = () => {
   const [alumnos, setAlumnos] = useState([]);
   const [grados, setGrados] = useState([]);
   const [form, setForm] = useState({
+  DNI: "",
+  DNI_Padre: "",
   ID_Grado: "",
-  Identidad: "",
   Nombre: "",
   Apellido: "",
   Fecha_Nacimiento: "",
   Direccion: "",
   Genero: "",
 });
+  const formularioRef = useRef(null);
 
   const [editando, setEditando] = useState(false);
   const [idEditar, setIdEditar] = useState(null);
@@ -44,7 +46,8 @@ const Alumnos = () => {
   const limpiarFormulario = () => {
     setForm({
   ID_Grado: "",
-  Identidad: "",
+  DNI: "",
+  DNI_Padre: "",
   Nombre: "",
   Apellido: "",
   Fecha_Nacimiento: "",
@@ -72,7 +75,7 @@ const Alumnos = () => {
             url: "/updateAlumno",
             data: {
               ...form,
-              ID_Alumno: idEditar,
+              DNI: idEditar,
               ID_Grado: Number(form.ID_Grado),
             },
           })
@@ -82,10 +85,10 @@ const Alumnos = () => {
         await dispatch(
           fetchers.insertAlumno({
             url: "/insertAlumno",
-            data: {
-              ...form,
-              ID_Grado: Number(form.ID_Grado),
-            },
+           data: {
+            ...form,
+            ID_Grado: Number(form.ID_Grado),
+            }
           })
         );
         alert("Alumno registrado correctamente");
@@ -102,7 +105,7 @@ const Alumnos = () => {
   const editar = (alumno) => {
     setForm({
   ID_Grado: alumno.ID_Grado ? String(alumno.ID_Grado) : "",
-  Identidad: alumno.Identidad || "",
+  DNI: alumno.DNI || "",
   Nombre: alumno.Nombre || "",
   Apellido: alumno.Apellido || "",
       Fecha_Nacimiento: alumno.Fecha_Nacimiento
@@ -113,7 +116,14 @@ const Alumnos = () => {
     });
 
     setEditando(true);
-    setIdEditar(alumno.ID_Alumno);
+    setIdEditar(alumno.DNI);
+
+    setTimeout(() => {
+      formularioRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 100);
   };
 
   const eliminar = async (id) => {
@@ -160,7 +170,7 @@ const Alumnos = () => {
           </div>
         </div>
 
-        <div className="row justify-content-center">
+        <div className="row justify-content-center" ref={formularioRef}>
           <div className="col-lg-8">
             <div className="p-4 border rounded bg-white shadow-sm">
               <form onSubmit={handleSubmit}>
@@ -169,10 +179,10 @@ const Alumnos = () => {
   <label className="form-label">Número de Identidad</label>
   <input
     type="text"
-    name="Identidad"
+    name="DNI"
     placeholder="Ej: 0801200512345"
     className="form-control"
-    value={form.Identidad}
+    value={form.DNI}
     onChange={handleChange}
     maxLength={13}
     required
@@ -289,14 +299,14 @@ const Alumnos = () => {
 
             <div className="row">
               {alumnos.map((alumno) => (
-                <div className="col-md-6 col-lg-4 mb_30" key={alumno.ID_Alumno}>
+                <div className="col-md-6 col-lg-4 mb_30" key={alumno.DNI}>
                   <div className="tf__single_courses">
                     <div className="tf__single_courses_text">
                       <h3>
                         {alumno.Nombre} {alumno.Apellido}
                       </h3>
                       <p>
-                        <strong>Identidad:</strong> {alumno.Identidad}
+                        <strong>DNI:</strong> {alumno.DNI}
                       </p>
 
                       <p><strong>Dirección:</strong> {alumno.Direccion}</p>
@@ -319,7 +329,7 @@ const Alumnos = () => {
 
                         <button
                           className="btn btn-danger btn-sm"
-                          onClick={() => eliminar(alumno.ID_Alumno)}
+                          onClick={() => eliminar(alumno.DNI)}
                         >
                           Eliminar
                         </button>

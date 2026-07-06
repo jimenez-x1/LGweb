@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef , useState } from "react";
 import { useDispatch, useSelector } from "../store";
 import fetchers from "../store/slices/Grado/fetchers";
 import Selector from "../store/slices/Grado/selectors";
@@ -6,15 +6,14 @@ import Selector from "../store/slices/Grado/selectors";
 const Grado = () => {
   const dispatch = useDispatch();
   const grados = useSelector(Selector.getGrados);
-  const [clases, setClases] = useState([]);
-  const [form, setForm] = useState({ ID_Clase: "", Nombre_Grado: "", Seccion: "", Anio: "" });
+  const [form, setForm] = useState({ Nombre_Grado: "", Seccion: "", Anio: "" });
   const [editando, setEditando] = useState(false);
   const [idEditar, setIdEditar] = useState(null);
+  const formularioRef = useRef(null);
 
   useEffect(() => {
     dispatch(fetchers.getGrados({ url: "/grados" }));
     dispatch(fetchers.getClases({ url: "/clases" })).then((res) => {
-      setClases(res.payload?.clasesInfo ?? []);
     });
   }, []);
 
@@ -30,7 +29,7 @@ const Grado = () => {
         await dispatch(fetchers.insertGrado({ url: "/grados", data: form }));
         alert("Grado registrado");
       }
-      setForm({ ID_Clase: "", Nombre_Grado: "", Seccion: "", Anio: "" });
+      setForm({ Nombre_Grado: "", Seccion: "", Anio: "" });
       setEditando(false);
       setIdEditar(null);
       dispatch(fetchers.getGrados({ url: "/grados" }));
@@ -39,11 +38,23 @@ const Grado = () => {
     }
   };
 
-  const editar = (grado) => {
-    setForm({ ID_Clase: String(grado.ID_Clase), Nombre_Grado: grado.Nombre_Grado, Seccion: grado.Seccion, Anio: String(grado.Anio) });
-    setEditando(true);
-    setIdEditar(grado.ID_Grado);
-  };
+      const editar = (grado) => {
+      setForm({
+        Nombre_Grado: grado.Nombre_Grado,
+        Seccion: grado.Seccion,
+        Anio: String(grado.Anio),
+      });
+
+      setEditando(true);
+      setIdEditar(grado.ID_Grado);
+
+      setTimeout(() => {
+        formularioRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 100);
+    };
 
   const eliminar = async (id) => {
     if (!window.confirm("¿Eliminar este grado?")) return;
@@ -68,19 +79,10 @@ const Grado = () => {
           </div>
         </div>
 
-        <div className="row justify-content-center">
+        <div className="row justify-content-center" ref={formularioRef}>
           <div className="col-lg-8">
             <div className="p-4 border rounded bg-white shadow-sm">
               <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                  <label className="form-label">Clase</label>
-                  <select className="form-control" name="ID_Clase" value={form.ID_Clase} onChange={handleChange} required>
-                    <option value="">Seleccione una Clase...</option>
-                    {clases.map((c) => (
-                      <option key={c.ID_Clase} value={c.ID_Clase}>{c.Nombre_Clase}</option>
-                    ))}
-                  </select>
-                </div>
                 <div className="mb-3">
                   <label className="form-label">Nombre Grado</label>
                   <input type="text" className="form-control" name="Nombre_Grado" placeholder="Ej: Primero" value={form.Nombre_Grado} onChange={handleChange} required />
@@ -116,7 +118,6 @@ const Grado = () => {
               <thead className="table-dark">
                 <tr>
                   <th>ID</th>
-                  <th>Clase</th>
                   <th>Nombre Grado</th>
                   <th>Sección</th>
                   <th>Año</th>
@@ -127,7 +128,6 @@ const Grado = () => {
                 {grados.map((g) => (
                   <tr key={g.ID_Grado}>
                     <td>{g.ID_Grado}</td>
-                    <td>{g.Clase ? g.Clase.Nombre_Clase : "Sin asignar"}</td>
                     <td>{g.Nombre_Grado}</td>
                     <td>{g.Seccion}</td>
                     <td>{g.Anio}</td>
