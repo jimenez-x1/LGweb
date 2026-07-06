@@ -2,18 +2,22 @@ import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "../store";
 import fetchers from "../store/slices/Grado/fetchers";
 import Selector from "../store/slices/Grado/selectors";
+import maestroFetchers from "../store/slices/Maestros/fetchers";
+import MaestroSelector from "../store/slices/Maestros/selectors";
 
 const Grado = () => {
   const dispatch = useDispatch();
   const grados = useSelector(Selector.getGrados);
   const clases = useSelector(Selector.getClases);
+  const maestros = useSelector(MaestroSelector.getMaestros);
 
-  const [form, setForm] = useState({
-    Nombre_Grado: "",
-    Seccion: "",
-    Anio: "",
-    clases: [],
-  });
+const [form, setForm] = useState({
+  Nombre_Grado: "",
+  Seccion: "",
+  Anio: "",
+  DNI_Maestro: "",
+  clases: [],
+});
 
   const [editando, setEditando] = useState(false);
   const [idEditar, setIdEditar] = useState(null);
@@ -22,6 +26,7 @@ const Grado = () => {
   useEffect(() => {
     dispatch(fetchers.getGrados({ url: "/grados" }));
     dispatch(fetchers.getClases({ url: "/clases" }));
+    dispatch(maestroFetchers.getMaestros({ url: "/maestros" }));
   }, []);
 
   const handleChange = (e) =>
@@ -75,18 +80,34 @@ const Grado = () => {
       }
 
       if (idGrado) {
-        await dispatch(
-          fetchers.asignarClases({
-            url: "/grado-clase/asignar",
-            data: {
-              ID_Grado: idGrado,
-              clases: form.clases,
-            },
-          })
-        );
-      }
+  await dispatch(
+    fetchers.asignarClases({
+      url: "/grado-clase/asignar",
+      data: {
+        ID_Grado: idGrado,
+        clases: form.clases,
+      },
+    })
+  );
 
-      setForm({ Nombre_Grado: "", Seccion: "", Anio: "", clases: [] });
+  await dispatch(
+    maestroFetchers.asignarMaestro({
+      url: "/maestro-grado/asignar",
+      data: {
+        ID_Grado: idGrado,
+        DNI_Maestro: form.DNI_Maestro,
+      },
+    })
+  );
+}
+
+    setForm({
+  Nombre_Grado: "",
+  Seccion: "",
+  Anio: "",
+  DNI_Maestro: "",
+  clases: [],
+});
       setEditando(false);
       setIdEditar(null);
       dispatch(fetchers.getGrados({ url: "/grados" }));
@@ -100,7 +121,8 @@ const Grado = () => {
       Nombre_Grado: grado.Nombre_Grado,
       Seccion: grado.Seccion,
       Anio: String(grado.Anio),
-      clases: grado.Clases ? grado.Clases.map((c) => c.ID_Clase) : [],
+   DNI_Maestro: grado.Maestros && grado.Maestros.length > 0 ? grado.Maestros[0].DNI : "",
+clases: grado.Clases ? grado.Clases.map((c) => c.ID_Clase) : [],
     });
 
     setEditando(true);
@@ -167,15 +189,16 @@ const Grado = () => {
     <label className="form-label">Sección</label>
 
     <select
-        className="form-control"
-        name="Seccion"
-        value={form.Seccion}
-        onChange={handleChange}
-        required
-    >
-        <option value="">Seleccione una Sección...</option>
-        <option value="A">A</option>
-    </select>
+  className="form-control"
+  name="Seccion"
+  value={form.Seccion}
+  onChange={handleChange}
+  required
+>
+  <option value="">Seleccione una Sección...</option>
+  <option value="A">A</option>
+  <option value="B">B</option>
+</select>
 </div>
 <div className="mb-3">
   <label className="form-label">Año</label>
@@ -190,25 +213,27 @@ const Grado = () => {
   />
 </div>
 
-           <div className="mb-3">
-  <label className="form-label">Nombre Grado</label>
+<div className="mb-3">
+  <label className="form-label">Maestro Titular</label>
 
   <select
     className="form-control"
-    name="Nombre_Grado"
-    value={form.Nombre_Grado}
+    name="DNI_Maestro"
+    value={form.DNI_Maestro}
     onChange={handleChange}
     required
   >
-    <option value="">Seleccione un grado...</option>
-    <option value="Primero">Primero</option>
-    <option value="Segundo">Segundo</option>
-    <option value="Tercero">Tercero</option>
-    <option value="Cuarto">Cuarto</option>
-    <option value="Quinto">Quinto</option>
-    <option value="Sexto">Sexto</option>
+    <option value="">Seleccione un maestro...</option>
+
+    {maestros.map((maestro) => (
+      <option key={maestro.DNI} value={maestro.DNI}>
+        {maestro.Nombre} {maestro.Apellido}
+      </option>
+    ))}
   </select>
 </div>
+
+          
 
                 <div className="mb-3">
                   <label className="form-label">Clases</label>
@@ -274,6 +299,7 @@ const Grado = () => {
                   <th>Nombre Grado</th>
                   <th>Sección</th>
                   <th>Año</th>
+                  <th>Maestro Titular</th>
                   <th>Clases Asignadas</th>
                   <th>Acciones</th>
                 </tr>
@@ -286,7 +312,17 @@ const Grado = () => {
                     <td>{g.Nombre_Grado}</td>
                     <td>{g.Seccion}</td>
                     <td>{g.Anio}</td>
-
+<td>
+  {g.Maestros && g.Maestros.length > 0 ? (
+    g.Maestros.map((maestro) => (
+      <div key={maestro.DNI}>
+        {maestro.Nombre} {maestro.Apellido}
+      </div>
+    ))
+  ) : (
+    <span className="text-muted">Sin maestro</span>
+  )}
+</td>
                     <td>
                       {g.Clases && g.Clases.length > 0 ? (
                         <div className="d-flex flex-wrap gap-2">
