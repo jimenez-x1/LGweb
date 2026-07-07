@@ -37,6 +37,18 @@ export default CreateFetchers(NAME, {
         if (isError<any>(response?.error)) {
             return { error: response?.error };
         }
+
         return { maestrosInfo: response?.data };
     },
+
+ 
+
+async asignarMaestro(params: any) {
+    const response = await saveData(params);
+    if (isError<any>(response?.error)) {
+        return { error: response?.error };
+    }
+    return { asignarMaestroInfo: response?.data };
+},
+
 });

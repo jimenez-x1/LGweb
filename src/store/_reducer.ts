@@ -16,6 +16,11 @@ import {
 } from "./slices/Padre";
 
 import {
+    NAME as NAME_MAESTROS,
+    Reducer as ReducerMaestros
+} from "./slices/Maestros";
+
+import {
     NAME as NAME_CALIFICACIONES,
     Reducer as ReducerCalificaciones
 } from "./slices/Calificaciones";
@@ -24,5 +29,6 @@ export default CombineReducers({
     [NAME_GRADOS]: ReducerGrados,
     [NAME_CLASES]: ReducerClases,
     [NAME_PADRES]: ReducerPadres,
+    [NAME_MAESTROS]: ReducerMaestros,
     [NAME_CALIFICACIONES]: ReducerCalificaciones,
 });

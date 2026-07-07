@@ -28,7 +28,11 @@ export const Action = CreateActions<{
     cleanCalificacion: void;
     cleanStore: void;
     setCalificacion: Type.CalificacionInfo;
-}>(NAME, ["cleanCalificacion", "cleanStore", "setCalificacion"]);
+}>(NAME, [
+    "cleanCalificacion",
+    "cleanStore",
+    "setCalificacion"
+]);
 
 export const INIT: StoreCalificaciones.State = {
     calificacionInfo: null,

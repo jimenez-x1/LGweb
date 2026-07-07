@@ -1,5 +1,7 @@
 import { Routes, Route } from "react-router-dom";
+
 import NavbarSection from "./components/navbar/NavbarSection.jsx";
+
 import Home from "./pages/Home";
 import Clase from "./pages/Clase";
 import Alumnos from "./pages/Alumnos";
@@ -20,12 +22,15 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Home />} />
+
         <Route path="/clase" element={<Clase />} />
         <Route path="/alumnos" element={<Alumnos />} />
         <Route path="/grado" element={<Grado />} />
         <Route path="/maestros" element={<Maestros />} />
+
         <Route path="/registrar-maestro" element={<RegistrarMaestro />} />
-        <Route path="/editar-maestro/:id" element={<EditarMaestro />} />
+        <Route path="/editar-maestro" element={<EditarMaestro />} />
+
         <Route path="/pagos" element={<Pagos />} />
 
         <Route path="/calificaciones" element={<Calificaciones />} />

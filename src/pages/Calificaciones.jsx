@@ -147,7 +147,6 @@ const Calificaciones = () => {
         );
 
         alert("Calificación registrada");
-
       }
 
       limpiarFormulario();
@@ -204,7 +203,6 @@ const Calificaciones = () => {
     );
 
     cargarCalificaciones();
-
   };
 
   return (

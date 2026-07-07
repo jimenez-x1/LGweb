@@ -4,9 +4,13 @@ import fetchers from "../store/slices/Alumnos/fetchers";
 
 const Alumnos = () => {
   const dispatch = useDispatch();
+  const formularioRef = useRef(null);
 
   const [alumnos, setAlumnos] = useState([]);
   const [grados, setGrados] = useState([]);
+  const [editando, setEditando] = useState(false);
+  const [idEditar, setIdEditar] = useState(null);
+
   const [form, setForm] = useState({
   DNI: "",
   DNI_Padre: "",
@@ -17,24 +21,17 @@ const Alumnos = () => {
   Direccion: "",
   Genero: "",
 });
-  const formularioRef = useRef(null);
 
-  const [editando, setEditando] = useState(false);
-  const [idEditar, setIdEditar] = useState(null);
 
   const cargarAlumnos = () => {
     dispatch(fetchers.getAlumnos({ url: "/alumnos" }))
-      .then((res) => {
-        setAlumnos(res.payload?.alumnosInfo ?? []);
-      })
+      .then((res) => setAlumnos(res.payload?.alumnosInfo ?? []))
       .catch((error) => console.error(error));
   };
 
   const cargarGrados = () => {
     dispatch(fetchers.getGrados({ url: "/grados" }))
-      .then((res) => {
-        setGrados(res.payload?.gradosInfo ?? []);
-      })
+      .then((res) => setGrados(res.payload?.gradosInfo ?? []))
       .catch((error) => console.error(error));
   };
 
@@ -66,65 +63,93 @@ const Alumnos = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      if (editando) {
-        await dispatch(
-          fetchers.updateAlumno({
-            url: "/updateAlumno",
-            data: {
-              ...form,
-              DNI: idEditar,
-              ID_Grado: Number(form.ID_Grado),
-            },
-          })
-        );
-        alert("Alumno actualizado correctamente");
-      } else {
-        await dispatch(
-          fetchers.insertAlumno({
-            url: "/insertAlumno",
-           data: {
-            ...form,
+  try {
+    let res;
+
+    if (editando) {
+      res = await dispatch(
+        fetchers.updateAlumno({
+          url: "/updateAlumno",
+          data: {
+            DNI: idEditar,
+            DNI_Padre: form.DNI_Padre || null,
             ID_Grado: Number(form.ID_Grado),
-            }
-          })
+            Nombre: form.Nombre,
+            Apellido: form.Apellido,
+            Fecha_Nacimiento: form.Fecha_Nacimiento,
+            Direccion: form.Direccion,
+            Genero: form.Genero,
+          },
+        })
+      );
+
+      if (res.payload?.error) {
+        throw new Error(
+          res.payload.error.message || "Error al actualizar alumno"
         );
-        alert("Alumno registrado correctamente");
       }
 
-      limpiarFormulario();
-      cargarAlumnos();
-    } catch (error) {
-      console.error(error);
-      alert("Error al guardar alumno");
+      alert("Alumno actualizado correctamente");
+    } else {
+      res = await dispatch(
+        fetchers.insertAlumno({
+          url: "/insertAlumno",
+          data: {
+            DNI: form.DNI,
+            DNI_Padre: form.DNI_Padre || null,
+            ID_Grado: Number(form.ID_Grado),
+            Nombre: form.Nombre,
+            Apellido: form.Apellido,
+            Fecha_Nacimiento: form.Fecha_Nacimiento,
+            Direccion: form.Direccion,
+            Genero: form.Genero,
+          },
+        })
+      );
+
+      if (res.payload?.error) {
+        throw new Error(
+          res.payload.error.message || "Error al registrar alumno"
+        );
+      }
+
+      alert("Alumno registrado correctamente");
     }
-  };
 
-  const editar = (alumno) => {
-    setForm({
-  ID_Grado: alumno.ID_Grado ? String(alumno.ID_Grado) : "",
-  DNI: alumno.DNI || "",
-  Nombre: alumno.Nombre || "",
-  Apellido: alumno.Apellido || "",
-      Fecha_Nacimiento: alumno.Fecha_Nacimiento
-        ? String(alumno.Fecha_Nacimiento).slice(0, 10)
-        : "",
-      Direccion: alumno.Direccion || "",
-      Genero: alumno.Genero || "",
+    limpiarFormulario();
+    cargarAlumnos();
+  } catch (error) {
+    console.error("Error:", error);
+    alert(error.message || "Error al guardar alumno");
+  }
+};
+
+ const editar = (alumno) => {
+  setForm({
+    ID_Grado: alumno.ID_Grado ? String(alumno.ID_Grado) : "",
+    DNI: alumno.DNI || "",
+    DNI_Padre: alumno.DNI_Padre || "",
+    Nombre: alumno.Nombre || "",
+    Apellido: alumno.Apellido || "",
+    Fecha_Nacimiento: alumno.Fecha_Nacimiento
+      ? String(alumno.Fecha_Nacimiento).slice(0, 10)
+      : "",
+    Direccion: alumno.Direccion || "",
+    Genero: alumno.Genero || "",
+  });
+
+  setEditando(true);
+  setIdEditar(alumno.DNI);
+
+  setTimeout(() => {
+    formularioRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
     });
-
-    setEditando(true);
-    setIdEditar(alumno.DNI);
-
-    setTimeout(() => {
-      formularioRef.current?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }, 100);
-  };
+  }, 100);
+};
 
   const eliminar = async (id) => {
     const confirmar = window.confirm("¿Eliminar este alumno?");
@@ -174,26 +199,36 @@ const Alumnos = () => {
           <div className="col-lg-8">
             <div className="p-4 border rounded bg-white shadow-sm">
               <form onSubmit={handleSubmit}>
+                <div className="mb-3">
+                  <label className="form-label">Número de Identidad</label>
+                  <input
+                    type="text"
+                    name="DNI"
+                    className="form-control"
+                    value={form.DNI}
+                    onChange={handleChange}
+                    maxLength={13}
+                    required
+                  />
+                </div>
 
-              <div className="mb-3">
-  <label className="form-label">Número de Identidad</label>
-  <input
-    type="text"
-    name="DNI"
-    placeholder="Ej: 0801200512345"
-    className="form-control"
-    value={form.DNI}
-    onChange={handleChange}
-    maxLength={13}
-    required
-  />
-</div>
+                <div className="mb-3">
+                  <label className="form-label">DNI Padre</label>
+                  <input
+                    type="text"
+                    name="DNI_Padre"
+                    className="form-control"
+                    value={form.DNI_Padre}
+                    onChange={handleChange}
+                    maxLength={13}
+                  />
+                </div>
+
                 <div className="mb-3">
                   <label className="form-label">Nombre</label>
                   <input
                     type="text"
                     name="Nombre"
-                    placeholder="Ej: Sofía"
                     className="form-control"
                     value={form.Nombre}
                     onChange={handleChange}
@@ -206,7 +241,6 @@ const Alumnos = () => {
                   <input
                     type="text"
                     name="Apellido"
-                    placeholder="Ej: Maradiaga"
                     className="form-control"
                     value={form.Apellido}
                     onChange={handleChange}
@@ -231,7 +265,6 @@ const Alumnos = () => {
                   <input
                     type="text"
                     name="Direccion"
-                    placeholder="Ej: Col. El Zarzal"
                     className="form-control"
                     value={form.Direccion}
                     onChange={handleChange}
@@ -306,9 +339,10 @@ const Alumnos = () => {
                         {alumno.Nombre} {alumno.Apellido}
                       </h3>
                       <p>
-                        <strong>DNI:</strong> {alumno.DNI}
+                        <strong>Identidad:</strong> {alumno.Identidad}
                       </p>
 
+                      <p><strong>DNI:</strong> {alumno.DNI}</p>
                       <p><strong>Dirección:</strong> {alumno.Direccion}</p>
                       <p><strong>Género:</strong> {alumno.Genero}</p>
                       <p>

@@ -1,9 +1,9 @@
-    import { CreateReducer } from "../../../storeConfig";
-    import { Action, INIT } from "./namespace";
-    import type { Type } from "./namespace";
-    import fetchers from "./fetchers";
+import { CreateReducer } from "../../../storeConfig";
+import { Action, INIT } from "./namespace";
+import type { Type } from "./namespace";
+import fetchers from "./fetchers";
 
-    export default CreateReducer(INIT, ({ addCase }) => {
+export default CreateReducer(INIT, ({ addCase }) => {
 
     addCase(Action.cleanStore, (state) => ({
         ...state,
@@ -25,4 +25,4 @@
         calificacionesInfo: (payload.calificacionesInfo ?? []) as Type.CalificacionInfo[],
     }));
 
-    });
+});

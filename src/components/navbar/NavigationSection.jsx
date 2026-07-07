@@ -1,5 +1,6 @@
 import React from "react";
 import { useEduorContext } from "../../context/EduorContext";
+
 import Navlink from "./Navlink";
 
 const NavigationSection = ({ position, navRef }) => {

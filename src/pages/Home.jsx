@@ -15,7 +15,9 @@ const Home = () => {
       .catch((error) => console.error(error));
   }, [dispatch]);
 
+
   const obtenerNombreGrado = (idGrado) => {
+    // Convierte el ID del grado en un nombre
     const grados = {
       1: "Primero",
       4: "Segundo",
@@ -25,23 +27,23 @@ const Home = () => {
       12: "Sexto",
     };
 
-    return grados[idGrado] || idGrado;
+    return grados[idGrado] || idGrado; // Si no encuentra, devuelve el ID
   };
 
-  const totalAlumnos = alumnos.length;
+  const totalAlumnos = alumnos.length; // Cantidad total de alumnos
 
   const gradosRegistrados = new Set(
     alumnos.map((alumno) => alumno.ID_Grado).filter(Boolean)
-  ).size;
+  ).size; // Cuenta cuántos grados diferentes hay
 
   const stats = {
-    totalAlumnos,
-    gradosRegistrados,
+    totalAlumnos, // Total de alumnos
+    gradosRegistrados, // Total de grados únicos
   };
 
   return (
     <>
-      <BannerSection stats={stats} />
+      <BannerSection stats={stats} /> {/* Componente que muestra estadísticas */}
 
       <section className="pt_100 pb_100">
         <div className="container-fluid px-5">
@@ -60,7 +62,7 @@ const Home = () => {
                 <div className="tf__single_courses">
                   <div className="tf__single_courses_text">
                     <h3>
-                      {alumno.Nombre} {alumno.Apellido}
+                      {alumno.Nombre} {alumno.Apellido} {/* Nombre completo */}
                     </h3>
                     <p><strong>Dirección:</strong> {alumno.Direccion}</p>
                     <p><strong>Género:</strong> {alumno.Genero}</p>

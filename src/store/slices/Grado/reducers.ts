@@ -25,4 +25,8 @@ addCase(fetchers.getGrados.fulfilled, (state, { payload }) => ({
     gradosInfo: (payload.gradosInfo ?? []) as Type.GradoInfo[],
 }));
 
+addCase(fetchers.getClases.fulfilled, (state, { payload }) => ({
+    ...state,
+    clasesInfo: (payload.clasesInfo ?? []) as Type.ClaseInfo[],
+}));
 });
