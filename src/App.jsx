@@ -37,6 +37,7 @@ function App() {
 
         <Route path="/registrar-pago" element={<RegistrarPago />} />
         <Route path="/registrar-pago/:id" element={<RegistrarPago />} />
+        
 
         <Route path="/padre" element={<Padre />} />
         <Route path="/archivos" element={<Archivos />} />

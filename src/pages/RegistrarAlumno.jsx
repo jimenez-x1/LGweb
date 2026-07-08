@@ -14,7 +14,7 @@ const RegistrarAlumno = () => {
     ID_Grado: "",
   });
 
-  const [grados, setGrados] = useState([]);
+ const [grados, setGrados] = useState([]);
 
   useEffect(() => {
     obtenerGrados();
@@ -24,6 +24,7 @@ const RegistrarAlumno = () => {
     try {
       const response = await fetch("http://localhost:3000/api/grados");
       const data = await response.json();
+      console.log("GRADOS RECIBIDOS:", data);   // ← agrega esta línea
       setGrados(data);
     } catch (error) {
       console.error("Error al obtener grados:", error);
