@@ -1,15 +1,33 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 const RegistrarMaestro = () => {
 
-  const [form, setForm] = useState({
-    DNI: "",
-    Nombre: "",
-    Apellido: "",
-    Telefono: "",
-    Correo: "",
-  });
+const [form, setForm] = useState({
+  DNI: "",
+  Nombre: "",
+  Apellido: "",
+  Telefono: "",
+  Correo: "",
+  Cargo: "Docente",
+  ID_Grado: "",
+});
+
+const [grados, setGrados] = useState([]);
+
+  useEffect(() => {
+    const fetchGrados = async () => {
+      try {
+        const res = await fetch("http://localhost:3000/api/grados");
+        const data = await res.json();
+        setGrados(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchGrados();
+  }, []);
 
   const handleChange = (e) => {
     setForm({
@@ -41,12 +59,14 @@ const RegistrarMaestro = () => {
       alert("Maestro registrado correctamente");
 
       setForm({
-        DNI: "",
-        Nombre: "",
-        Apellido: "",
-        Telefono: "",
-        Correo: "",
-      });
+  DNI: "",
+  Nombre: "",
+  Apellido: "",
+  Telefono: "",
+  Correo: "",
+  Cargo: "Docente",
+  ID_Grado: "",
+});
 
     } catch (error) {
 
@@ -167,6 +187,57 @@ const RegistrarMaestro = () => {
                   />
 
                 </div>
+
+                <div className="mb-3">
+
+                   <label className="form-label">
+                   Cargo
+                  </label>
+
+                   <select
+                   className="form-control"
+                   name="Cargo"
+                   value={form.Cargo}
+                   onChange={handleChange}
+                   required
+                    >
+
+                        <option value="Docente">
+                   Docente
+                   </option>
+
+                   <option value="Administrativo">
+                    Administrativo
+                   </option>
+
+                   </select>
+
+                 </div>
+
+                 <div className="mb-3">
+  <label className="form-label">
+    Grado
+  </label>
+
+  <select
+    className="form-control"
+    name="ID_Grado"
+    value={form.ID_Grado}
+    onChange={handleChange}
+    required
+  >
+    <option value="">Seleccione un grado</option>
+
+    {grados.map((grado) => (
+      <option
+        key={grado.ID_Grado}
+        value={grado.ID_Grado}
+      >
+        {grado.Nombre_Grado}
+      </option>
+    ))}
+  </select>
+</div>
 
                 <div className="d-flex gap-3">
 

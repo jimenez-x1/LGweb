@@ -124,6 +124,10 @@ const Maestros = () => {
                     </p>
 
                     <p>
+                    <strong>Cargo:</strong> {maestro.Cargo}
+                   </p>
+
+                    <p>
                       <strong>Teléfono:</strong>{" "}
                       {maestro.Telefono || "—"}
                     </p>

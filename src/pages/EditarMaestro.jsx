@@ -5,20 +5,21 @@ const EditarMaestro = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [form, setForm] = useState({
-    DNI: "",
-    Nombre: "",
-    Apellido: "",
-    Telefono: "",
-    Correo: "",
-    ID_Grado: "",
-  });
+  DNI: "",
+  Nombre: "",
+  Apellido: "",
+  Telefono: "",
+  Correo: "",
+  Cargo: "Docente",
+  ID_Grado: "",
+});
   const [grados, setGrados] = useState([]);
 
   useEffect(() => {
     fetch("http://localhost:3000/api/maestros")
       .then((res) => res.json())
       .then((data) => {
-        const maestro = (data ?? []).find((m) => m.DNI === parseInt(id));
+        const maestro = (data ?? []).find((m) => m.DNI === id);
         if (maestro) setForm(maestro);
       })
       .catch((error) => console.error(error));
@@ -113,6 +114,21 @@ const EditarMaestro = () => {
                 </div>
 
                 <div className="mb-3">
+  <label className="form-label">Cargo</label>
+
+  <select
+    className="form-control"
+    name="Cargo"
+    value={form.Cargo}
+    onChange={handleChange}
+    required
+  >
+    <option value="Docente">Docente</option>
+    <option value="Administrativo">Administrativo</option>
+  </select>
+</div>
+
+                <div className="mb-3">
                   <label className="form-label">Grado</label>
                   <select
                     className="form-control"
@@ -129,6 +145,8 @@ const EditarMaestro = () => {
                     ))}
                   </select>
                 </div>
+
+
 
                 <div className="d-flex gap-3">
                   <button type="submit" className="btn btn-warning">
