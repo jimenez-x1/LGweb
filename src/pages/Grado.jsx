@@ -77,7 +77,7 @@ const Grado = () => {
             },
           })
         );
-
+console.log(res);
         idGrado = res?.payload?.gradosInfo?.ID_Grado;
         alert("Grado registrado");
       }
@@ -143,17 +143,28 @@ const Grado = () => {
     setIdEditar(null);
   };
 
-  const eliminar = async (id) => {
-    if (!window.confirm("¿Eliminar este grado?")) return;
+const eliminar = async (id) => {
+  if (!window.confirm("¿Eliminar este grado?")) return;
 
-    try {
-      await dispatch(fetchers.deleteGrado({ url: `/grados/${id}` }));
-      alert("Eliminado correctamente");
-      dispatch(fetchers.getGrados({ url: "/grados" }));
-    } catch (error) {
-      alert("Error al eliminar");
-    }
-  };
+  try {
+    await dispatch(
+      fetchers.deleteGrado({
+        url: `/grados/${id}`,
+      })
+    ).unwrap();
+
+    alert("Grado eliminado correctamente");
+
+    dispatch(fetchers.getGrados({ url: "/grados" }));
+
+  } catch (error) {
+    alert(
+      error?.message ||
+      error?.error ||
+      "No se puede eliminar este grado porque tiene clases o un docente asignado."
+    );
+  }
+};
 
   return (
     <section className="pt_100 pb_100">

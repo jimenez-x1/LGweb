@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import PadreAutocomplete from "../components/work/PadreAutocomplete";
 const RegistrarAlumno = () => {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
     DNI: "",
+    DNI_Padre: "",
     Nombre: "",
     Apellido: "",
     Fecha_Nacimiento: "",
@@ -45,6 +46,7 @@ const RegistrarAlumno = () => {
     try {
       const alumnoData = {
         DNI: form.DNI.trim(),
+        DNI_Padre: "",
         Nombre: form.Nombre.trim(),
         Apellido: form.Apellido.trim(),
         Fecha_Nacimiento: form.Fecha_Nacimiento,

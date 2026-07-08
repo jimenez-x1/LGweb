@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useDispatch } from "../store";
 import fetchers from "../store/slices/Alumnos/fetchers";
+import PadreAutocomplete from "../components/work/PadreAutocomplete";
 
 const Alumnos = () => {
   const dispatch = useDispatch();
@@ -10,7 +11,10 @@ const Alumnos = () => {
   const [grados, setGrados] = useState([]);
   const [editando, setEditando] = useState(false);
   const [idEditar, setIdEditar] = useState(null);
-
+  const [vista, setVista] = useState("formulario"); //Tesly prueba 
+  const [gradoConsulta, setGradoConsulta] = useState("");
+  const [padreEditar, setPadreEditar] = useState(null);
+const [busquedaConsulta, setBusquedaConsulta] = useState("");
   const [form, setForm] = useState({
   DNI: "",
   DNI_Padre: "",
@@ -125,8 +129,7 @@ const Alumnos = () => {
     alert(error.message || "Error al guardar alumno");
   }
 };
-
- const editar = (alumno) => {
+const editar = (alumno) => {
   setForm({
     ID_Grado: alumno.ID_Grado ? String(alumno.ID_Grado) : "",
     DNI: alumno.DNI || "",
@@ -140,6 +143,8 @@ const Alumnos = () => {
     Genero: alumno.Genero || "",
   });
 
+  setPadreEditar(alumno.Padre || null);
+
   setEditando(true);
   setIdEditar(alumno.DNI);
 
@@ -150,6 +155,8 @@ const Alumnos = () => {
     });
   }, 100);
 };
+
+
 
   const eliminar = async (id) => {
     const confirmar = window.confirm("¿Eliminar este alumno?");
@@ -181,73 +188,85 @@ const Alumnos = () => {
       alumno.ID_Grado ||
       "Sin grado"
     );
+
+    
   };
 
   return (
-    <section className="pt_100 pb_100">
-      <div className="container">
-        <div className="row mb_40">
-          <div className="col-12 text-center">
-            <div className="tf__heading_area">
-              <h5>Formulario</h5>
-              <h2>{editando ? "Editar Alumno" : "Registrar Alumno"}</h2>
-            </div>
+  <section className="pt_100 pb_100">
+    <div className="container">
+      <div className="row mb_40">
+        <div className="col-12 text-center">
+          <div className="tf__heading_area">
+            <h5>Formulario</h5>
+            <h2>{editando ? "Editar Alumno" : "Registrar Alumno"}</h2>
           </div>
         </div>
+      </div>
 
-        <div className="row justify-content-center" ref={formularioRef}>
-          <div className="col-lg-8">
-            <div className="p-4 border rounded bg-white shadow-sm">
-              <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                  <label className="form-label">Número de Identidad</label>
-                  <input
-                    type="text"
-                    name="DNI"
-                    className="form-control"
-                    value={form.DNI}
-                    onChange={handleChange}
-                    maxLength={13}
-                    required
-                  />
-                </div>
+      <div className="row justify-content-center" ref={formularioRef}>
+        <div className="col-lg-8">
+          <div className="p-4 border rounded bg-white shadow-sm">
+            <form onSubmit={handleSubmit}>
 
-                <div className="mb-3">
-                  <label className="form-label">DNI Padre</label>
-                  <input
-                    type="text"
-                    name="DNI_Padre"
-                    className="form-control"
-                    value={form.DNI_Padre}
-                    onChange={handleChange}
-                    maxLength={13}
-                  />
-                </div>
+              {/* Padre o Encargado */}
+              <div className="mb-3">
+                <label className="form-label">Padre o Encargado</label>
+                
 
-                <div className="mb-3">
-                  <label className="form-label">Nombre</label>
-                  <input
-                    type="text"
-                    name="Nombre"
-                    className="form-control"
-                    value={form.Nombre}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
+              <PadreAutocomplete
+  padreSeleccionado={padreEditar}
+  onSelect={(padre) => {
+    setPadreEditar(padre);
 
-                <div className="mb-3">
-                  <label className="form-label">Apellido</label>
-                  <input
-                    type="text"
-                    name="Apellido"
-                    className="form-control"
-                    value={form.Apellido}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
+    setForm((prev) => ({
+      ...prev,
+      DNI_Padre: padre ? padre.DNI : "",
+    }));
+  }}
+                />
+              </div>
 
+              {/* DNI del Alumno */}
+              <div className="mb-3">
+                <label className="form-label">
+                  Número de identidad del alumno
+                </label>
+
+                <input
+                  type="text"
+                  name="DNI"
+                  className="form-control"
+                  value={form.DNI}
+                  onChange={handleChange}
+                  maxLength={13}
+                  required
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">Nombre</label>
+                <input
+                  type="text"
+                  name="Nombre"
+                  className="form-control"
+                  value={form.Nombre}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">Apellido</label>
+                <input
+                  type="text"
+                  name="Apellido"
+                  className="form-control"
+                  value={form.Apellido}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
                 <div className="mb-3">
                   <label className="form-label">Fecha de nacimiento</label>
                   <input
@@ -308,6 +327,13 @@ const Alumnos = () => {
                   <button type="submit" className="common_btn">
                     {editando ? "Actualizar Alumno" : "Guardar Alumno"}
                   </button>
+  <button
+    type="button"
+    className="common_btn"
+    onClick={() => setVista("consulta")}
+  >
+    Consultar alumnos
+  </button>
 
                   {editando && (
                     <button
@@ -380,5 +406,6 @@ const Alumnos = () => {
     </section>
   );
 };
+
 
 export default Alumnos;
