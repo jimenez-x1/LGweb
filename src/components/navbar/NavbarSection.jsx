@@ -1,5 +1,5 @@
 import { useEduorContext } from "../../context/EduorContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import React, { useEffect, useRef } from "react";
 import NavigationSection from "./NavigationSection";
 
@@ -13,6 +13,13 @@ const NavbarSection = ({ style, logo }) => {
   } = useEduorContext();
 
   const navMenuRef = useRef(null);
+
+const navigate = useNavigate();
+
+const cerrarSesion = () => {
+  localStorage.removeItem("SECURE");
+  navigate("/login");
+};
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -70,11 +77,38 @@ const NavbarSection = ({ style, logo }) => {
           </button>
         )}
 
-        <NavigationSection
-          position="ms-auto"
-          btnPosition={false}
-          navRef={navMenuRef}
-        />
+        <div className="d-flex align-items-center ms-auto">
+
+  <NavigationSection
+    position=""
+    btnPosition={false}
+    navRef={navMenuRef}
+  />
+
+  <div className="dropdown ms-3">
+    <button
+  className="btn btn-primary rounded-circle"
+  type="button"
+  data-bs-toggle="dropdown"
+  aria-expanded="false"
+>
+  <i className="fas fa-user"></i>
+</button>
+
+    <ul className="dropdown-menu dropdown-menu-end">
+      <li>
+        <button
+          className="dropdown-item text-danger"
+          onClick={cerrarSesion}
+        >
+          <i className="fas fa-sign-out-alt me-2"></i>
+          Cerrar sesión
+        </button>
+      </li>
+    </ul>
+  </div>
+
+</div>
       </div>
     </nav>
   );
