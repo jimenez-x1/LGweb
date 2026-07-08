@@ -8,6 +8,9 @@ const Archivos = () => {
     Fecha_Subida: "",
   });
 
+  const [dni, setDni] = useState("");
+  const [generando, setGenerando] = useState(false);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -31,6 +34,36 @@ const Archivos = () => {
     } catch (error) {
       console.error(error);
       alert("Error al guardar archivo");
+    }
+  };
+
+  const generarConstancia = async (e) => {
+    e.preventDefault();
+    if (!dni) return alert("Ingresa el DNI del alumno");
+
+    setGenerando(true);
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/alumno/${dni}/constancia`,
+        { responseType: "blob" }
+      );
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `constancia_${dni}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error(error);
+      if (error.response?.status === 404) {
+        alert("No se encontró un alumno con ese DNI");
+      } else {
+        alert("Error al generar la constancia");
+      }
+    } finally {
+      setGenerando(false);
     }
   };
 
@@ -77,6 +110,26 @@ const Archivos = () => {
 
         <button type="submit" className="btn btn-primary">
           Guardar Archivo
+        </button>
+      </form>
+
+      <hr className="my-5" />
+
+      <h2>Constancia de Matrícula</h2>
+      <form onSubmit={generarConstancia} className="mt-4">
+        <div className="mb-3">
+          <label className="form-label">DNI del alumno</label>
+          <input
+            type="text"
+            className="form-control"
+            value={dni}
+            onChange={(e) => setDni(e.target.value)}
+            placeholder="Ej: 0801-1990-00000"
+            required
+          />
+        </div>
+        <button type="submit" className="btn btn-success" disabled={generando}>
+          {generando ? "Generando..." : "Generar Constancia"}
         </button>
       </form>
     </div>
