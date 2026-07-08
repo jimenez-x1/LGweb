@@ -327,14 +327,7 @@ const editar = (alumno) => {
                   <button type="submit" className="common_btn">
                     {editando ? "Actualizar Alumno" : "Guardar Alumno"}
                   </button>
-  <button
-    type="button"
-    className="common_btn"
-    onClick={() => setVista("consulta")}
-  >
-    Consultar alumnos
-  </button>
-
+ 
                   {editando && (
                     <button
                       type="button"
