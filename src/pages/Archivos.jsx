@@ -9,7 +9,6 @@ const Archivos = () => {
   const [mostrarSugerencias, setMostrarSugerencias] = useState(false);
   const contenedorRef = useRef(null);
 
-  // Carga la lista de alumnos una sola vez al montar el componente
   useEffect(() => {
     const cargarAlumnos = async () => {
       try {
@@ -22,7 +21,6 @@ const Archivos = () => {
     cargarAlumnos();
   }, []);
 
-  // Cierra las sugerencias si se hace clic fuera del componente
   useEffect(() => {
     const manejarClicFuera = (e) => {
       if (contenedorRef.current && !contenedorRef.current.contains(e.target)) {
@@ -50,7 +48,7 @@ const Archivos = () => {
         alumno.DNI?.toLowerCase().includes(texto) ||
         nombreCompleto.includes(texto)
       );
-    }).slice(0, 6); // máximo 6 sugerencias visibles
+    }).slice(0, 6);
 
     setSugerencias(filtrados);
     setMostrarSugerencias(filtrados.length > 0);
@@ -110,14 +108,24 @@ const Archivos = () => {
 
           {mostrarSugerencias && (
             <ul
-              className="list-group position-absolute w-100 shadow-sm"
-              style={{ zIndex: 1000, maxHeight: "220px", overflowY: "auto" }}
+              className="list-group position-absolute w-100 shadow"
+              style={{
+                zIndex: 1050,
+                top: "100%",
+                left: 0,
+                maxHeight: "165px",
+                overflowY: "auto",
+              }}
             >
               {sugerencias.map((alumno) => (
                 <li
                   key={alumno.DNI}
                   className="list-group-item list-group-item-action"
-                  style={{ cursor: "pointer" }}
+                  style={{
+                    cursor: "pointer",
+                    padding: "10px 14px",
+                    fontSize: "0.95rem",
+                  }}
                   onClick={() => seleccionarSugerencia(alumno)}
                 >
                   <strong>{alumno.DNI}</strong> — {alumno.Nombre} {alumno.Apellido}
