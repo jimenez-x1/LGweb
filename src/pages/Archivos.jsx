@@ -1,40 +1,64 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 
 const Archivos = () => {
-  const [formData, setFormData] = useState({
-    Nombre_Archivo: "",
-    Tipo_Archivo: "",
-    Fecha_Subida: "",
-  });
-
   const [dni, setDni] = useState("");
   const [generando, setGenerando] = useState(false);
+  const [alumnos, setAlumnos] = useState([]);
+  const [sugerencias, setSugerencias] = useState([]);
+  const [mostrarSugerencias, setMostrarSugerencias] = useState(false);
+  const contenedorRef = useRef(null);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+  // Carga la lista de alumnos una sola vez al montar el componente
+  useEffect(() => {
+    const cargarAlumnos = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/api/alumnos");
+        setAlumnos(response.data || []);
+      } catch (error) {
+        console.error("Error al cargar alumnos:", error);
+      }
+    };
+    cargarAlumnos();
+  }, []);
+
+  // Cierra las sugerencias si se hace clic fuera del componente
+  useEffect(() => {
+    const manejarClicFuera = (e) => {
+      if (contenedorRef.current && !contenedorRef.current.contains(e.target)) {
+        setMostrarSugerencias(false);
+      }
+    };
+    document.addEventListener("mousedown", manejarClicFuera);
+    return () => document.removeEventListener("mousedown", manejarClicFuera);
+  }, []);
+
+  const handleChangeDni = (e) => {
+    const valor = e.target.value;
+    setDni(valor);
+
+    if (valor.trim().length === 0) {
+      setSugerencias([]);
+      setMostrarSugerencias(false);
+      return;
+    }
+
+    const texto = valor.toLowerCase();
+    const filtrados = alumnos.filter((alumno) => {
+      const nombreCompleto = `${alumno.Nombre} ${alumno.Apellido}`.toLowerCase();
+      return (
+        alumno.DNI?.toLowerCase().includes(texto) ||
+        nombreCompleto.includes(texto)
+      );
+    }).slice(0, 6); // máximo 6 sugerencias visibles
+
+    setSugerencias(filtrados);
+    setMostrarSugerencias(filtrados.length > 0);
   };
 
-  const guardarArchivo = async (e) => {
-    e.preventDefault();
-
-    try {
-      await axios.post("http://localhost:3000/api/archivos", formData);
-      alert("Archivo guardado correctamente");
-
-      setFormData({
-        Nombre_Archivo: "",
-        Tipo_Archivo: "",
-        Fecha_Subida: "",
-      });
-    } catch (error) {
-      console.error(error);
-      alert("Error al guardar archivo");
-    }
+  const seleccionarSugerencia = (alumno) => {
+    setDni(alumno.DNI);
+    setMostrarSugerencias(false);
   };
 
   const generarConstancia = async (e) => {
@@ -69,65 +93,40 @@ const Archivos = () => {
 
   return (
     <div className="container mt-5">
-      <h2>Registro de Archivos</h2>
-
-      <form onSubmit={guardarArchivo} className="mt-4">
-        <div className="mb-3">
-          <label className="form-label">Nombre del archivo</label>
-          <input
-            type="text"
-            className="form-control"
-            name="Nombre_Archivo"
-            value={formData.Nombre_Archivo}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label">Tipo de archivo</label>
-          <input
-            type="text"
-            className="form-control"
-            name="Tipo_Archivo"
-            value={formData.Tipo_Archivo}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label">Fecha de subida</label>
-          <input
-            type="date"
-            className="form-control"
-            name="Fecha_Subida"
-            value={formData.Fecha_Subida}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <button type="submit" className="btn btn-primary">
-          Guardar Archivo
-        </button>
-      </form>
-
-      <hr className="my-5" />
-
       <h2>Constancia de Matrícula</h2>
       <form onSubmit={generarConstancia} className="mt-4">
-        <div className="mb-3">
+        <div className="mb-3 position-relative" ref={contenedorRef}>
           <label className="form-label">DNI del alumno</label>
           <input
             type="text"
             className="form-control"
             value={dni}
-            onChange={(e) => setDni(e.target.value)}
+            onChange={handleChangeDni}
+            onFocus={() => sugerencias.length > 0 && setMostrarSugerencias(true)}
             placeholder="Ej: 0801-1990-00000"
+            autoComplete="off"
             required
           />
+
+          {mostrarSugerencias && (
+            <ul
+              className="list-group position-absolute w-100 shadow-sm"
+              style={{ zIndex: 1000, maxHeight: "220px", overflowY: "auto" }}
+            >
+              {sugerencias.map((alumno) => (
+                <li
+                  key={alumno.DNI}
+                  className="list-group-item list-group-item-action"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => seleccionarSugerencia(alumno)}
+                >
+                  <strong>{alumno.DNI}</strong> — {alumno.Nombre} {alumno.Apellido}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
+
         <button type="submit" className="btn btn-success" disabled={generando}>
           {generando ? "Generando..." : "Generar Constancia"}
         </button>
