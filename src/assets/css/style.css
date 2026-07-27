@@ -10,10 +10,11 @@ html {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-img {
-  max-width: 100%;
-  padding-top: 0 !important;
+.img{
+    max-width:100%;
+    height:auto;
 }
+
 
 .main_menu {
   background: #ffffff !important;

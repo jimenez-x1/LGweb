@@ -1,6 +1,8 @@
-import { Routes, Route } from "react-router-dom";
-import ProtectedRoute from "./components/ProtectedRoute.jsx";
-import NavbarSection from "./components/navbar/NavbarSection.jsx";
+import { Routes, Route, useLocation } from "react-router-dom";
+
+import ProtectedRoute from "./components/ProtectedRoute";
+import NavbarSection from "./components/navbar/NavbarSection";
+
 import Home from "./pages/Home";
 import Clase from "./pages/Clase";
 import Alumnos from "./pages/Alumnos";
@@ -11,10 +13,9 @@ import EditarMaestro from "./pages/EditarMaestro";
 import Pagos from "./pages/Pagos";
 import RegistrarPago from "./pages/RegistrarPago";
 import Padre from "./pages/Padre";
+import Archivos from "./pages/Archivos";
 import Login from "./pages/Login";
 
-import Archivos from "./pages/Archivos";
-import { useLocation } from "react-router-dom";
 
 
 function App() {
@@ -22,7 +23,7 @@ function App() {
 
   return (
     <>
-      {location.pathname !== "/login" && (
+     {location.pathname !== "/" && (
   <NavbarSection
     style=""
     logo="/images/logo-escuela-luis-gamero.png"
@@ -30,16 +31,16 @@ function App() {
 )}
       <Routes>
 
-  <Route path="/login" element={<Login />} />
+  <Route path="/" element={<Login />} />
 
-  <Route
-    path="/"
-    element={
-      <ProtectedRoute>
-        <Home />
-      </ProtectedRoute>
-    }
-  />
+<Route
+  path="/home"
+  element={
+    <ProtectedRoute>
+      <Home />
+    </ProtectedRoute>
+  }
+/>
 
   <Route
     path="/clase"
