@@ -62,20 +62,49 @@ const Alumnos = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+if (!form.Nombre.trim()) {
+  return alert("El nombre es obligatorio");
+}
 
+if (!form.Apellido.trim()) {
+  return alert("El apellido es obligatorio");
+}
+
+if (!form.Direccion.trim()) {
+  return alert("La dirección es obligatoria");
+}
+
+if (!form.Genero) {
+  return alert("Seleccione un género");
+}
+
+if (!form.ID_Grado) {
+  return alert("Seleccione un grado");
+}
     try {
       if (editando) {
-        await dispatch(
-          fetchers.updateAlumno({
-            url: "/updateAlumno",
-            data: {
-              ...form,
-              ID_Alumno: idEditar,
-              ID_Grado: Number(form.ID_Grado),
-            },
-          })
-        );
-        alert("Alumno actualizado correctamente");
+        const response = await dispatch(
+  fetchers.insertAlumno({
+    url: "/insertAlumno",
+    data: {
+      ...form,
+      ID_Grado: Number(form.ID_Grado),
+    },
+  })
+);
+
+if (response?.payload?.error) {
+  const mensaje =
+    response.payload.error?.response?.data?.message ||
+    response.payload.error?.message ||
+    "Error al guardar alumno";
+
+  alert(mensaje);
+  return;
+}
+
+alert("Alumno registrado correctamente");
+
       } else {
         await dispatch(
           fetchers.insertAlumno({
@@ -91,11 +120,22 @@ const Alumnos = () => {
 
       limpiarFormulario();
       cargarAlumnos();
+
     } catch (error) {
-      console.error(error);
-      alert("Error al guardar alumno");
-    }
-  };
+  console.error(error);
+
+  const mensaje =
+    error?.response?.data?.message ||
+    error?.payload?.message ||
+    error?.message;
+
+  if (mensaje === "Ya existe un alumno con ese nombre y apellido") {
+    alert(mensaje);
+  } else {
+    alert("Error al guardar alumno");
+  }
+}
+};
 
   const editar = (alumno) => {
     setForm({
@@ -314,7 +354,8 @@ const Alumnos = () => {
         </div>
       </div>
     </section>
-  );
-};
+    
+    );
+  };
 
 export default Alumnos;
