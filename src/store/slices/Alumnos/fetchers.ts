@@ -1,6 +1,46 @@
-import api from "../../../utilities/axiosConfig";
+import { CreateFetchers } from "../../../storeConfig";
+import { NAME } from "./namespace";
+import { getData, saveData, deleteData, updateData } from "../../../utilities/Utilities";
+import { isError } from "../../../Api/utilsError";
 
-export const getAlumnos = async () => {
-  const response = await api.get("/alumnos");
-  return response.data;
-};
+export default CreateFetchers(NAME, {
+  async getAlumnos(params: any) {
+    const response = await getData(params);
+    if (isError<any>(response?.error)) {
+      return { error: response?.error };
+    }
+    return { alumnosInfo: response?.data };
+  },
+
+  async getGrados(params: any) {
+    const response = await getData(params);
+    if (isError<any>(response?.error)) {
+      return { error: response?.error };
+    }
+    return { gradosInfo: response?.data };
+  },
+
+  async insertAlumno(params: any) {
+    const response = await saveData(params);
+    if (isError<any>(response?.error)) {
+      return { error: response?.error };
+    }
+    return { alumnosInfo: response?.data };
+  },
+
+  async updateAlumno(params: any) {
+    const response = await updateData(params);
+    if (isError<any>(response?.error)) {
+      return { error: response?.error };
+    }
+    return { alumnosInfo: response?.data };
+  },
+
+  async deleteAlumno(params: any) {
+    const response = await deleteData(params);
+    if (isError<any>(response?.error)) {
+      return { error: response?.error };
+    }
+    return { alumnosInfo: response?.data };
+  },
+});

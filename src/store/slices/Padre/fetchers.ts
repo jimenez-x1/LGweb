@@ -4,39 +4,39 @@ import { getData, saveData, deleteData, updateData } from "../../../utilities/Ut
 import { isError } from "../../../Api/utilsError";
 
 export default CreateFetchers(NAME, {
-    async getGrados(params: any) {
+    async getPadres(params: any) {
         const response = await getData(params);
         if (isError<any>(response?.error)) {
             return { error: response?.error };
         }
-        return { gradosInfo: response?.data };
+        return { padresInfo: response?.data };
     },
-    async getClases(params: any) {
+    async getAlumnos(params: any) {
         const response = await getData(params);
         if (isError<any>(response?.error)) {
             return { error: response?.error };
         }
-        return { clasesInfo: response?.data };
+        return { alumnosInfo: response?.data };
     },
-    async insertGrado(params: any) {
+    async insertPadre(params: any) {
         const response = await saveData(params);
         if (isError<any>(response?.error)) {
             return { error: response?.error };
         }
-        return { gradosInfo: response?.data };
+        return { padresInfo: response?.data };
     },
-  async updateGrado(params: any) {
-    const response = await updateData(params);
-    if (isError<any>(response?.error)) {
-        return { error: response?.error };
-    }
-    return { gradosInfo: response?.data };
-},
-    async deleteGrado(params: any) {
+    async updatePadre(params: any) {
+        const response = await updateData(params);
+        if (isError<any>(response?.error)) {
+            return { error: response?.error };
+        }
+        return { padresInfo: response?.data };
+    },
+    async deletePadre(params: any) {
         const response = await deleteData(params);
         if (isError<any>(response?.error)) {
             return { error: response?.error };
         }
-        return { gradosInfo: response?.data };
+        return { padresInfo: response?.data };
     },
 });
