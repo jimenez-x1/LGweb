@@ -6,6 +6,7 @@ import {
   mostrarError,
   confirmarEliminacion,
 } from "../utilities/Alertas";
+import PadreAutocomplete from "../components/work/PadreAutocomplete";
 
 const Alumnos = () => {
   const dispatch = useDispatch();
@@ -15,17 +16,21 @@ const Alumnos = () => {
   const [grados, setGrados] = useState([]);
   const [editando, setEditando] = useState(false);
   const [idEditar, setIdEditar] = useState(null);
-
+  const [vista, setVista] = useState("formulario"); //Tesly prueba 
+  const [gradoConsulta, setGradoConsulta] = useState("");
+  const [padreEditar, setPadreEditar] = useState(null);
+const [busquedaConsulta, setBusquedaConsulta] = useState("");
   const [form, setForm] = useState({
-    DNI: "",
-    DNI_Padre: "",
-    ID_Grado: "",
-    Nombre: "",
-    Apellido: "",
-    Fecha_Nacimiento: "",
-    Direccion: "",
-    Genero: "",
-  });
+  DNI: "",
+  DNI_Padre: "",
+  ID_Grado: "",
+  Nombre: "",
+  Apellido: "",
+  Fecha_Nacimiento: "",
+  Direccion: "",
+  Genero: "",
+});
+
 
   const obtenerMensajeError = (respuesta, mensajePredeterminado) => {
     const payload = respuesta?.payload;
@@ -252,6 +257,8 @@ const Alumnos = () => {
       alumno.ID_Grado ||
       "Sin grado"
     );
+
+    
   };
 
   return (
@@ -270,44 +277,45 @@ const Alumnos = () => {
           </div>
         </div>
 
-        <div
-          className="row justify-content-center"
-          ref={formularioRef}
-        >
-          <div className="col-lg-8">
-            <div className="p-4 border rounded bg-white shadow-sm">
-              <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                  <label className="form-label">
-                    Número de Identidad
-                  </label>
+      <div className="row justify-content-center" ref={formularioRef}>
+        <div className="col-lg-8">
+          <div className="p-4 border rounded bg-white shadow-sm">
+            <form onSubmit={handleSubmit}>
 
-                  <input
-                    type="text"
-                    name="DNI"
-                    className="form-control"
-                    value={form.DNI}
-                    onChange={handleChange}
-                    maxLength={13}
-                    required
-                    disabled={editando}
-                  />
-                </div>
+              {/* Padre o Encargado */}
+              <div className="mb-3">
+                <label className="form-label">Padre o Encargado</label>
+                
 
-                <div className="mb-3">
-                  <label className="form-label">
-                    DNI Padre
-                  </label>
+              <PadreAutocomplete
+  padreSeleccionado={padreEditar}
+  onSelect={(padre) => {
+    setPadreEditar(padre);
 
-                  <input
-                    type="text"
-                    name="DNI_Padre"
-                    className="form-control"
-                    value={form.DNI_Padre}
-                    onChange={handleChange}
-                    maxLength={13}
-                  />
-                </div>
+    setForm((prev) => ({
+      ...prev,
+      DNI_Padre: padre ? padre.DNI : "",
+    }));
+  }}
+                />
+              </div>
+
+              {/* DNI del Alumno */}
+              <div className="mb-3">
+                <label className="form-label">
+                  Número de identidad del alumno
+                </label>
+
+                <input
+                  type="text"
+                  name="DNI"
+                  className="form-control"
+                  value={form.DNI}
+                  onChange={handleChange}
+                  maxLength={13}
+                  required
+                />
+              </div>
 
                 <div className="mb-3">
                   <label className="form-label">
@@ -431,7 +439,7 @@ const Alumnos = () => {
                       ? "Actualizar Alumno"
                       : "Guardar Alumno"}
                   </button>
-
+ 
                   {editando && (
                     <button
                       type="button"
@@ -534,5 +542,6 @@ const Alumnos = () => {
     </section>
   );
 };
+
 
 export default Alumnos;

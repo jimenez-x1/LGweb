@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+
 const Maestros = () => {
 
   const [maestros, setMaestros] = useState([]);
@@ -122,6 +123,10 @@ const Maestros = () => {
                     <p>
                       <strong>DNI:</strong> {maestro.DNI}
                     </p>
+
+                    <p>
+                    <strong>Cargo:</strong> {maestro.Cargo}
+                   </p>
 
                     <p>
                       <strong>Teléfono:</strong>{" "}

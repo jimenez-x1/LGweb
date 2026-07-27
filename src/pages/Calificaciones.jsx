@@ -1,372 +1,725 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "../store";
-import fetchers from "../store/slices/Calificaciones/fetchers";
+
+import calificacionFetchers from "../store/slices/Calificaciones/fetchers";
+import gradoFetchers from "../store/slices/Grado/fetchers";
+import claseFetchers from "../store/slices/Clase/fetchers";
+import alumnoFetchers from "../store/slices/Alumnos/fetchers";
 
 const Calificaciones = () => {
-  const dispatch = useDispatch();
 
-  const [calificaciones, setCalificaciones] = useState([]);
-  const [alumnos, setAlumnos] = useState([]);
-  const [clases, setClases] = useState([]);
+    const dispatch = useDispatch();
 
-  const [form, setForm] = useState({
-    ID_Alumno: "",
-    ID_Clase: "",
-    Parcial1: "",
-    Parcial2: "",
-    Parcial3: "",
-    Parcial4: "",
-  });
+    // ============================
+    // Estados
+    // ============================
 
-  const [editando, setEditando] = useState(false);
-  const [idEditar, setIdEditar] = useState(null);
+    const [grados, setGrados] = useState([]);
+    const [clases, setClases] = useState([]);
+    const [alumnos, setAlumnos] = useState([]);
 
-  const cargarCalificaciones = () => {
-    dispatch(fetchers.getCalificaciones({ url: "/calificaciones" }))
-      .then((res) => {
-        setCalificaciones(res.payload?.calificacionesInfo ?? []);
-      })
-      .catch(console.error);
-  };
+    const [gradoSeleccionado, setGradoSeleccionado] = useState("");
+    const [claseSeleccionada, setClaseSeleccionada] = useState("");
 
-  const cargarAlumnos = () => {
-    dispatch(fetchers.getAlumnos({ url: "/alumnos" }))
-      .then((res) => {
-        setAlumnos(res.payload?.alumnosInfo ?? []);
-      })
-      .catch(console.error);
-  };
+    const [notas, setNotas] = useState({});
+    const [busqueda, setBusqueda] = useState("");
 
-  const cargarClases = () => {
-    dispatch(fetchers.getClases({ url: "/clases" }))
-      .then((res) => {
-        setClases(res.payload?.clasesInfo ?? []);
-      })
-      .catch(console.error);
-  };
+    const [cargandoAlumnos, setCargandoAlumnos] = useState(false);
+    const [cargandoClases, setCargandoClases] = useState(false);
+    const [cargandoNotas, setCargandoNotas] = useState(false);
+    const [guardando, setGuardando] = useState(false);
 
-  useEffect(() => {
-    cargarCalificaciones();
-    cargarAlumnos();
-    cargarClases();
-  }, []);
+    const [cambiosSinGuardar, setCambiosSinGuardar] = useState(false);
 
-  const handleChange = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
-  };
+    // ============================
+    // Al abrir la página
+    // ============================
 
-  const limpiarFormulario = () => {
-    setForm({
-      ID_Alumno: "",
-      ID_Clase: "",
-      Parcial1: "",
-      Parcial2: "",
-      Parcial3: "",
-      Parcial4: "",
-    });
+    useEffect(() => {
 
-    setEditando(false);
-    setIdEditar(null);
-  };
+        cargarGrados();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+    }, []);
 
-    try {
-      if (editando) {
-        await dispatch(
-          fetchers.updateCalificacion({
-            url: "/calificaciones",
-            data: {
-              ...form,
-              ID_Calificacion: idEditar,
-            },
-          })
+    // ============================
+    // Cuando cambia el grado
+    // ============================
+
+    useEffect(() => {
+
+        if (gradoSeleccionado === "") {
+
+            setClases([]);
+            setAlumnos([]);
+            setClaseSeleccionada("");
+            setNotas({});
+            setCambiosSinGuardar(false);
+
+            return;
+
+        }
+
+        setClaseSeleccionada("");
+        setNotas({});
+        setCambiosSinGuardar(false);
+
+        cargarClases();
+        cargarAlumnos();
+
+    }, [gradoSeleccionado]);
+
+    // ============================
+    // Cuando cambia la clase
+    // ============================
+
+    useEffect(() => {
+
+        setNotas({});
+        setCambiosSinGuardar(false);
+
+        if (claseSeleccionada !== "") {
+
+            cargarCalificaciones();
+
+        }
+
+    }, [claseSeleccionada]);
+
+    // ============================
+    // Cargar grados
+    // ============================
+
+    const cargarGrados = () => {
+
+        dispatch(
+            gradoFetchers.getGrados({
+                url: "/grados"
+            })
+        )
+        .then((res) => {
+
+            setGrados(res.payload?.gradosInfo ?? []);
+
+        })
+        .catch(console.error);
+
+    };
+
+    // ============================
+    // Cargar clases del grado
+    // ============================
+
+    // NOTA: el método correcto es getClases (confirmado en fetchers.ts), no getGradoClase
+    const cargarClases = () => {
+
+        setCargandoClases(true);
+
+        dispatch(
+            claseFetchers.getClases({
+                url: `/grado-clase/${gradoSeleccionado}`
+            })
+        )
+        .then((res) => {
+
+            setClases(res.payload?.clasesInfo ?? []);
+
+        })
+        .catch(console.error)
+        .finally(() => setCargandoClases(false));
+
+    };
+
+    // ============================
+    // Cargar alumnos
+    // ============================
+
+    const cargarAlumnos = () => {
+
+        setCargandoAlumnos(true);
+
+        dispatch(
+            alumnoFetchers.getAlumnos({
+                url: "/alumnos"
+            })
+        )
+        .then((res) => {
+
+            const lista = res.payload?.alumnosInfo ?? [];
+
+            const filtrados = lista.filter(
+                alumno => alumno.ID_Grado == gradoSeleccionado
+            );
+
+            setAlumnos(filtrados);
+
+        })
+        .catch(console.error)
+        .finally(() => setCargandoAlumnos(false));
+
+    };
+
+    // ============================
+    // Cargar calificaciones guardadas
+    // ============================
+
+    const cargarCalificaciones = () => {
+
+        setCargandoNotas(true);
+
+        dispatch(
+            calificacionFetchers.getCalificaciones({
+                url: "/calificaciones"
+            })
+        )
+        .then((res) => {
+
+            const lista = res.payload?.calificacionesInfo ?? [];
+
+            const nuevasNotas = {};
+
+            lista.forEach((calificacion) => {
+
+                if (calificacion.ID_Clase == claseSeleccionada) {
+
+                    nuevasNotas[calificacion.DNI_Alumno] = {
+
+                        ID_Calificacion: calificacion.ID_Calificacion,
+                        Parcial1: calificacion.Parcial1 ?? "",
+                        Parcial2: calificacion.Parcial2 ?? "",
+                        Parcial3: calificacion.Parcial3 ?? "",
+                        Parcial4: calificacion.Parcial4 ?? "",
+                        Reposicion: calificacion.Reposicion ?? ""
+
+                    };
+
+                }
+
+            });
+
+            setNotas(nuevasNotas);
+            setCambiosSinGuardar(false);
+
+        })
+        .catch(console.error)
+        .finally(() => setCargandoNotas(false));
+
+    };
+
+    // ============================
+    // Cambiar grado / clase (con aviso de cambios sin guardar)
+    // ============================
+
+    const cambiarGrado = (valor) => {
+
+        if (cambiosSinGuardar) {
+
+            const confirmar = window.confirm(
+                "Tienes cambios sin guardar. Si continúas, se perderán. ¿Deseas continuar?"
+            );
+
+            if (!confirmar) return;
+
+        }
+
+        setGradoSeleccionado(valor);
+
+    };
+
+    const cambiarClase = (valor) => {
+
+        if (cambiosSinGuardar) {
+
+            const confirmar = window.confirm(
+                "Tienes cambios sin guardar. Si continúas, se perderán. ¿Deseas continuar?"
+            );
+
+            if (!confirmar) return;
+
+        }
+
+        setClaseSeleccionada(valor);
+
+    };
+
+    // ============================
+    // Cambiar nota
+    // ============================
+
+    const cambiarNota = (dni, parcial, valor) => {
+
+        // No permitir valores fuera de rango 0-100
+        if (valor !== "" && (Number(valor) < 0 || Number(valor) > 100)) {
+
+            return;
+
+        }
+
+        setNotas((prev) => ({
+
+            ...prev,
+
+            [dni]: {
+
+                ...prev[dni],
+
+                [parcial]: valor
+
+            }
+
+        }));
+
+        setCambiosSinGuardar(true);
+
+    };
+
+    // ============================
+    // Guardar cambios
+    // ============================
+
+    const guardarCambios = async () => {
+
+        if (claseSeleccionada === "") {
+
+            alert("Seleccione una clase");
+            return;
+
+        }
+
+        if (alumnos.length === 0) {
+
+            alert("No hay alumnos para guardar.");
+            return;
+
+        }
+
+        if (guardando) return;
+
+        setGuardando(true);
+
+        try {
+
+            for (const alumno of alumnos) {
+
+                const nota = notas[alumno.DNI] || {};
+
+                await dispatch(
+
+                    calificacionFetchers.insertCalificacion({
+
+                        url: "/calificaciones",
+
+                        data: {
+
+                            DNI_Alumno: alumno.DNI,
+
+                            ID_Clase: Number(claseSeleccionada),
+
+                            Parcial1:
+                                nota.Parcial1 === "" || nota.Parcial1 == null
+                                    ? null
+                                    : Number(nota.Parcial1),
+
+                            Parcial2:
+                                nota.Parcial2 === "" || nota.Parcial2 == null
+                                    ? null
+                                    : Number(nota.Parcial2),
+
+                            Parcial3:
+                                nota.Parcial3 === "" || nota.Parcial3 == null
+                                    ? null
+                                    : Number(nota.Parcial3),
+
+                            Parcial4:
+                                nota.Parcial4 === "" || nota.Parcial4 == null
+                                    ? null
+                                    : Number(nota.Parcial4),
+
+                            Reposicion:
+                                nota.Reposicion === "" || nota.Reposicion == null
+                                    ? null
+                                    : Number(nota.Reposicion)
+
+                        }
+
+                    })
+
+                );
+
+            }
+
+            alert("Calificaciones guardadas correctamente");
+
+            await cargarCalificaciones();
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert("Error al guardar");
+
+        } finally {
+
+            setGuardando(false);
+
+        }
+
+    };
+
+    // ============================
+    // Eliminar calificación
+    // ============================
+
+    const eliminarCalificacion = async (alumno) => {
+
+        const idCalificacion = notas[alumno.DNI]?.ID_Calificacion;
+
+        if (!idCalificacion) return;
+
+        const confirmar = window.confirm(
+            `¿Eliminar por completo el registro de calificación de ${alumno.Nombre} ${alumno.Apellido} en esta clase? Esta acción no se puede deshacer.`
         );
 
-        alert("Calificación actualizada");
-      } else {
-        await dispatch(
-          fetchers.insertCalificacion({
-            url: "/calificaciones",
-            data: form,
-          })
+        if (!confirmar) return;
+
+        try {
+
+            await dispatch(
+                calificacionFetchers.deleteCalificacion({
+                    url: `/calificaciones/${idCalificacion}`
+                })
+            );
+
+            await cargarCalificaciones();
+
+        } catch (error) {
+
+            console.error(error);
+            alert("Error al eliminar");
+
+        }
+
+    };
+
+    // ============================
+    // Filtrado por búsqueda
+    // ============================
+    const alumnosFiltrados = alumnos.filter((alumno) => {
+
+        const texto = busqueda.trim().toLowerCase();
+
+        if (texto === "") return true;
+
+        const nombreCompleto = `${alumno.Nombre} ${alumno.Apellido}`.toLowerCase();
+
+        return (
+            nombreCompleto.includes(texto) ||
+            String(alumno.DNI).toLowerCase().includes(texto)
         );
 
-        alert("Calificación registrada");
-      }
-
-      limpiarFormulario();
-      cargarCalificaciones();
-    } catch (error) {
-      console.error(error);
-      alert("Error al guardar");
-    }
-  };
-
-  const editar = (c) => {
-    setForm({
-      ID_Alumno: String(c.ID_Alumno),
-      ID_Clase: String(c.ID_Clase),
-      Parcial1: c.Parcial1,
-      Parcial2: c.Parcial2,
-      Parcial3: c.Parcial3,
-      Parcial4: c.Parcial4,
     });
 
-    setEditando(true);
-    setIdEditar(c.ID_Calificacion);
-  };
+    const cargando = cargandoAlumnos || cargandoClases || cargandoNotas;
 
-  const eliminar = async (id) => {
-    if (!window.confirm("¿Eliminar esta calificación?")) return;
+    return (
 
-    await dispatch(
-      fetchers.deleteCalificacion({
-        url: `/calificaciones/${id}`,
-      })
+        <div className="container-fluid mt-4">
+
+            <h3 className="mb-4">Calificaciones</h3>
+
+            <div className="row mb-3">
+
+                <div className="col-md-3">
+
+                    <label className="form-label">Grado</label>
+
+                    <select
+                        className="form-select"
+                        value={gradoSeleccionado}
+                        onChange={(e) => cambiarGrado(e.target.value)}
+                    >
+
+                        <option value="">Seleccione un grado</option>
+
+                        {grados.map((grado) => (
+
+                            <option key={grado.ID_Grado} value={grado.ID_Grado}>
+                                {grado.Nombre_Grado}
+                            </option>
+
+                        ))}
+
+                    </select>
+
+                </div>
+
+                <div className="col-md-3">
+
+                    <label className="form-label">Clase</label>
+
+                    <select
+                        className="form-select"
+                        value={claseSeleccionada}
+                        onChange={(e) => cambiarClase(e.target.value)}
+                        disabled={gradoSeleccionado === "" || cargandoClases}
+                    >
+
+                        <option value="">
+                            {cargandoClases ? "Cargando clases..." : "Seleccione una clase"}
+                        </option>
+
+                        {clases.map((item) => (
+
+                            <option
+                                key={item.ID_Clase}
+                                value={item.ID_Clase}
+                            >
+                                {item.Clase.Nombre_Clase}
+                            </option>
+
+                        ))}
+
+                    </select>
+
+                </div>
+
+                <div className="col-md-4">
+
+                    <label className="form-label">Buscar alumno</label>
+
+                    <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Nombre o DNI"
+                        value={busqueda}
+                        onChange={(e) => setBusqueda(e.target.value)}
+                    />
+
+                </div>
+
+                <div className="col-md-2 d-flex align-items-end">
+
+                    <button
+                        className="btn btn-primary w-100"
+                        onClick={guardarCambios}
+                        disabled={guardando || cargando}
+                    >
+                        {guardando ? "Guardando..." : "Guardar"}
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div className="table-responsive">
+
+                <table className="table table-bordered table-hover align-middle">
+
+                    <thead className="table-dark">
+
+                        <tr>
+                            <th>DNI</th>
+                            <th>Nombre</th>
+                            <th>Parcial 1</th>
+                            <th>Parcial 2</th>
+                            <th>Parcial 3</th>
+                            <th>Parcial 4</th>
+                            <th>Recuperación</th>
+                            <th>Promedio</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+    {cargando ? (
+
+        <tr>
+
+            <td colSpan="10" className="text-center">
+                Cargando...
+            </td>
+
+        </tr>
+
+    ) : alumnosFiltrados.length === 0 ? (
+
+        <tr>
+
+            <td colSpan="10" className="text-center">
+                No hay alumnos para este grado
+            </td>
+
+        </tr>
+
+    ) : (
+
+        alumnosFiltrados.map((alumno) => {
+
+            const nota = notas[alumno.DNI] || {};
+
+            const parciales = [
+                nota.Parcial1,
+                nota.Parcial2,
+                nota.Parcial3,
+                nota.Parcial4
+            ].filter((valor) => valor !== "" && valor != null);
+
+            const promedio = parciales.length === 0
+                ? null
+                : parciales.reduce((suma, valor) => suma + Number(valor), 0) / parciales.length;
+
+            return (
+
+                <tr key={alumno.DNI}>
+
+                    <td>{alumno.DNI}</td>
+
+                    <td>
+                        {alumno.Nombre} {alumno.Apellido}
+                    </td>
+
+                    <td>
+                        <input
+                            type="number"
+                            min="0"
+                            max="100"
+                            className="form-control"
+                            value={notas[alumno.DNI]?.Parcial1 ?? ""}
+                            onChange={(e) =>
+                                cambiarNota(
+                                    alumno.DNI,
+                                    "Parcial1",
+                                    e.target.value
+                                )
+                            }
+                        />
+                    </td>
+
+                    <td>
+                        <input
+                            type="number"
+                            min="0"
+                            max="100"
+                            className="form-control"
+                            value={notas[alumno.DNI]?.Parcial2 ?? ""}
+                            onChange={(e) =>
+                                cambiarNota(
+                                    alumno.DNI,
+                                    "Parcial2",
+                                    e.target.value
+                                )
+                            }
+                        />
+                    </td>
+
+                    <td>
+                        <input
+                            type="number"
+                            min="0"
+                            max="100"
+                            className="form-control"
+                            value={notas[alumno.DNI]?.Parcial3 ?? ""}
+                            onChange={(e) =>
+                                cambiarNota(
+                                    alumno.DNI,
+                                    "Parcial3",
+                                    e.target.value
+                                )
+                            }
+                        />
+                    </td>
+
+                    <td>
+                        <input
+                            type="number"
+                            min="0"
+                            max="100"
+                            className="form-control"
+                            value={notas[alumno.DNI]?.Parcial4 ?? ""}
+                            onChange={(e) =>
+                                cambiarNota(
+                                    alumno.DNI,
+                                    "Parcial4",
+                                    e.target.value
+                                )
+                            }
+                        />
+                    </td>
+
+                    <td>
+                        <input
+                            type="number"
+                            min="0"
+                            max="100"
+                            className="form-control"
+                            value={notas[alumno.DNI]?.Reposicion ?? ""}
+                            onChange={(e) =>
+                                cambiarNota(
+                                    alumno.DNI,
+                                    "Reposicion",
+                                    e.target.value
+                                )
+                            }
+                        />
+                    </td>
+
+                    <td>
+                        {promedio === null ? "-" : promedio.toFixed(2)}
+                    </td>
+
+                    <td>
+                        {promedio === null ? (
+                            "-"
+                        ) : (
+                            <span
+                                className={
+                                    promedio >= 70
+                                        ? "badge bg-success"
+                                        : "badge bg-danger"
+                                }
+                            >
+                                {promedio >= 70
+                                    ? "Aprobado"
+                                    : "Reprobado"}
+                            </span>
+                        )}
+                    </td>
+
+                    <td>
+                        <button
+                            className="btn btn-sm btn-outline-danger"
+                            onClick={() => eliminarCalificacion(alumno)}
+                            disabled={!notas[alumno.DNI]?.ID_Calificacion}
+                            title={
+                                notas[alumno.DNI]?.ID_Calificacion
+                                    ? "Eliminar este registro de calificación"
+                                    : "Este alumno aún no tiene calificación guardada"
+                            }
+                        >
+                            Eliminar
+                        </button>
+                    </td>
+
+                </tr>
+
+            );
+
+        })
+
+    )}
+
+</tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
     );
 
-    cargarCalificaciones();
-  };
-
-  return (
-    <section className="pt_100 pb_100">
-  <div className="container">
-
-    <div className="row mb_40">
-      <div className="col-12 text-center">
-        <div className="tf__heading_area">
-          <h5>Formulario</h5>
-          <h2>{editando ? "Editar Calificación" : "Registrar Calificación"}</h2>
-        </div>
-      </div>
-    </div>
-
-    <div className="row justify-content-center">
-      <div className="col-lg-8">
-
-        <div className="p-4 border rounded bg-white shadow-sm">
-
-          <form onSubmit={handleSubmit}>
-
-            <div className="mb-3">
-              <label className="form-label">Alumno</label>
-
-              <select
-                className="form-control"
-                name="ID_Alumno"
-                value={form.ID_Alumno}
-                onChange={handleChange}
-                required
-              >
-
-                <option value="">Seleccione un alumno</option>
-
-                {alumnos.map((a) => (
-                  <option key={a.ID_Alumno} value={a.ID_Alumno}>
-                    {a.Nombre} {a.Apellido}
-                  </option>
-                ))}
-
-              </select>
-            </div>
-
-            <div className="mb-3">
-              <label className="form-label">Clase</label>
-
-              <select
-                className="form-control"
-                name="ID_Clase"
-                value={form.ID_Clase}
-                onChange={handleChange}
-                required
-              >
-
-                <option value="">Seleccione una clase</option>
-
-                {clases.map((c) => (
-                  <option key={c.ID_Clase} value={c.ID_Clase}>
-                    {c.Nombre_Clase}
-                  </option>
-                ))}
-
-              </select>
-
-            </div>
-
-            <div className="row">
-
-              <div className="col-md-6 mb-3">
-                <label>Parcial 1</label>
-
-                <input
-                  className="form-control"
-                  type="number"
-                  name="Parcial1"
-                  value={form.Parcial1}
-                  onChange={handleChange}
-                  required
-                />
-
-              </div>
-
-              <div className="col-md-6 mb-3">
-                <label>Parcial 2</label>
-
-                <input
-                  className="form-control"
-                  type="number"
-                  name="Parcial2"
-                  value={form.Parcial2}
-                  onChange={handleChange}
-                  required
-                />
-
-              </div>
-
-              <div className="col-md-6 mb-3">
-                <label>Parcial 3</label>
-
-                <input
-                  className="form-control"
-                  type="number"
-                  name="Parcial3"
-                  value={form.Parcial3}
-                  onChange={handleChange}
-                  required
-                />
-
-              </div>
-
-              <div className="col-md-6 mb-3">
-                <label>Parcial 4</label>
-
-                <input
-                  className="form-control"
-                  type="number"
-                  name="Parcial4"
-                  value={form.Parcial4}
-                  onChange={handleChange}
-                  required
-                />
-
-              </div>
-
-            </div>
-
-            <div className="d-flex gap-3">
-
-              <button
-                className="btn btn-primary"
-                type="submit"
-              >
-                {editando ? "Actualizar" : "Guardar"}
-              </button>
-
-              {editando && (
-
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={limpiarFormulario}
-                >
-                  Cancelar
-                </button>
-
-              )}
-
-            </div>
-
-          </form>
-
-        </div>
-
-      </div>
-    </div>
-        <div className="row mt_50">
-      <div className="col-12">
-
-        <div className="tf__heading_area mb_30">
-          <h2>Calificaciones Registradas</h2>
-        </div>
-
-        <table className="table table-bordered table-striped">
-
-          <thead className="table-dark">
-            <tr>
-              <th>Alumno</th>
-              <th>Clase</th>
-              <th>P1</th>
-              <th>P2</th>
-              <th>P3</th>
-              <th>P4</th>
-              <th>Promedio</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-
-          <tbody>
-
-            {calificaciones.map((c) => (
-
-              <tr key={c.ID_Calificacion}>
-
-                <td>
-                  {c.Alumno
-                    ? `${c.Alumno.Nombre} ${c.Alumno.Apellido}`
-                    : ""}
-                </td>
-
-                <td>
-                  {c.Clase
-                    ? c.Clase.Nombre_Clase
-                    : ""}
-                </td>
-
-                <td>{c.Parcial1}</td>
-                <td>{c.Parcial2}</td>
-                <td>{c.Parcial3}</td>
-                <td>{c.Parcial4}</td>
-                <td>
-                  <strong>{c.Promedio}</strong>
-                </td>
-
-                <td>
-
-                  <button
-                    className="btn btn-warning btn-sm me-2"
-                    onClick={() => editar(c)}
-                  >
-                    Editar
-                  </button>
-
-                  <button
-                    className="btn btn-danger btn-sm"
-                    onClick={() => eliminar(c.ID_Calificacion)}
-                  >
-                    Eliminar
-                  </button>
-
-                </td>
-
-              </tr>
-
-            ))}
-
-          </tbody>
-
-        </table>
-
-      </div>
-    </div>
-
-  </div>
-</section>
-);
 };
 
 export default Calificaciones;

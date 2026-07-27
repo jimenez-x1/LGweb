@@ -13,3 +13,4 @@ export default function Selector(store: StoreState): StoreGrados.State {
 
 Selector.getGrados = CreateSelector(Selector, (state) => state.gradosInfo);
 Selector.getGrado = CreateSelector(Selector, (state) => state.gradoInfo);
+Selector.getClases = CreateSelector(Selector, (state) => state.clasesInfo);

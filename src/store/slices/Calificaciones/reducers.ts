@@ -1,19 +1,28 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { CreateReducer } from "../../../storeConfig";
+import { Action, INIT } from "./namespace";
+import type { Type } from "./namespace";
+import fetchers from "./fetchers";
 
-const initialState = {
-  calificaciones: [],
-};
+export default CreateReducer(INIT, ({ addCase }) => {
 
-const calificacionesSlice = createSlice({
-  name: "calificaciones",
-  initialState,
-  reducers: {
-    setCalificaciones: (state, action) => {
-      state.calificaciones = action.payload;
-    },
-  },
+    addCase(Action.cleanStore, (state) => ({
+        ...state,
+        ...INIT
+    }));
+
+    addCase(Action.cleanCalificacion, (state) => ({
+        ...state,
+        calificacionInfo: INIT.calificacionInfo,
+    }));
+
+    addCase(Action.setCalificacion, (state, { payload }) => ({
+        ...state,
+        calificacionInfo: payload,
+    }));
+
+    addCase(fetchers.getCalificaciones.fulfilled, (state, { payload }) => ({
+        ...state,
+        calificacionesInfo: (payload.calificacionesInfo ?? []) as Type.CalificacionInfo[],
+    }));
+
 });
-
-export const { setCalificaciones } = calificacionesSlice.actions;
-
-export default calificacionesSlice.reducer;

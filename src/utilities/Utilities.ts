@@ -79,6 +79,14 @@ const obtenerMensajeError = (
 
     return mensajeOriginal || mensajePredeterminado;
 };
+// Crea un objeto de respuesta NUEVO e independiente en cada llamada,
+// para evitar que peticiones en paralelo se pisen entre sí.
+function crearRespuestaVacia(): TypeGenericResponse {
+    return {
+        ...INIT,
+        error: { ...INIT.error },
+    };
+}
 
 api.interceptors.request.use(
     async config => {
@@ -324,6 +332,7 @@ async function checkUser() {
 
     return await api.get('/user/whoami')
         .then(response => {
+            const responseData = crearRespuestaVacia();
             if (response.status === 200) {
                 responseData.data = response.data;
                 responseData.status = response.status;
