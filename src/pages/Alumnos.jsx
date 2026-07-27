@@ -1,6 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useDispatch } from "../store";
 import fetchers from "../store/slices/Alumnos/fetchers";
+import {
+  mostrarExito,
+  mostrarError,
+  confirmarEliminacion,
+} from "../utilities/Alertas";
 
 const Alumnos = () => {
   const dispatch = useDispatch();
@@ -22,6 +27,24 @@ const Alumnos = () => {
     Genero: "",
   });
 
+  const obtenerMensajeError = (respuesta, mensajePredeterminado) => {
+    const payload = respuesta?.payload;
+
+    if (typeof payload === "string") {
+      return payload;
+    }
+
+    return (
+      payload?.message ||
+      payload?.mensaje ||
+      payload?.error?.message ||
+      payload?.error?.mensaje ||
+      (typeof payload?.error === "string" ? payload.error : null) ||
+      respuesta?.error?.message ||
+      mensajePredeterminado
+    );
+  };
+
   const cargarAlumnos = () => {
     dispatch(fetchers.getAlumnos({ url: "/alumnos" }))
       .then((res) => setAlumnos(res.payload?.alumnosInfo ?? []))
@@ -41,15 +64,16 @@ const Alumnos = () => {
 
   const limpiarFormulario = () => {
     setForm({
-  ID_Grado: "",
-  DNI: "",
-  DNI_Padre: "",
-  Nombre: "",
-  Apellido: "",
-  Fecha_Nacimiento: "",
-  Direccion: "",
-  Genero: "",
-});
+      ID_Grado: "",
+      DNI: "",
+      DNI_Padre: "",
+      Nombre: "",
+      Apellido: "",
+      Fecha_Nacimiento: "",
+      Direccion: "",
+      Genero: "",
+    });
+
     setEditando(false);
     setIdEditar(null);
   };
@@ -62,116 +86,164 @@ const Alumnos = () => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-
-  try {
-    let res;
-
-    if (editando) {
-      res = await dispatch(
-        fetchers.updateAlumno({
-          url: "/updateAlumno",
-          data: {
-            DNI: idEditar,
-            DNI_Padre: form.DNI_Padre || null,
-            ID_Grado: Number(form.ID_Grado),
-            Nombre: form.Nombre,
-            Apellido: form.Apellido,
-            Fecha_Nacimiento: form.Fecha_Nacimiento,
-            Direccion: form.Direccion,
-            Genero: form.Genero,
-          },
-        })
-      );
-
-      if (res.payload?.error) {
-        throw new Error(
-          res.payload.error.message || "Error al actualizar alumno"
-        );
-      }
-
-      alert("Alumno actualizado correctamente");
-    } else {
-      res = await dispatch(
-        fetchers.insertAlumno({
-          url: "/insertAlumno",
-          data: {
-            DNI: form.DNI,
-            DNI_Padre: form.DNI_Padre || null,
-            ID_Grado: Number(form.ID_Grado),
-            Nombre: form.Nombre,
-            Apellido: form.Apellido,
-            Fecha_Nacimiento: form.Fecha_Nacimiento,
-            Direccion: form.Direccion,
-            Genero: form.Genero,
-          },
-        })
-      );
-
-      if (res.payload?.error) {
-        throw new Error(
-          res.payload.error.message || "Error al registrar alumno"
-        );
-      }
-
-      alert("Alumno registrado correctamente");
-    }
-
-    limpiarFormulario();
-    cargarAlumnos();
-  } catch (error) {
-    console.error("Error:", error);
-    alert(error.message || "Error al guardar alumno");
-  }
-};
-
- const editar = (alumno) => {
-  setForm({
-    ID_Grado: alumno.ID_Grado ? String(alumno.ID_Grado) : "",
-    DNI: alumno.DNI || "",
-    DNI_Padre: alumno.DNI_Padre || "",
-    Nombre: alumno.Nombre || "",
-    Apellido: alumno.Apellido || "",
-    Fecha_Nacimiento: alumno.Fecha_Nacimiento
-      ? String(alumno.Fecha_Nacimiento).slice(0, 10)
-      : "",
-    Direccion: alumno.Direccion || "",
-    Genero: alumno.Genero || "",
-  });
-
-  setEditando(true);
-  setIdEditar(alumno.DNI);
-
-  setTimeout(() => {
-    formularioRef.current?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-  }, 100);
-};
-
-  const eliminar = async (id) => {
-    const confirmar = window.confirm("¿Eliminar este alumno?");
-    if (!confirmar) return;
+    e.preventDefault();
 
     try {
-      await dispatch(
+      let res;
+
+      if (editando) {
+        res = await dispatch(
+          fetchers.updateAlumno({
+            url: "/updateAlumno",
+            data: {
+              DNI: idEditar,
+              DNI_Padre: form.DNI_Padre || null,
+              ID_Grado: Number(form.ID_Grado),
+              Nombre: form.Nombre,
+              Apellido: form.Apellido,
+              Fecha_Nacimiento: form.Fecha_Nacimiento,
+              Direccion: form.Direccion,
+              Genero: form.Genero,
+            },
+          })
+        );
+
+        if (
+          res.meta?.requestStatus === "rejected" ||
+          res.payload?.error
+        ) {
+          throw new Error(
+            obtenerMensajeError(
+              res,
+              "Error al actualizar alumno"
+            )
+          );
+        }
+
+        await mostrarExito(
+          "Alumno actualizado correctamente."
+        );
+      } else {
+        res = await dispatch(
+          fetchers.insertAlumno({
+            url: "/insertAlumno",
+            data: {
+              DNI: form.DNI,
+              DNI_Padre: form.DNI_Padre || null,
+              ID_Grado: Number(form.ID_Grado),
+              Nombre: form.Nombre,
+              Apellido: form.Apellido,
+              Fecha_Nacimiento: form.Fecha_Nacimiento,
+              Direccion: form.Direccion,
+              Genero: form.Genero,
+            },
+          })
+        );
+
+        console.log("Respuesta de insertAlumno:", res);
+
+        if (
+          res.meta?.requestStatus === "rejected" ||
+          res.payload?.error
+        ) {
+          throw new Error(
+            obtenerMensajeError(
+              res,
+              "Error al registrar alumno"
+            )
+          );
+        }
+
+        await mostrarExito(
+          "Alumno registrado correctamente."
+        );
+      }
+
+      limpiarFormulario();
+      cargarAlumnos();
+    } catch (error) {
+      console.error("Error al guardar alumno:", error);
+
+      await mostrarError(
+        error?.message || "Error al guardar alumno."
+      );
+    }
+  };
+
+  const editar = (alumno) => {
+    setForm({
+      ID_Grado: alumno.ID_Grado
+        ? String(alumno.ID_Grado)
+        : "",
+      DNI: alumno.DNI || "",
+      DNI_Padre: alumno.DNI_Padre || "",
+      Nombre: alumno.Nombre || "",
+      Apellido: alumno.Apellido || "",
+      Fecha_Nacimiento: alumno.Fecha_Nacimiento
+        ? String(alumno.Fecha_Nacimiento).slice(0, 10)
+        : "",
+      Direccion: alumno.Direccion || "",
+      Genero: alumno.Genero || "",
+    });
+
+    setEditando(true);
+    setIdEditar(alumno.DNI);
+
+    setTimeout(() => {
+      formularioRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 100);
+  };
+
+  const eliminar = async (id) => {
+    const resultado = await confirmarEliminacion(
+      "este alumno"
+    );
+
+    if (!resultado.isConfirmed) {
+      return;
+    }
+
+    try {
+      const res = await dispatch(
         fetchers.deleteAlumno({
           url: `/deleteAlumno/${id}`,
         })
       );
 
-      alert("Alumno eliminado correctamente");
+      if (
+        res.meta?.requestStatus === "rejected" ||
+        res.payload?.error
+      ) {
+        throw new Error(
+          obtenerMensajeError(
+            res,
+            "Error al eliminar alumno"
+          )
+        );
+      }
+
+      await mostrarExito(
+        "Alumno eliminado correctamente."
+      );
+
       cargarAlumnos();
     } catch (error) {
-      console.error(error);
-      alert("Error al eliminar alumno");
+      console.error("Error al eliminar alumno:", error);
+
+      await mostrarError(
+        error?.message || "Error al eliminar alumno."
+      );
     }
   };
 
   const obtenerNombreGrado = (alumno) => {
     const gradoEncontrado = grados.find(
-      (g) => String(g.ID_Grado) === String(alumno.ID_Grado)
+      (g) =>
+        String(g.ID_Grado) ===
+        String(alumno.ID_Grado)
     );
 
     return (
@@ -189,17 +261,27 @@ const Alumnos = () => {
           <div className="col-12 text-center">
             <div className="tf__heading_area">
               <h5>Formulario</h5>
-              <h2>{editando ? "Editar Alumno" : "Registrar Alumno"}</h2>
+              <h2>
+                {editando
+                  ? "Editar Alumno"
+                  : "Registrar Alumno"}
+              </h2>
             </div>
           </div>
         </div>
 
-        <div className="row justify-content-center" ref={formularioRef}>
+        <div
+          className="row justify-content-center"
+          ref={formularioRef}
+        >
           <div className="col-lg-8">
             <div className="p-4 border rounded bg-white shadow-sm">
               <form onSubmit={handleSubmit}>
                 <div className="mb-3">
-                  <label className="form-label">Número de Identidad</label>
+                  <label className="form-label">
+                    Número de Identidad
+                  </label>
+
                   <input
                     type="text"
                     name="DNI"
@@ -208,11 +290,15 @@ const Alumnos = () => {
                     onChange={handleChange}
                     maxLength={13}
                     required
+                    disabled={editando}
                   />
                 </div>
 
                 <div className="mb-3">
-                  <label className="form-label">DNI Padre</label>
+                  <label className="form-label">
+                    DNI Padre
+                  </label>
+
                   <input
                     type="text"
                     name="DNI_Padre"
@@ -224,7 +310,10 @@ const Alumnos = () => {
                 </div>
 
                 <div className="mb-3">
-                  <label className="form-label">Nombre</label>
+                  <label className="form-label">
+                    Nombre
+                  </label>
+
                   <input
                     type="text"
                     name="Nombre"
@@ -236,7 +325,10 @@ const Alumnos = () => {
                 </div>
 
                 <div className="mb-3">
-                  <label className="form-label">Apellido</label>
+                  <label className="form-label">
+                    Apellido
+                  </label>
+
                   <input
                     type="text"
                     name="Apellido"
@@ -248,7 +340,10 @@ const Alumnos = () => {
                 </div>
 
                 <div className="mb-3">
-                  <label className="form-label">Fecha de nacimiento</label>
+                  <label className="form-label">
+                    Fecha de nacimiento
+                  </label>
+
                   <input
                     type="date"
                     name="Fecha_Nacimiento"
@@ -260,7 +355,10 @@ const Alumnos = () => {
                 </div>
 
                 <div className="mb-3">
-                  <label className="form-label">Dirección</label>
+                  <label className="form-label">
+                    Dirección
+                  </label>
+
                   <input
                     type="text"
                     name="Direccion"
@@ -271,7 +369,10 @@ const Alumnos = () => {
                 </div>
 
                 <div className="mb-3">
-                  <label className="form-label">Género</label>
+                  <label className="form-label">
+                    Género
+                  </label>
+
                   <select
                     name="Genero"
                     className="form-control"
@@ -279,14 +380,25 @@ const Alumnos = () => {
                     onChange={handleChange}
                     required
                   >
-                    <option value="">Seleccione género</option>
-                    <option value="M">Masculino</option>
-                    <option value="F">Femenino</option>
+                    <option value="">
+                      Seleccione género
+                    </option>
+
+                    <option value="M">
+                      Masculino
+                    </option>
+
+                    <option value="F">
+                      Femenino
+                    </option>
                   </select>
                 </div>
 
                 <div className="mb-4">
-                  <label className="form-label">Grado</label>
+                  <label className="form-label">
+                    Grado
+                  </label>
+
                   <select
                     name="ID_Grado"
                     className="form-control"
@@ -294,18 +406,30 @@ const Alumnos = () => {
                     onChange={handleChange}
                     required
                   >
-                    <option value="">Seleccione grado</option>
+                    <option value="">
+                      Seleccione grado
+                    </option>
+
                     {grados.map((grado) => (
-                      <option key={grado.ID_Grado} value={grado.ID_Grado}>
-                        {grado.Nombre_Grado || grado.Nombre}
+                      <option
+                        key={grado.ID_Grado}
+                        value={grado.ID_Grado}
+                      >
+                        {grado.Nombre_Grado ||
+                          grado.Nombre}
                       </option>
                     ))}
                   </select>
                 </div>
 
                 <div className="d-flex gap-3">
-                  <button type="submit" className="common_btn">
-                    {editando ? "Actualizar Alumno" : "Guardar Alumno"}
+                  <button
+                    type="submit"
+                    className="common_btn"
+                  >
+                    {editando
+                      ? "Actualizar Alumno"
+                      : "Guardar Alumno"}
                   </button>
 
                   {editando && (
@@ -326,43 +450,75 @@ const Alumnos = () => {
         <div className="row mt_50">
           <div className="col-12">
             <div className="tf__heading_area mb_30">
-              <h2>Listado Alumnos Registrados</h2>
+              <h2>
+                Listado Alumnos Registrados
+              </h2>
             </div>
 
             <div className="row">
               {alumnos.map((alumno) => (
-                <div className="col-md-6 col-lg-4 mb_30" key={alumno.DNI}>
+                <div
+                  className="col-md-6 col-lg-4 mb_30"
+                  key={alumno.DNI}
+                >
                   <div className="tf__single_courses">
                     <div className="tf__single_courses_text">
                       <h3>
-                        {alumno.Nombre} {alumno.Apellido}
+                        {alumno.Nombre}{" "}
+                        {alumno.Apellido}
                       </h3>
+
                       <p>
-                        <strong>Identidad:</strong> {alumno.Identidad}
+                        <strong>Identidad:</strong>{" "}
+                        {alumno.Identidad}
                       </p>
 
-                      <p><strong>DNI:</strong> {alumno.DNI}</p>
-                      <p><strong>Dirección:</strong> {alumno.Direccion}</p>
-                      <p><strong>Género:</strong> {alumno.Genero}</p>
                       <p>
-                        <strong>Fecha de nacimiento:</strong>{" "}
+                        <strong>DNI:</strong>{" "}
+                        {alumno.DNI}
+                      </p>
+
+                      <p>
+                        <strong>Dirección:</strong>{" "}
+                        {alumno.Direccion}
+                      </p>
+
+                      <p>
+                        <strong>Género:</strong>{" "}
+                        {alumno.Genero}
+                      </p>
+
+                      <p>
+                        <strong>
+                          Fecha de nacimiento:
+                        </strong>{" "}
                         {alumno.Fecha_Nacimiento
-                          ? String(alumno.Fecha_Nacimiento).slice(0, 10)
+                          ? String(
+                              alumno.Fecha_Nacimiento
+                            ).slice(0, 10)
                           : ""}
                       </p>
-                      <p><strong>Grado:</strong> {obtenerNombreGrado(alumno)}</p>
+
+                      <p>
+                        <strong>Grado:</strong>{" "}
+                        {obtenerNombreGrado(alumno)}
+                      </p>
 
                       <div className="mt-3 d-flex gap-2">
                         <button
                           className="btn btn-warning btn-sm"
-                          onClick={() => editar(alumno)}
+                          onClick={() =>
+                            editar(alumno)
+                          }
                         >
                           Editar
                         </button>
 
                         <button
                           className="btn btn-danger btn-sm"
-                          onClick={() => eliminar(alumno.DNI)}
+                          onClick={() =>
+                            eliminar(alumno.DNI)
+                          }
                         >
                           Eliminar
                         </button>
@@ -372,7 +528,6 @@ const Alumnos = () => {
                 </div>
               ))}
             </div>
-
           </div>
         </div>
       </div>
