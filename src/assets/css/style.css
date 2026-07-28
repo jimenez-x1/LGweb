@@ -10,11 +10,18 @@ html {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+<<<<<<< HEAD
 img {
   max-width: 100%;
   height: auto;
   display: block;
+=======
+.img{
+    max-width:100%;
+    height:auto;
+>>>>>>> origin/Ari
 }
+
 
 .main_menu {
   background: #ffffff !important;

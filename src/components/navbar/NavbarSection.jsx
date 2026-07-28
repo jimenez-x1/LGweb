@@ -1,9 +1,13 @@
 import { useEduorContext } from "../../context/EduorContext";
+<<<<<<< HEAD
 // Hook del contexto para manejar estado del navbar (abierto, cerrado, fijo, etc.)
 
 import { Link } from "react-router-dom";
 // Permite navegar sin recargar la página
 
+=======
+import { Link, useNavigate } from "react-router-dom";
+>>>>>>> origin/Ari
 import React, { useEffect, useRef } from "react";
 import NavigationSection from "./NavigationSection";
 // Componente donde están los links del menú
@@ -19,6 +23,13 @@ const NavbarSection = ({ style, logo }) => {
 
   const navMenuRef = useRef(null); 
   // Referencia al navbar para detectar clics fuera de él
+
+const navigate = useNavigate();
+
+const cerrarSesion = () => {
+  localStorage.removeItem("SECURE");
+  navigate("/login");
+};
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -84,12 +95,47 @@ const NavbarSection = ({ style, logo }) => {
           </button>
         )}
 
+<<<<<<< HEAD
         {/* Sección de navegación (links) */}
         <NavigationSection
           position="ms-auto"
           btnPosition={false}
           navRef={navMenuRef}
         />
+=======
+        <div className="d-flex align-items-center ms-auto">
+
+  <NavigationSection
+    position=""
+    btnPosition={false}
+    navRef={navMenuRef}
+  />
+
+  <div className="dropdown ms-3">
+    <button
+  className="btn btn-primary rounded-circle"
+  type="button"
+  data-bs-toggle="dropdown"
+  aria-expanded="false"
+>
+  <i className="fas fa-user"></i>
+</button>
+
+    <ul className="dropdown-menu dropdown-menu-end">
+      <li>
+        <button
+          className="dropdown-item text-danger"
+          onClick={cerrarSesion}
+        >
+          <i className="fas fa-sign-out-alt me-2"></i>
+          Cerrar sesión
+        </button>
+      </li>
+    </ul>
+  </div>
+
+</div>
+>>>>>>> origin/Ari
       </div>
     </nav>
   );

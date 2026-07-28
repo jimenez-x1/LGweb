@@ -67,6 +67,7 @@ const [busquedaConsulta, setBusquedaConsulta] = useState("");
   };
 
   const handleSubmit = async (e) => {
+<<<<<<< HEAD
   e.preventDefault();
 
   try {
@@ -121,6 +122,83 @@ const [busquedaConsulta, setBusquedaConsulta] = useState("");
 
       alert("Alumno registrado correctamente");
     }
+=======
+    e.preventDefault();
+if (!form.Nombre.trim()) {
+  return alert("El nombre es obligatorio");
+}
+
+if (!form.Apellido.trim()) {
+  return alert("El apellido es obligatorio");
+}
+
+if (!form.Direccion.trim()) {
+  return alert("La dirección es obligatoria");
+}
+
+if (!form.Genero) {
+  return alert("Seleccione un género");
+}
+
+if (!form.ID_Grado) {
+  return alert("Seleccione un grado");
+}
+    try {
+      if (editando) {
+        const response = await dispatch(
+  fetchers.insertAlumno({
+    url: "/insertAlumno",
+    data: {
+      ...form,
+      ID_Grado: Number(form.ID_Grado),
+    },
+  })
+);
+
+if (response?.payload?.error) {
+  const mensaje =
+    response.payload.error?.response?.data?.message ||
+    response.payload.error?.message ||
+    "Error al guardar alumno";
+
+  alert(mensaje);
+  return;
+}
+
+alert("Alumno registrado correctamente");
+
+      } else {
+        await dispatch(
+          fetchers.insertAlumno({
+            url: "/insertAlumno",
+            data: {
+              ...form,
+              ID_Grado: Number(form.ID_Grado),
+            },
+          })
+        );
+        alert("Alumno registrado correctamente");
+      }
+
+      limpiarFormulario();
+      cargarAlumnos();
+
+    } catch (error) {
+  console.error(error);
+
+  const mensaje =
+    error?.response?.data?.message ||
+    error?.payload?.message ||
+    error?.message;
+
+  if (mensaje === "Ya existe un alumno con ese nombre y apellido") {
+    alert(mensaje);
+  } else {
+    alert("Error al guardar alumno");
+  }
+}
+};
+>>>>>>> origin/Ari
 
     limpiarFormulario();
     cargarAlumnos();
@@ -397,8 +475,9 @@ const editar = (alumno) => {
         </div>
       </div>
     </section>
-  );
-};
+    
+    );
+  };
 
 
 export default Alumnos;
