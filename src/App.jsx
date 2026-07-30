@@ -15,6 +15,8 @@ import RegistrarPago from "./pages/RegistrarPago";
 import Padre from "./pages/Padre";
 import Archivos from "./pages/Archivos";
 import Login from "./pages/Login";
+import Calificaciones from "./pages/Calificaciones";
+import MisCalificaciones from "./pages/MisCalificaciones";
 
 
 function App() {
@@ -73,6 +75,22 @@ function App() {
     element={
       <ProtectedRoute>
         <Maestros />
+      </ProtectedRoute>
+    }
+  />
+  <Route                              
+    path="/calificaciones"
+    element={
+      <ProtectedRoute>
+        <Calificaciones />
+      </ProtectedRoute>
+    }
+  />
+  <Route
+    path="/mis-calificaciones"
+    element={
+      <ProtectedRoute allowedRoles={[3]}>
+        <MisCalificaciones />
       </ProtectedRoute>
     }
   />

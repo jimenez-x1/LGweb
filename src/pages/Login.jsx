@@ -7,9 +7,7 @@ import {
   FaUser,
   FaLock,
   FaEye,
-  FaUserShield,
-  FaChalkboardTeacher,
-  FaUsers,
+  FaEyeSlash,
   FaSignInAlt,
   FaShieldAlt,
   FaBookOpen,
@@ -18,29 +16,77 @@ import {
 const Login = () => {
   const navigate = useNavigate();
 
-  const [Correo, setCorreo] = useState("");
+  const [Usuario, setUsuario] = useState("");
   const [Password, setPassword] = useState("");
   const [mensaje, setMensaje] = useState("");
+  const [mostrarPassword, setMostrarPassword] = useState(false);
 
   const iniciarSesion = async (e) => {
     e.preventDefault();
 
-    const response = await LogIn({
-      url: "/login",
-      data: {
-        Correo,
-        Password,
-      },
-    });
+    setMensaje("");
 
-    if (response.status === 200) {
-      navigate("/home");
-    } else {
-      setMensaje("Correo o contraseña incorrectos");
+    try {
+
+     const response = await LogIn({
+  url: "/signIn",
+  data: {
+    Id: Usuario,
+    pass: Password,
+  },
+});
+
+console.log("RESPONSE:", response);
+console.log("RESPONSE.DATA:", response.data);
+console.log("TOKEN:", response.data?.token);
+
+if (response.data?.token) {
+  localStorage.setItem("SECURE", response.data.token);
+}
+
+console.log("LOCAL:", localStorage.getItem("SECURE"));
+
+      if (response.status === 200) {
+
+        localStorage.setItem("TOKEN", response.data.token);
+        localStorage.setItem("ROL", response.data.rolId);
+        localStorage.setItem("USER_ID", response.data.userId);
+
+        switch (response.data.rolId) {
+
+  case 1:
+    console.log("ADMIN");
+    navigate("/home");
+    break;
+
+  case 2:
+    console.log("MAESTRO");
+    navigate("/maestros");
+    break;
+
+  case 3:
+    console.log("PADRE");
+    navigate("/mis-calificaciones");
+    break;
+
+  default:
+    navigate("/");
+    break;
+}
+      } else {
+
+        setMensaje("Usuario o contraseña incorrectos");
+
+      }
+
+    } catch (error) {
+
+      setMensaje("Usuario o contraseña incorrectos");
+
     }
-  };
 
-  return (
+  };
+    return (
     <div className="login-page">
 
       <div className="login-overlay"></div>
@@ -65,11 +111,13 @@ const Login = () => {
         </h1>
 
         <div className="line-title">
+
           <div className="line"></div>
 
           <FaBookOpen className="book-icon" />
 
           <div className="line"></div>
+
         </div>
 
         <h2 className="login-title">
@@ -85,13 +133,13 @@ const Login = () => {
             <FaUser className="input-icon" />
 
             <input
-              type="email"
-              className="login-input"
-              placeholder="Correo"
-              value={Correo}
-              onChange={(e) => setCorreo(e.target.value)}
-              required
-            />
+            type="text"
+            className="login-input"
+            placeholder="Número de identidad"
+            value={Usuario}
+            onChange={(e) => setUsuario(e.target.value)}
+            required
+          />
 
           </div>
 
@@ -102,15 +150,30 @@ const Login = () => {
             <FaLock className="input-icon" />
 
             <input
-              type="password"
+              type={mostrarPassword ? "text" : "password"}
               className="login-input"
               placeholder="Contraseña"
               value={Password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
+                        {mostrarPassword ? (
 
-            <FaEye className="eye-icon" />
+              <FaEyeSlash
+                className="eye-icon"
+                onClick={() => setMostrarPassword(false)}
+                style={{ cursor: "pointer" }}
+              />
+
+            ) : (
+
+              <FaEye
+                className="eye-icon"
+                onClick={() => setMostrarPassword(true)}
+                style={{ cursor: "pointer" }}
+              />
+
+            )}
 
           </div>
 
@@ -125,57 +188,28 @@ const Login = () => {
                 className="form-check-input"
               />
 
-              <label>Recordar contraseña</label>
+              <label>Recordarme</label>
 
             </div>
 
-            <a href="#">
-              ¿Olvidaste tu contraseña?
-            </a>
-
-          </div>
-
-          {/* Roles */}
-
-          <div className="roles">
-
-            <button
-              type="button"
-              className="role admin"
-            >
-              <FaUserShield />
-              <span>Admin</span>
-            </button>
-
-            <button
-              type="button"
-              className="role teacher"
-            >
-              <FaChalkboardTeacher />
-              <span>Profesor</span>
-            </button>
-
-            <button
-              type="button"
-              className="role parent"
-            >
-              <FaUsers />
-              <span>Padres</span>
-            </button>
+            
 
           </div>
 
           {mensaje && (
-            <div className="alert alert-danger mt-2">
-              {mensaje}
-            </div>
-          )}
 
-          <button
+            <div className="alert alert-danger mt-3">
+
+              {mensaje}
+
+            </div>
+
+          )}
+                    <button
             type="submit"
             className="login-btn"
           >
-            <FaSignInAlt />
+            <FaSignInAlt className="me-2" />
             <span>ACCEDER</span>
           </button>
 
@@ -184,7 +218,11 @@ const Login = () => {
       </div>
 
       <div className="secure-text">
+
         <FaShieldAlt />
+
+        <span>Sistema Escolar </span>
+
       </div>
 
     </div>

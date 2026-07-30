@@ -1,13 +1,7 @@
 import { useEduorContext } from "../../context/EduorContext";
-<<<<<<< HEAD
 // Hook del contexto para manejar estado del navbar (abierto, cerrado, fijo, etc.)
 
-import { Link } from "react-router-dom";
-// Permite navegar sin recargar la página
-
-=======
 import { Link, useNavigate } from "react-router-dom";
->>>>>>> origin/Ari
 import React, { useEffect, useRef } from "react";
 import NavigationSection from "./NavigationSection";
 // Componente donde están los links del menú
@@ -28,7 +22,9 @@ const navigate = useNavigate();
 
 const cerrarSesion = () => {
   localStorage.removeItem("SECURE");
-  navigate("/login");
+  localStorage.removeItem("ROL");
+  localStorage.removeItem("USER_ID");
+  navigate("/");
 };
 
   useEffect(() => {
@@ -94,15 +90,6 @@ const cerrarSesion = () => {
             {/* Icono de menú */}
           </button>
         )}
-
-<<<<<<< HEAD
-        {/* Sección de navegación (links) */}
-        <NavigationSection
-          position="ms-auto"
-          btnPosition={false}
-          navRef={navMenuRef}
-        />
-=======
         <div className="d-flex align-items-center ms-auto">
 
   <NavigationSection
@@ -135,7 +122,6 @@ const cerrarSesion = () => {
   </div>
 
 </div>
->>>>>>> origin/Ari
       </div>
     </nav>
   );

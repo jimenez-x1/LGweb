@@ -224,7 +224,7 @@ const [grados, setGrados] = useState([]);
     name="ID_Grado"
     value={form.ID_Grado}
     onChange={handleChange}
-    required
+    
   >
     <option value="">Seleccione un grado</option>
 

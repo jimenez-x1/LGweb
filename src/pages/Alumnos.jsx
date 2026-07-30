@@ -67,147 +67,50 @@ const [busquedaConsulta, setBusquedaConsulta] = useState("");
   };
 
   const handleSubmit = async (e) => {
-<<<<<<< HEAD
-  e.preventDefault();
-
-  try {
-    let res;
-
-    if (editando) {
-      res = await dispatch(
-        fetchers.updateAlumno({
-          url: "/updateAlumno",
-          data: {
-            DNI: idEditar,
-            DNI_Padre: form.DNI_Padre || null,
-            ID_Grado: Number(form.ID_Grado),
-            Nombre: form.Nombre,
-            Apellido: form.Apellido,
-            Fecha_Nacimiento: form.Fecha_Nacimiento,
-            Direccion: form.Direccion,
-            Genero: form.Genero,
-          },
-        })
-      );
-
-      if (res.payload?.error) {
-        throw new Error(
-          res.payload.error.message || "Error al actualizar alumno"
-        );
-      }
-
-      alert("Alumno actualizado correctamente");
-    } else {
-      res = await dispatch(
-        fetchers.insertAlumno({
-          url: "/insertAlumno",
-          data: {
-            DNI: form.DNI,
-            DNI_Padre: form.DNI_Padre || null,
-            ID_Grado: Number(form.ID_Grado),
-            Nombre: form.Nombre,
-            Apellido: form.Apellido,
-            Fecha_Nacimiento: form.Fecha_Nacimiento,
-            Direccion: form.Direccion,
-            Genero: form.Genero,
-          },
-        })
-      );
-
-      if (res.payload?.error) {
-        throw new Error(
-          res.payload.error.message || "Error al registrar alumno"
-        );
-      }
-
-      alert("Alumno registrado correctamente");
-    }
-=======
     e.preventDefault();
-if (!form.Nombre.trim()) {
-  return alert("El nombre es obligatorio");
-}
 
-if (!form.Apellido.trim()) {
-  return alert("El apellido es obligatorio");
-}
-
-if (!form.Direccion.trim()) {
-  return alert("La dirección es obligatoria");
-}
-
-if (!form.Genero) {
-  return alert("Seleccione un género");
-}
-
-if (!form.ID_Grado) {
-  return alert("Seleccione un grado");
-}
-    try {
-      if (editando) {
-        const response = await dispatch(
-  fetchers.insertAlumno({
-    url: "/insertAlumno",
-    data: {
-      ...form,
+    const payloadData = {
+      DNI: editando ? idEditar : form.DNI,
+      DNI_Padre: form.DNI_Padre || null,
       ID_Grado: Number(form.ID_Grado),
-    },
-  })
-);
+      Nombre: form.Nombre,
+      Apellido: form.Apellido,
+      Fecha_Nacimiento: form.Fecha_Nacimiento,
+      Direccion: form.Direccion,
+      Genero: form.Genero,
+    };
 
-if (response?.payload?.error) {
-  const mensaje =
-    response.payload.error?.response?.data?.message ||
-    response.payload.error?.message ||
-    "Error al guardar alumno";
+    const action = editando ? fetchers.updateAlumno : fetchers.insertAlumno;
+    const url = editando ? "/updateAlumno" : "/insertAlumno";
 
-  alert(mensaje);
-  return;
-}
+    const res = await dispatch(
+      action({
+        url,
+        data: payloadData,
+      })
+    ).catch((error) => {
+      console.error("Error:", error);
+      alert("Error al guardar alumno");
+      return null;
+    });
 
-alert("Alumno registrado correctamente");
+    if (!res) return;
 
-      } else {
-        await dispatch(
-          fetchers.insertAlumno({
-            url: "/insertAlumno",
-            data: {
-              ...form,
-              ID_Grado: Number(form.ID_Grado),
-            },
-          })
-        );
-        alert("Alumno registrado correctamente");
-      }
+    if (res.payload?.error) {
+      console.error("Error:", res.payload.error);
+      alert(
+        res.payload.error.message ||
+          (editando ? "Error al actualizar alumno" : "Error al registrar alumno")
+      );
+      return;
+    }
 
-      limpiarFormulario();
-      cargarAlumnos();
-
-    } catch (error) {
-  console.error(error);
-
-  const mensaje =
-    error?.response?.data?.message ||
-    error?.payload?.message ||
-    error?.message;
-
-  if (mensaje === "Ya existe un alumno con ese nombre y apellido") {
-    alert(mensaje);
-  } else {
-    alert("Error al guardar alumno");
-  }
-}
-};
->>>>>>> origin/Ari
-
+    alert(editando ? "Alumno actualizado correctamente" : "Alumno registrado correctamente");
     limpiarFormulario();
     cargarAlumnos();
-  } catch (error) {
-    console.error("Error:", error);
-    alert(error.message || "Error al guardar alumno");
-  }
-};
-const editar = (alumno) => {
+  };
+
+  const editar = (alumno) => {
   setForm({
     ID_Grado: alumno.ID_Grado ? String(alumno.ID_Grado) : "",
     DNI: alumno.DNI || "",
@@ -246,7 +149,6 @@ const editar = (alumno) => {
           url: `/deleteAlumno/${id}`,
         })
       );
-
       alert("Alumno eliminado correctamente");
       cargarAlumnos();
     } catch (error) {
@@ -260,14 +162,7 @@ const editar = (alumno) => {
       (g) => String(g.ID_Grado) === String(alumno.ID_Grado)
     );
 
-    return (
-      gradoEncontrado?.Nombre_Grado ||
-      gradoEncontrado?.Nombre ||
-      alumno.ID_Grado ||
-      "Sin grado"
-    );
-
-    
+    return gradoEncontrado?.Nombre_Grado || gradoEncontrado?.Nombre || alumno.ID_Grado || "Sin grado";
   };
 
   return (
