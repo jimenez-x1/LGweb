@@ -67,69 +67,50 @@ const [busquedaConsulta, setBusquedaConsulta] = useState("");
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  try {
-    let res;
+    const payloadData = {
+      DNI: editando ? idEditar : form.DNI,
+      DNI_Padre: form.DNI_Padre || null,
+      ID_Grado: Number(form.ID_Grado),
+      Nombre: form.Nombre,
+      Apellido: form.Apellido,
+      Fecha_Nacimiento: form.Fecha_Nacimiento,
+      Direccion: form.Direccion,
+      Genero: form.Genero,
+    };
 
-    if (editando) {
-      res = await dispatch(
-        fetchers.updateAlumno({
-          url: "/updateAlumno",
-          data: {
-            DNI: idEditar,
-            DNI_Padre: form.DNI_Padre || null,
-            ID_Grado: Number(form.ID_Grado),
-            Nombre: form.Nombre,
-            Apellido: form.Apellido,
-            Fecha_Nacimiento: form.Fecha_Nacimiento,
-            Direccion: form.Direccion,
-            Genero: form.Genero,
-          },
-        })
+    const action = editando ? fetchers.updateAlumno : fetchers.insertAlumno;
+    const url = editando ? "/updateAlumno" : "/insertAlumno";
+
+    const res = await dispatch(
+      action({
+        url,
+        data: payloadData,
+      })
+    ).catch((error) => {
+      console.error("Error:", error);
+      alert("Error al guardar alumno");
+      return null;
+    });
+
+    if (!res) return;
+
+    if (res.payload?.error) {
+      console.error("Error:", res.payload.error);
+      alert(
+        res.payload.error.message ||
+          (editando ? "Error al actualizar alumno" : "Error al registrar alumno")
       );
-
-      if (res.payload?.error) {
-        throw new Error(
-          res.payload.error.message || "Error al actualizar alumno"
-        );
-      }
-
-      alert("Alumno actualizado correctamente");
-    } else {
-      res = await dispatch(
-        fetchers.insertAlumno({
-          url: "/insertAlumno",
-          data: {
-            DNI: form.DNI,
-            DNI_Padre: form.DNI_Padre || null,
-            ID_Grado: Number(form.ID_Grado),
-            Nombre: form.Nombre,
-            Apellido: form.Apellido,
-            Fecha_Nacimiento: form.Fecha_Nacimiento,
-            Direccion: form.Direccion,
-            Genero: form.Genero,
-          },
-        })
-      );
-
-      if (res.payload?.error) {
-        throw new Error(
-          res.payload.error.message || "Error al registrar alumno"
-        );
-      }
-
-      alert("Alumno registrado correctamente");
+      return;
     }
 
+    alert(editando ? "Alumno actualizado correctamente" : "Alumno registrado correctamente");
     limpiarFormulario();
     cargarAlumnos();
-  } catch (error) {
-    console.error("Error:", error);
-    alert(error.message || "Error al guardar alumno");
-  }
-};
-const editar = (alumno) => {
+  };
+
+  const editar = (alumno) => {
   setForm({
     ID_Grado: alumno.ID_Grado ? String(alumno.ID_Grado) : "",
     DNI: alumno.DNI || "",
@@ -168,7 +149,6 @@ const editar = (alumno) => {
           url: `/deleteAlumno/${id}`,
         })
       );
-
       alert("Alumno eliminado correctamente");
       cargarAlumnos();
     } catch (error) {
@@ -182,14 +162,7 @@ const editar = (alumno) => {
       (g) => String(g.ID_Grado) === String(alumno.ID_Grado)
     );
 
-    return (
-      gradoEncontrado?.Nombre_Grado ||
-      gradoEncontrado?.Nombre ||
-      alumno.ID_Grado ||
-      "Sin grado"
-    );
-
-    
+    return gradoEncontrado?.Nombre_Grado || gradoEncontrado?.Nombre || alumno.ID_Grado || "Sin grado";
   };
 
   return (
@@ -397,8 +370,9 @@ const editar = (alumno) => {
         </div>
       </div>
     </section>
-  );
-};
+    
+    );
+  };
 
 
 export default Alumnos;
