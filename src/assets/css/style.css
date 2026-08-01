@@ -14,7 +14,11 @@ img {
   max-width: 100%;
   height: auto;
   display: block;
+.img{
+    max-width:100%;
+    height:auto;
 }
+
 
 .main_menu {
   background: #ffffff !important;

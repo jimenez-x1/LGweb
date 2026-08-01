@@ -523,7 +523,7 @@ const Calificaciones = () => {
                             <th>Parcial 2</th>
                             <th>Parcial 3</th>
                             <th>Parcial 4</th>
-                            <th>Reposición</th>
+                            <th>Recuperación</th>
                             <th>Promedio</th>
                             <th>Estado</th>
                             <th>Acciones</th>
