@@ -290,7 +290,7 @@ const [busquedaConsulta, setBusquedaConsulta] = useState("");
                     <option value="">Seleccione grado</option>
                     {grados.map((grado) => (
                       <option key={grado.ID_Grado} value={grado.ID_Grado}>
-                        {grado.Nombre_Grado || grado.Nombre}
+                        {grado.Nombre_Grado || grado.Nombre} - {grado.Seccion}
                       </option>
                     ))}
                   </select>
@@ -331,10 +331,9 @@ const [busquedaConsulta, setBusquedaConsulta] = useState("");
                         {alumno.Nombre} {alumno.Apellido}
                       </h3>
                       <p>
-                        <strong>Identidad:</strong> {alumno.Identidad}
+                        <strong>Identidad:</strong> {alumno.DNI}
                       </p>
 
-                      <p><strong>DNI:</strong> {alumno.DNI}</p>
                       <p><strong>Dirección:</strong> {alumno.Direccion}</p>
                       <p><strong>Género:</strong> {alumno.Genero}</p>
                       <p>

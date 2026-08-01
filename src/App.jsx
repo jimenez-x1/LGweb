@@ -34,19 +34,19 @@ function App() {
 
   <Route path="/" element={<Login />} />
 
-<Route
-  path="/home"
-  element={
-    <ProtectedRoute>
-      <Home />
-    </ProtectedRoute>
-  }
-/>
+  <Route
+    path="/home"
+    element={
+      <ProtectedRoute allowedRoles={[1, 2]}>
+        <Home />
+      </ProtectedRoute>
+    }
+  />
 
   <Route
     path="/clase"
     element={
-      <ProtectedRoute>
+      <ProtectedRoute allowedRoles={[1, 2]}>
         <Clase />
       </ProtectedRoute>
     }
@@ -55,7 +55,7 @@ function App() {
   <Route
     path="/alumnos"
     element={
-      <ProtectedRoute>
+      <ProtectedRoute allowedRoles={[1, 2]}>
         <Alumnos />
       </ProtectedRoute>
     }
@@ -64,7 +64,7 @@ function App() {
   <Route
     path="/grado"
     element={
-      <ProtectedRoute>
+      <ProtectedRoute allowedRoles={[1, 2]}>
         <Grado />
       </ProtectedRoute>
     }
@@ -73,7 +73,7 @@ function App() {
   <Route
     path="/maestros"
     element={
-      <ProtectedRoute>
+      <ProtectedRoute allowedRoles={[1, 2]}>
         <Maestros />
       </ProtectedRoute>
     }
@@ -81,7 +81,7 @@ function App() {
   <Route                              
     path="/calificaciones"
     element={
-      <ProtectedRoute>
+      <ProtectedRoute allowedRoles={[1, 2]}>
         <Calificaciones />
       </ProtectedRoute>
     }
@@ -98,7 +98,7 @@ function App() {
   <Route
     path="/registrar-maestro"
     element={
-      <ProtectedRoute>
+      <ProtectedRoute allowedRoles={[1, 2]}>
         <RegistrarMaestro />
       </ProtectedRoute>
     }
@@ -107,7 +107,7 @@ function App() {
   <Route
     path="/editar-maestro/:id"
     element={
-      <ProtectedRoute>
+      <ProtectedRoute allowedRoles={[1, 2]}>
         <EditarMaestro />
       </ProtectedRoute>
     }
@@ -125,7 +125,7 @@ function App() {
   <Route
     path="/registrar-pago"
     element={
-      <ProtectedRoute>
+      <ProtectedRoute allowedRoles={[1, 2]}>
         <RegistrarPago />
       </ProtectedRoute>
     }
@@ -134,7 +134,7 @@ function App() {
   <Route
     path="/registrar-pago/:id"
     element={
-      <ProtectedRoute>
+      <ProtectedRoute allowedRoles={[1, 2]}>
         <RegistrarPago />
       </ProtectedRoute>
     }
@@ -143,7 +143,7 @@ function App() {
   <Route
     path="/padre"
     element={
-      <ProtectedRoute>
+      <ProtectedRoute allowedRoles={[1, 2]}>
         <Padre />
       </ProtectedRoute>
     }

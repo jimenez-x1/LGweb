@@ -84,6 +84,19 @@ const MisCalificaciones = () => {
     }));
   };
 
+  const calcularPromedio = (c) => {
+    const parciales = [
+      c.Parcial1,
+      c.Parcial2,
+      c.Parcial3,
+      c.Parcial4
+    ].filter((valor) => valor !== null && valor !== undefined && valor !== "");
+
+    return parciales.length === 0
+      ? null
+      : parciales.reduce((suma, valor) => suma + Number(valor), 0) / parciales.length;
+  };
+
   const grupos = agruparPorAlumno();
 
   return (
@@ -309,7 +322,8 @@ const MisCalificaciones = () => {
                       <tbody>
                         {grupo.notas.map((c, i) => {
 
-                          const aprobado = c.Promedio >= 60;
+                          const promedio = calcularPromedio(c);
+                          const aprobado = promedio !== null && promedio >= 60;
 
                           return (
                             <tr
@@ -329,7 +343,7 @@ const MisCalificaciones = () => {
                                       : "notas-badge notas-badge-reprobado"
                                   }
                                 >
-                                  {c.Promedio}
+                                  {promedio}
                                 </span>
                               </td>
                             </tr>

@@ -8,12 +8,12 @@ const NavigationSection = () => {
 
   const enlaces = esPadre
     ? [
-        { href: "/mis-calificaciones", label: "Notas" },
+        { href: "/mis-calificaciones", label: "Calificaciones" },
         { href: "/pagos", label: "Pagos" },
         { href: "/archivos", label: "Constancias" }
       ]
     : [
-        { href: "/", label: "Inicio" },
+        { href: "/home", label: "Inicio" },
         { href: "/clase", label: "Clase" },
         { href: "/grado", label: "Grado" },
         { href: "/alumnos", label: "Alumnos" },

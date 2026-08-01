@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 
 const Maestros = () => {
 
   const [maestros, setMaestros] = useState([]);
-   const navigate = useNavigate(); 
 
   useEffect(() => {
     cargarDatos();
@@ -153,11 +152,6 @@ const Maestros = () => {
                       <Link
                         to={`/editar-maestro/${maestro.DNI}`}
                         className="btn btn-warning btn-sm"
-                        onClick={() =>
-                          navigate("/editar-maestro", {
-                            state: { maestro },
-                          })
-                        }
                       >
 
                         Editar

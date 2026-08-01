@@ -443,7 +443,7 @@ const Calificaciones = () => {
                         {grados.map((grado) => (
 
                             <option key={grado.ID_Grado} value={grado.ID_Grado}>
-                                {grado.Nombre_Grado}
+                                {grado.Nombre_Grado} - {grado.Seccion}
                             </option>
 
                         ))}

@@ -233,7 +233,7 @@ const [grados, setGrados] = useState([]);
         key={grado.ID_Grado}
         value={grado.ID_Grado}
       >
-        {grado.Nombre_Grado}
+        {grado.Nombre_Grado} - {grado.Seccion}
       </option>
     ))}
   </select>

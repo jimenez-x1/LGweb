@@ -36,36 +36,22 @@ const Login = () => {
   },
 });
 
-console.log("RESPONSE:", response);
-console.log("RESPONSE.DATA:", response.data);
-console.log("TOKEN:", response.data?.token);
-
-if (response.data?.token) {
-  localStorage.setItem("SECURE", response.data.token);
-}
-
-console.log("LOCAL:", localStorage.getItem("SECURE"));
-
       if (response.status === 200) {
 
-        localStorage.setItem("TOKEN", response.data.token);
         localStorage.setItem("ROL", response.data.rolId);
         localStorage.setItem("USER_ID", response.data.userId);
 
         switch (response.data.rolId) {
 
   case 1:
-    console.log("ADMIN");
     navigate("/home");
     break;
 
   case 2:
-    console.log("MAESTRO");
     navigate("/maestros");
     break;
 
   case 3:
-    console.log("PADRE");
     navigate("/mis-calificaciones");
     break;
 

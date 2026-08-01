@@ -19,7 +19,12 @@ const AlumnoAutocomplete = ({ onSelect }) => {
             try {
 
                 const res = await axios.get(
-                    `http://localhost:3000/api/buscar?texto=${texto}`
+                    `http://localhost:3000/api/buscar?texto=${texto}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem("SECURE")}`,
+                        },
+                    }
                 );
 
                 setResultados(res.data);
