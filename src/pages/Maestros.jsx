@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 
 const Maestros = () => {
@@ -14,10 +14,19 @@ const Maestros = () => {
 
     try {
 
-      const res = await fetch("http://localhost:3000/api/maestros");
+      const res = await fetch("http://localhost:3000/api/maestros", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("SECURE")}`,
+        },
+      });
       const data = await res.json();
 
-      setMaestros(data ?? []);
+      if (res.ok && Array.isArray(data)) {      
+        setMaestros(data);                       
+      } else {
+        console.error("Error al cargar maestros:", data.message);
+        setMaestros([]);
+      }
 
     } catch (error) {
 
@@ -143,11 +152,6 @@ const Maestros = () => {
                       <Link
                         to={`/editar-maestro/${maestro.DNI}`}
                         className="btn btn-warning btn-sm"
-                        onClick={() =>
-                          navigate("/editar-maestro", {
-                            state: { maestro },
-                          })
-                        }
                       >
 
                         Editar

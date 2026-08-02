@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 const EditarMaestro = () => {
-  const location = useLocation();
   const navigate = useNavigate();
-
-  const maestroRecibido = location.state?.maestro;
+  const { id } = useParams();
 
   const [form, setForm] = useState({
     DNI: "",
@@ -13,17 +11,30 @@ const EditarMaestro = () => {
     Apellido: "",
     Telefono: "",
     Correo: "",
+    Cargo: "",
     ID_Grado: "",
   });
 
   const [grados, setGrados] = useState([]);
 
   useEffect(() => {
+    if (!id) return;
+
     fetch("http://localhost:3000/api/maestros")
       .then((res) => res.json())
       .then((data) => {
-        const maestro = (data ?? []).find((m) => m.DNI === parseInt(id));
-        if (maestro) setForm(maestro);
+        const maestro = (data ?? []).find((m) => m.DNI === id);
+        if (maestro) {
+          setForm({
+            DNI: maestro.DNI,
+            Nombre: maestro.Nombre,
+            Apellido: maestro.Apellido,
+            Telefono: maestro.Telefono || "",
+            Correo: maestro.Correo || "",
+            Cargo: maestro.Cargo || "Docente",
+            ID_Grado: maestro.Grados?.[0]?.ID_Grado || "",
+          });
+        }
       })
       .catch((error) => console.error(error));
 
@@ -31,7 +42,7 @@ const EditarMaestro = () => {
       .then((res) => res.json())
       .then((data) => setGrados(data ?? []))
       .catch((error) => console.error(error));
-  }, [maestroRecibido, navigate]);
+  }, [id]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -144,7 +155,7 @@ const EditarMaestro = () => {
                     <option value="">Seleccione un grado</option>
                     {grados.map((g) => (
                       <option key={g.ID_Grado} value={g.ID_Grado}>
-                        {g.Nombre_Grado}
+                        {g.Nombre_Grado} - {g.Seccion}
                       </option>
                     ))}
                   </select>

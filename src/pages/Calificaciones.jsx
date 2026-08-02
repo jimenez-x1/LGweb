@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "../store";
+import axios from "axios";
 
 import calificacionFetchers from "../store/slices/Calificaciones/fetchers";
 import gradoFetchers from "../store/slices/Grado/fetchers";
@@ -109,7 +110,6 @@ const Calificaciones = () => {
     // Cargar clases del grado
     // ============================
 
-    // NOTA: el método correcto es getClases (confirmado en fetchers.ts), no getGradoClase
     const cargarClases = () => {
 
         setCargandoClases(true);
@@ -247,7 +247,6 @@ const Calificaciones = () => {
 
     const cambiarNota = (dni, parcial, valor) => {
 
-        // No permitir valores fuera de rango 0-100
         if (valor !== "" && (Number(valor) < 0 || Number(valor) > 100)) {
 
             return;
@@ -401,6 +400,36 @@ const Calificaciones = () => {
     };
 
     // ============================
+    // Generar boletín individual (un alumno por PDF)
+    // ============================
+
+    const generarBoletin = async (alumno) => {
+
+        try {
+
+            const response = await axios.get(
+                `http://localhost:3000/api/alumno/${alumno.DNI}/boletin`,
+                { responseType: "blob" }
+            );
+
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download", `boletin_${alumno.DNI}.pdf`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+
+        } catch (error) {
+
+            console.error(error);
+            alert("Error al generar el boletín");
+
+        }
+
+    };
+
+    // ============================
     // Filtrado por búsqueda
     // ============================
     const alumnosFiltrados = alumnos.filter((alumno) => {
@@ -443,7 +472,7 @@ const Calificaciones = () => {
                         {grados.map((grado) => (
 
                             <option key={grado.ID_Grado} value={grado.ID_Grado}>
-                                {grado.Nombre_Grado}
+                                {grado.Nombre_Grado} - {grado.Seccion}
                             </option>
 
                         ))}
@@ -688,6 +717,13 @@ const Calificaciones = () => {
                     </td>
 
                     <td>
+                        <button
+                            className="btn btn-sm btn-outline-primary me-2"
+                            onClick={() => generarBoletin(alumno)}
+                        >
+                            Boletín
+                        </button>
+
                         <button
                             className="btn btn-sm btn-outline-danger"
                             onClick={() => eliminarCalificacion(alumno)}

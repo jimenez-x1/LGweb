@@ -1,6 +1,7 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 
-import NavbarSection from "./components/navbar/NavbarSection.jsx";
+import ProtectedRoute from "./components/ProtectedRoute";
+import NavbarSection from "./components/navbar/NavbarSection";
 
 import Home from "./pages/Home";
 import Clase from "./pages/Clase";
@@ -11,36 +12,151 @@ import RegistrarMaestro from "./pages/RegistrarMaestro";
 import EditarMaestro from "./pages/EditarMaestro";
 import Pagos from "./pages/Pagos";
 import RegistrarPago from "./pages/RegistrarPago";
-import Calificaciones from "./pages/Calificaciones";
 import Padre from "./pages/Padre";
 import Archivos from "./pages/Archivos";
+import Login from "./pages/Login";
+import Calificaciones from "./pages/Calificaciones";
+import MisCalificaciones from "./pages/MisCalificaciones";
+
 
 function App() {
+  const location = useLocation();
+
   return (
     <>
-      <NavbarSection style="" logo="/images/logo-escuela-luis-gamero.png" />
-
+     {location.pathname !== "/" && (
+  <NavbarSection
+    style=""
+    logo="/images/logo-escuela-luis-gamero.png"
+  />
+)}
       <Routes>
-        <Route path="/" element={<Home />} />
 
-        <Route path="/clase" element={<Clase />} />
-        <Route path="/alumnos" element={<Alumnos />} />
-        <Route path="/grado" element={<Grado />} />
-        <Route path="/maestros" element={<Maestros />} />
+  <Route path="/" element={<Login />} />
 
-        <Route path="/registrar-maestro" element={<RegistrarMaestro />} />
-        <Route path="/editar-maestro" element={<EditarMaestro />} />
+  <Route
+    path="/home"
+    element={
+      <ProtectedRoute allowedRoles={[1, 2]}>
+        <Home />
+      </ProtectedRoute>
+    }
+  />
 
-        <Route path="/pagos" element={<Pagos />} />
+  <Route
+    path="/clase"
+    element={
+      <ProtectedRoute allowedRoles={[1, 2]}>
+        <Clase />
+      </ProtectedRoute>
+    }
+  />
 
-        <Route path="/calificaciones" element={<Calificaciones />} />
+  <Route
+    path="/alumnos"
+    element={
+      <ProtectedRoute allowedRoles={[1, 2]}>
+        <Alumnos />
+      </ProtectedRoute>
+    }
+  />
 
-        <Route path="/registrar-pago" element={<RegistrarPago />} />
-        <Route path="/registrar-pago/:id" element={<RegistrarPago />} />
-        
+  <Route
+    path="/grado"
+    element={
+      <ProtectedRoute allowedRoles={[1, 2]}>
+        <Grado />
+      </ProtectedRoute>
+    }
+  />
 
-        <Route path="/padre" element={<Padre />} />
-        <Route path="/archivos" element={<Archivos />} />
+  <Route
+    path="/maestros"
+    element={
+      <ProtectedRoute allowedRoles={[1, 2]}>
+        <Maestros />
+      </ProtectedRoute>
+    }
+  />
+  <Route                              
+    path="/calificaciones"
+    element={
+      <ProtectedRoute allowedRoles={[1, 2]}>
+        <Calificaciones />
+      </ProtectedRoute>
+    }
+  />
+  <Route
+    path="/mis-calificaciones"
+    element={
+      <ProtectedRoute allowedRoles={[3]}>
+        <MisCalificaciones />
+      </ProtectedRoute>
+    }
+  />
+
+  <Route
+    path="/registrar-maestro"
+    element={
+      <ProtectedRoute allowedRoles={[1, 2]}>
+        <RegistrarMaestro />
+      </ProtectedRoute>
+    }
+  />
+
+  <Route
+    path="/editar-maestro/:id"
+    element={
+      <ProtectedRoute allowedRoles={[1, 2]}>
+        <EditarMaestro />
+      </ProtectedRoute>
+    }
+  />
+
+  <Route
+    path="/pagos"
+    element={
+      <ProtectedRoute>
+        <Pagos />
+      </ProtectedRoute>
+    }
+  />
+
+  <Route
+    path="/registrar-pago"
+    element={
+      <ProtectedRoute allowedRoles={[1, 2]}>
+        <RegistrarPago />
+      </ProtectedRoute>
+    }
+  />
+
+  <Route
+    path="/registrar-pago/:id"
+    element={
+      <ProtectedRoute allowedRoles={[1, 2]}>
+        <RegistrarPago />
+      </ProtectedRoute>
+    }
+  />
+
+  <Route
+    path="/padre"
+    element={
+      <ProtectedRoute allowedRoles={[1, 2]}>
+        <Padre />
+      </ProtectedRoute>
+    }
+  />
+
+  <Route
+    path="/archivos"
+    element={
+      <ProtectedRoute>
+        <Archivos />
+      </ProtectedRoute>
+    }
+  />
       </Routes>
     </>
   );

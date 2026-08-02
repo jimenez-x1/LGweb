@@ -1,56 +1,22 @@
-import { useEduorContext } from "../../context/EduorContext";
-// Hook del contexto para manejar estado del navbar (abierto, cerrado, fijo, etc.)
-
-import { Link } from "react-router-dom";
-// Permite navegar sin recargar la página
-
-import React, { useEffect, useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import React from "react";
 import NavigationSection from "./NavigationSection";
-// Componente donde están los links del menú
 
 const NavbarSection = ({ style, logo }) => {
-  const {
-    isHeaderFixed, // Indica si el navbar está fijo al hacer scroll
-    handleMobileNavOpen, // Abre menú en móvil
-    isMobileNavOpen, // Estado del menú móvil
-    handleMobileNavClose, // Cierra menú móvil
-    setIsMobileNavOpen, // Cambia estado del menú móvil
-  } = useEduorContext();
 
-  const navMenuRef = useRef(null); 
-  // Referencia al navbar para detectar clics fuera de él
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      // Si se hace clic fuera del menú y está abierto, lo cierra
-      if (
-        navMenuRef.current &&
-        !navMenuRef.current.contains(event.target) &&
-        isMobileNavOpen
-      ) {
-        setIsMobileNavOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      // Limpia el evento al desmontar el componente
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isMobileNavOpen, setIsMobileNavOpen]);
+  const cerrarSesion = () => {
+    localStorage.removeItem("SECURE");
+    localStorage.removeItem("ROL");
+    localStorage.removeItem("USER_ID");
+    navigate("/");
+  };
 
   return (
-    <nav
-      className={`navbar navbar-expand-lg main_menu ${style} ${
-        isHeaderFixed ? "menu_fix" : ""
-      }`}
-      // Aplica clase extra si el navbar está fijo
-      ref={navMenuRef}
-    >
+    <nav className={`navbar navbar-expand-lg main_menu ${style}`}>
       <div className="container-fluid custom-navbar-container">
 
-        {/* Logo y nombre de la escuela */}
         <Link className="navbar-brand custom-brand" to="/">
           <img
             src={logo}
@@ -63,33 +29,57 @@ const NavbarSection = ({ style, logo }) => {
           </div>
         </Link>
 
-        {/* Botón de menú en móvil */}
-        {isMobileNavOpen ? (
-          <button
-            className="navbar-toggler"
-            type="button"
-            onClick={handleMobileNavClose}
-          >
-            <i className="fa fa-times close_icon"></i>
-            {/* Icono de cerrar */}
-          </button>
-        ) : (
-          <button
-            className="navbar-toggler"
-            type="button"
-            onClick={handleMobileNavOpen}
-          >
-            <i className="fa fa-bars menu_icon"></i>
-            {/* Icono de menú */}
-          </button>
-        )}
+      <div
+          className="dropdown"
+          style={{
+            position: "absolute",
+            top: "20px",
+            right: "40px"
+          }}
+        >
 
-        {/* Sección de navegación (links) */}
-        <NavigationSection
-          position="ms-auto"
-          btnPosition={false}
-          navRef={navMenuRef}
-        />
+          <button
+            className="btn btn-primary rounded-circle"
+            type="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            style={{
+              width: "42px",
+              height: "42px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: 0
+            }}
+          >
+            <i className="fa fa-bars"></i>
+          </button>
+
+          <ul
+            className="dropdown-menu dropdown-menu-end"
+            style={{ minWidth: "220px" }}
+          >
+
+            <NavigationSection />
+
+            <li>
+              <hr className="dropdown-divider" />
+            </li>
+
+            <li>
+              <button
+                className="dropdown-item text-danger"
+                onClick={cerrarSesion}
+              >
+                <i className="fas fa-sign-out-alt me-2"></i>
+                Cerrar sesión
+              </button>
+            </li>
+
+          </ul>
+
+        </div>
+
       </div>
     </nav>
   );

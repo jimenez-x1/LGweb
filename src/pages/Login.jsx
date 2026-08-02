@@ -1,77 +1,216 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LogIn } from "../utilities/Utilities";
+import "../assets/css/login.css";
+
+import {
+  FaUser,
+  FaLock,
+  FaEye,
+  FaEyeSlash,
+  FaSignInAlt,
+  FaShieldAlt,
+  FaBookOpen,
+} from "react-icons/fa";
 
 const Login = () => {
   const navigate = useNavigate();
 
-  const [Correo, setCorreo] = useState("");
+  const [Usuario, setUsuario] = useState("");
   const [Password, setPassword] = useState("");
   const [mensaje, setMensaje] = useState("");
+  const [mostrarPassword, setMostrarPassword] = useState(false);
 
   const iniciarSesion = async (e) => {
     e.preventDefault();
 
-    const response = await LogIn({
-      url: "/login",
-      data: {
-        Correo,
-        Password,
-      },
-    });
+    setMensaje("");
 
-    if (response.status === 200) {
-      navigate("/");
-    } else {
-      setMensaje("Correo o contraseña incorrectos");
+    try {
+
+     const response = await LogIn({
+  url: "/signIn",
+  data: {
+    Id: Usuario,
+    pass: Password,
+  },
+});
+
+      if (response.status === 200) {
+
+        localStorage.setItem("ROL", response.data.rolId);
+        localStorage.setItem("USER_ID", response.data.userId);
+
+        switch (response.data.rolId) {
+
+  case 1:
+    navigate("/home");
+    break;
+
+  case 2:
+    navigate("/maestros");
+    break;
+
+  case 3:
+    navigate("/mis-calificaciones");
+    break;
+
+  default:
+    navigate("/");
+    break;
+}
+      } else {
+
+        setMensaje("Usuario o contraseña incorrectos");
+
+      }
+
+    } catch (error) {
+
+      setMensaje("Usuario o contraseña incorrectos");
+
     }
+
   };
+    return (
+    <div className="login-page">
 
-  return (
-    <div className="container mt-5">
-      <div className="row justify-content-center">
-        <div className="col-md-4">
+      <div className="login-overlay"></div>
 
-          <h2 className="text-center mb-4">Iniciar Sesión</h2>
+      <div className="circle circle-left"></div>
+      <div className="circle circle-right"></div>
 
-          <form onSubmit={iniciarSesion}>
+      <div className="login-card">
 
-            <div className="mb-3">
-              <label>Correo</label>
-              <input
-                type="email"
-                className="form-control"
-                value={Correo}
-                onChange={(e) => setCorreo(e.target.value)}
-                required
-              />
-            </div>
+        <img
+          src="/images/logologin.png"
+          alt="Logo"
+          className="login-logo"
+        />
 
-            <div className="mb-3">
-              <label>Contraseña</label>
-              <input
-                type="password"
-                className="form-control"
-                value={Password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
+        <h5 className="school-title">
+          ESCUELA
+        </h5>
 
-            {mensaje && (
-              <div className="alert alert-danger">
-                {mensaje}
-              </div>
-            )}
+        <h1 className="school-name">
+          LUIS GAMERO
+        </h1>
 
-            <button className="btn btn-primary w-100">
-              Iniciar Sesión
-            </button>
+        <div className="line-title">
 
-          </form>
+          <div className="line"></div>
+
+          <FaBookOpen className="book-icon" />
+
+          <div className="line"></div>
 
         </div>
+
+        <h2 className="login-title">
+          Iniciar sesión
+        </h2>
+
+        <form onSubmit={iniciarSesion}>
+
+          {/* Usuario */}
+
+          <div className="input-box">
+
+            <FaUser className="input-icon" />
+
+            <input
+            type="text"
+            className="login-input"
+            placeholder="Número de identidad"
+            value={Usuario}
+            onChange={(e) => setUsuario(e.target.value)}
+            required
+          />
+
+          </div>
+
+          {/* Contraseña */}
+
+          <div className="input-box">
+
+            <FaLock className="input-icon" />
+
+            <input
+              type={mostrarPassword ? "text" : "password"}
+              className="login-input"
+              placeholder="Contraseña"
+              value={Password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+                        {mostrarPassword ? (
+
+              <FaEyeSlash
+                className="eye-icon"
+                onClick={() => setMostrarPassword(false)}
+                style={{ cursor: "pointer" }}
+              />
+
+            ) : (
+
+              <FaEye
+                className="eye-icon"
+                onClick={() => setMostrarPassword(true)}
+                style={{ cursor: "pointer" }}
+              />
+
+            )}
+
+          </div>
+
+          {/* Opciones */}
+
+          <div className="options">
+
+            <div className="remember-me">
+
+              <input
+                type="checkbox"
+                className="form-check-input"
+              />
+
+              <label>Recordarme</label>
+
+            </div>
+
+            
+
+          </div>
+
+          {mensaje && (
+
+            <div className="alert alert-danger mt-3">
+
+              {mensaje}
+
+            </div>
+
+          )}
+                    <button
+            type="submit"
+            className="login-btn"
+          >
+            <FaSignInAlt className="me-2" />
+            <span>ACCEDER</span>
+          </button>
+
+        </form>
+
       </div>
+
+      <div className="secure-text">
+
+        <FaShieldAlt />
+
+        <span>Sistema Escolar </span>
+
+      </div>
+
     </div>
   );
 };

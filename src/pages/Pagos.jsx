@@ -5,17 +5,23 @@ import axios from "axios";
 const Pagos = () => {
   const [pagos, setPagos] = useState([]);
 
-  // Trae todos los pagos
+  const esPadre = Number(localStorage.getItem("ROL")) === 3;
+
+  // Trae los pagos (todos para admin/maestro, solo los de sus hijos para el padre)
   const getPagos = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/api/pagos");
+      const dni = localStorage.getItem("USER_ID");
+      const url = esPadre
+        ? `http://localhost:3000/api/pagos/padre/${dni}`
+        : "http://localhost:3000/api/pagos";
+      const res = await axios.get(url);
       setPagos(res.data);
     } catch (error) {
       console.error("Error al obtener pagos:", error);
     }
   };
 
-  // Elimina un pago
+  // Elimina un pago (solo admin/maestro)
   const deletePago = async (id) => {
     const confirmar = window.confirm("¿Seguro que quieres eliminar este pago?");
     if (!confirmar) return;
@@ -58,7 +64,7 @@ const Pagos = () => {
                     <th>Referencia</th>
                     <th>Fecha</th>
                     <th>Comprobante</th>
-                    <th>Acciones</th>
+                    {!esPadre && <th>Acciones</th>}
                   </tr>
                 </thead>
 
@@ -91,14 +97,16 @@ const Pagos = () => {
                         )}
                       </td>
 
-                      <td>
-                        <button
-                          className="btn btn-danger btn-sm"
-                          onClick={() => deletePago(pago.ID_Pagos)}
-                        >
-                          Eliminar
-                        </button>
-                      </td>
+                      {!esPadre && (
+                        <td>
+                          <button
+                            className="btn btn-danger btn-sm"
+                            onClick={() => deletePago(pago.ID_Pagos)}
+                          >
+                            Eliminar
+                          </button>
+                        </td>
+                      )}
                     </tr>
                   ))}
                 </tbody>
@@ -107,11 +115,13 @@ const Pagos = () => {
             </div>
           )}
 
-          <div className="mt-4">
-            <Link to="/registrar-pago" className="btn btn-primary">
-              Registrar Pago
-            </Link>
-          </div>
+          {!esPadre && (
+            <div className="mt-4">
+              <Link to="/registrar-pago" className="btn btn-primary">
+                Registrar Pago
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </section>
