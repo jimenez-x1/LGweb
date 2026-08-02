@@ -59,10 +59,10 @@ console.log("LOCAL:", localStorage.getItem("SECURE"));
     navigate("/home");
     break;
 
-  case 2:
-    console.log("MAESTRO");
-    navigate("/maestros");
-    break;
+case 2:
+  console.log("MAESTRO");
+  navigate("/panel-maestro");
+  break;
 
   case 3:
     console.log("PADRE");

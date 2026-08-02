@@ -17,6 +17,9 @@ import Archivos from "./pages/Archivos";
 import Login from "./pages/Login";
 import Calificaciones from "./pages/Calificaciones";
 import MisCalificaciones from "./pages/MisCalificaciones";
+import PanelMaestro from "./pages/PanelMaestro";
+import MisAlumnos from "./pages/MisAlumnos";
+import MisNotas from "./pages/MisNotas";
 
 
 function App() {
@@ -42,7 +45,30 @@ function App() {
     </ProtectedRoute>
   }
 />
-
+<Route
+  path="/panel-maestro"
+  element={
+    <ProtectedRoute>
+      <PanelMaestro />
+    </ProtectedRoute>
+  }
+/>
+<Route
+  path="/mis-alumnos"
+  element={
+    <ProtectedRoute allowedRoles={[2]}>
+      <MisAlumnos />
+    </ProtectedRoute>
+  }
+/>
+<Route
+  path="/mis-notas"
+  element={
+    <ProtectedRoute allowedRoles={[2]}>
+      <MisNotas />
+    </ProtectedRoute>
+  }
+/>
   <Route
     path="/clase"
     element={

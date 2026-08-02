@@ -5,6 +5,7 @@ const NavigationSection = () => {
 
   const rol = Number(localStorage.getItem("ROL"));
   const esPadre = rol === 3;
+  const esMaestro = rol === 2;
 
   const enlaces = esPadre
     ? [
@@ -12,6 +13,12 @@ const NavigationSection = () => {
         { href: "/pagos", label: "Pagos" },
         { href: "/archivos", label: "Constancias" }
       ]
+      : esMaestro
+? [
+    { href: "/panel-maestro", label: "Panel" },
+    { href: "/mis-alumnos", label: "Mis alumnos" },
+   { href: "/mis-notas", label: "Notas" }
+  ]
     : [
         { href: "/", label: "Inicio" },
         { href: "/clase", label: "Clase" },
