@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 
 const Maestros = () => {
 
   const [maestros, setMaestros] = useState([]);
+   const navigate = useNavigate(); 
+   const rol = Number(localStorage.getItem("ROL"));
+const esAdministrador = rol === 1;
 
   useEffect(() => {
     cargarDatos();
@@ -91,18 +94,16 @@ const Maestros = () => {
 
         </div>
 
-        <div className="d-flex justify-content-end mb_20">
-
-          <Link
-            to="/registrar-maestro"
-            className="btn btn-primary"
-          >
-
-            + Registrar Maestro
-
-          </Link>
-
-        </div>
+       {esAdministrador && (
+  <div className="d-flex justify-content-end mb_20">
+    <Link
+      to="/registrar-maestro"
+      className="btn btn-primary"
+    >
+      + Registrar Maestro
+    </Link>
+  </div>
+)}
 
         <div className="row">
 
@@ -147,29 +148,32 @@ const Maestros = () => {
                       {maestro.Correo || "—"}
                     </p>
 
-                    <div className="d-flex gap-2 mt-3">
+                  {esAdministrador && (
+  <div className="d-flex gap-2 mt-3">
 
-                      <Link
-                        to={`/editar-maestro/${maestro.DNI}`}
-                        className="btn btn-warning btn-sm"
-                      >
+    <Link
+      to={`/editar-maestro/${maestro.DNI}`}
+      className="btn btn-warning btn-sm"
+      onClick={() =>
+        navigate("/editar-maestro", {
+          state: { maestro },
+        })
+      }
+    >
+      Editar
+    </Link>
 
-                        Editar
+    <button
+      className="btn btn-danger btn-sm"
+      onClick={() =>
+        handleEliminar(maestro.DNI)
+      }
+    >
+      Eliminar
+    </button>
 
-                      </Link>
-
-                      <button
-                        className="btn btn-danger btn-sm"
-                        onClick={() =>
-                          handleEliminar(maestro.DNI)
-                        }
-                      >
-
-                        Eliminar
-
-                      </button>
-
-                    </div>
+  </div>
+)}
 
                   </div>
 

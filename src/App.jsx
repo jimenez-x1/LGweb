@@ -17,6 +17,9 @@ import Archivos from "./pages/Archivos";
 import Login from "./pages/Login";
 import Calificaciones from "./pages/Calificaciones";
 import MisCalificaciones from "./pages/MisCalificaciones";
+import PanelMaestro from "./pages/PanelMaestro";
+import MisAlumnos from "./pages/MisAlumnos";
+import MisNotas from "./pages/MisNotas";
 
 
 function App() {
@@ -34,19 +37,42 @@ function App() {
 
   <Route path="/" element={<Login />} />
 
-  <Route
-    path="/home"
-    element={
-      <ProtectedRoute allowedRoles={[1, 2]}>
-        <Home />
-      </ProtectedRoute>
-    }
-  />
-
+<Route
+  path="/home"
+  element={
+    <ProtectedRoute>
+      <Home />
+    </ProtectedRoute>
+  }
+/>
+<Route
+  path="/panel-maestro"
+  element={
+    <ProtectedRoute>
+      <PanelMaestro />
+    </ProtectedRoute>
+  }
+/>
+<Route
+  path="/mis-alumnos"
+  element={
+    <ProtectedRoute allowedRoles={[2]}>
+      <MisAlumnos />
+    </ProtectedRoute>
+  }
+/>
+<Route
+  path="/mis-notas"
+  element={
+    <ProtectedRoute allowedRoles={[2]}>
+      <MisNotas />
+    </ProtectedRoute>
+  }
+/>
   <Route
     path="/clase"
     element={
-      <ProtectedRoute allowedRoles={[1, 2]}>
+      <ProtectedRoute>
         <Clase />
       </ProtectedRoute>
     }
@@ -55,7 +81,7 @@ function App() {
   <Route
     path="/alumnos"
     element={
-      <ProtectedRoute allowedRoles={[1, 2]}>
+      <ProtectedRoute>
         <Alumnos />
       </ProtectedRoute>
     }
@@ -64,7 +90,7 @@ function App() {
   <Route
     path="/grado"
     element={
-      <ProtectedRoute allowedRoles={[1, 2]}>
+      <ProtectedRoute>
         <Grado />
       </ProtectedRoute>
     }
@@ -73,7 +99,7 @@ function App() {
   <Route
     path="/maestros"
     element={
-      <ProtectedRoute allowedRoles={[1, 2]}>
+      <ProtectedRoute>
         <Maestros />
       </ProtectedRoute>
     }
@@ -81,7 +107,7 @@ function App() {
   <Route                              
     path="/calificaciones"
     element={
-      <ProtectedRoute allowedRoles={[1, 2]}>
+      <ProtectedRoute>
         <Calificaciones />
       </ProtectedRoute>
     }
@@ -98,7 +124,7 @@ function App() {
   <Route
     path="/registrar-maestro"
     element={
-      <ProtectedRoute allowedRoles={[1, 2]}>
+      <ProtectedRoute>
         <RegistrarMaestro />
       </ProtectedRoute>
     }
@@ -107,7 +133,7 @@ function App() {
   <Route
     path="/editar-maestro/:id"
     element={
-      <ProtectedRoute allowedRoles={[1, 2]}>
+      <ProtectedRoute>
         <EditarMaestro />
       </ProtectedRoute>
     }
@@ -125,7 +151,7 @@ function App() {
   <Route
     path="/registrar-pago"
     element={
-      <ProtectedRoute allowedRoles={[1, 2]}>
+      <ProtectedRoute>
         <RegistrarPago />
       </ProtectedRoute>
     }
@@ -134,7 +160,7 @@ function App() {
   <Route
     path="/registrar-pago/:id"
     element={
-      <ProtectedRoute allowedRoles={[1, 2]}>
+      <ProtectedRoute>
         <RegistrarPago />
       </ProtectedRoute>
     }
@@ -143,7 +169,7 @@ function App() {
   <Route
     path="/padre"
     element={
-      <ProtectedRoute allowedRoles={[1, 2]}>
+      <ProtectedRoute>
         <Padre />
       </ProtectedRoute>
     }
