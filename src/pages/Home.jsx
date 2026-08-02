@@ -15,20 +15,18 @@ const Home = () => {
       .catch((error) => console.error(error));
   }, [dispatch]);
 
-
-  const obtenerNombreGrado = (idGrado) => {
-    // Convierte el ID del grado en un nombre
-    const grados = {
-      1: "Primero",
-      4: "Segundo",
-      6: "Tercero",
-      8: "Cuarto",
-      10: "Quinto",
-      12: "Sexto",
-    };
-
-    return grados[idGrado] || idGrado; // Si no encuentra, devuelve el ID
+const obtenerNombreGrado = (idGrado) => {
+  const grados = {
+    1: "Primero",
+    2: "Segundo",
+    3: "Tercero",
+    4: "Cuarto",
+    5: "Quinto",
+    6: "Sexto",
   };
+
+  return grados[idGrado] || "";
+};
 
   const totalAlumnos = alumnos.length; // Cantidad total de alumnos
 
