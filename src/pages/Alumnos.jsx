@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useDispatch } from "../store";
 import fetchers from "../store/slices/Alumnos/fetchers";
+import PadreAutocomplete from "../components/work/PadreAutocomplete";
 
 const Alumnos = () => {
   const dispatch = useDispatch();
@@ -10,7 +11,10 @@ const Alumnos = () => {
   const [grados, setGrados] = useState([]);
   const [editando, setEditando] = useState(false);
   const [idEditar, setIdEditar] = useState(null);
-
+  const [vista, setVista] = useState("formulario"); //Tesly prueba 
+  const [gradoConsulta, setGradoConsulta] = useState("");
+  const [padreEditar, setPadreEditar] = useState(null);
+const [busquedaConsulta, setBusquedaConsulta] = useState("");
   const [form, setForm] = useState({
   DNI: "",
   DNI_Padre: "",
@@ -63,70 +67,50 @@ const Alumnos = () => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  try {
-    let res;
+    const payloadData = {
+      DNI: editando ? idEditar : form.DNI,
+      DNI_Padre: form.DNI_Padre || null,
+      ID_Grado: Number(form.ID_Grado),
+      Nombre: form.Nombre,
+      Apellido: form.Apellido,
+      Fecha_Nacimiento: form.Fecha_Nacimiento,
+      Direccion: form.Direccion,
+      Genero: form.Genero,
+    };
 
-    if (editando) {
-      res = await dispatch(
-        fetchers.updateAlumno({
-          url: "/updateAlumno",
-          data: {
-            DNI: idEditar,
-            DNI_Padre: form.DNI_Padre || null,
-            ID_Grado: Number(form.ID_Grado),
-            Nombre: form.Nombre,
-            Apellido: form.Apellido,
-            Fecha_Nacimiento: form.Fecha_Nacimiento,
-            Direccion: form.Direccion,
-            Genero: form.Genero,
-          },
-        })
+    const action = editando ? fetchers.updateAlumno : fetchers.insertAlumno;
+    const url = editando ? "/updateAlumno" : "/insertAlumno";
+
+    const res = await dispatch(
+      action({
+        url,
+        data: payloadData,
+      })
+    ).catch((error) => {
+      console.error("Error:", error);
+      alert("Error al guardar alumno");
+      return null;
+    });
+
+    if (!res) return;
+
+    if (res.payload?.error) {
+      console.error("Error:", res.payload.error);
+      alert(
+        res.payload.error.message ||
+          (editando ? "Error al actualizar alumno" : "Error al registrar alumno")
       );
-
-      if (res.payload?.error) {
-        throw new Error(
-          res.payload.error.message || "Error al actualizar alumno"
-        );
-      }
-
-      alert("Alumno actualizado correctamente");
-    } else {
-      res = await dispatch(
-        fetchers.insertAlumno({
-          url: "/insertAlumno",
-          data: {
-            DNI: form.DNI,
-            DNI_Padre: form.DNI_Padre || null,
-            ID_Grado: Number(form.ID_Grado),
-            Nombre: form.Nombre,
-            Apellido: form.Apellido,
-            Fecha_Nacimiento: form.Fecha_Nacimiento,
-            Direccion: form.Direccion,
-            Genero: form.Genero,
-          },
-        })
-      );
-
-      if (res.payload?.error) {
-        throw new Error(
-          res.payload.error.message || "Error al registrar alumno"
-        );
-      }
-
-      alert("Alumno registrado correctamente");
+      return;
     }
 
+    alert(editando ? "Alumno actualizado correctamente" : "Alumno registrado correctamente");
     limpiarFormulario();
     cargarAlumnos();
-  } catch (error) {
-    console.error("Error:", error);
-    alert(error.message || "Error al guardar alumno");
-  }
-};
+  };
 
- const editar = (alumno) => {
+  const editar = (alumno) => {
   setForm({
     ID_Grado: alumno.ID_Grado ? String(alumno.ID_Grado) : "",
     DNI: alumno.DNI || "",
@@ -140,6 +124,8 @@ const Alumnos = () => {
     Genero: alumno.Genero || "",
   });
 
+  setPadreEditar(alumno.Padre || null);
+
   setEditando(true);
   setIdEditar(alumno.DNI);
 
@@ -151,6 +137,8 @@ const Alumnos = () => {
   }, 100);
 };
 
+
+
   const eliminar = async (id) => {
     const confirmar = window.confirm("¿Eliminar este alumno?");
     if (!confirmar) return;
@@ -161,7 +149,6 @@ const Alumnos = () => {
           url: `/deleteAlumno/${id}`,
         })
       );
-
       alert("Alumno eliminado correctamente");
       cargarAlumnos();
     } catch (error) {
@@ -175,79 +162,84 @@ const Alumnos = () => {
       (g) => String(g.ID_Grado) === String(alumno.ID_Grado)
     );
 
-    return (
-      gradoEncontrado?.Nombre_Grado ||
-      gradoEncontrado?.Nombre ||
-      alumno.ID_Grado ||
-      "Sin grado"
-    );
+    return gradoEncontrado?.Nombre_Grado || gradoEncontrado?.Nombre || alumno.ID_Grado || "Sin grado";
   };
 
   return (
-    <section className="pt_100 pb_100">
-      <div className="container">
-        <div className="row mb_40">
-          <div className="col-12 text-center">
-            <div className="tf__heading_area">
-              <h5>Formulario</h5>
-              <h2>{editando ? "Editar Alumno" : "Registrar Alumno"}</h2>
-            </div>
+  <section className="pt_100 pb_100">
+    <div className="container">
+      <div className="row mb_40">
+        <div className="col-12 text-center">
+          <div className="tf__heading_area">
+            <h5>Formulario</h5>
+            <h2>{editando ? "Editar Alumno" : "Registrar Alumno"}</h2>
           </div>
         </div>
+      </div>
 
-        <div className="row justify-content-center" ref={formularioRef}>
-          <div className="col-lg-8">
-            <div className="p-4 border rounded bg-white shadow-sm">
-              <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                  <label className="form-label">Número de Identidad</label>
-                  <input
-                    type="text"
-                    name="DNI"
-                    className="form-control"
-                    value={form.DNI}
-                    onChange={handleChange}
-                    maxLength={13}
-                    required
-                  />
-                </div>
+      <div className="row justify-content-center" ref={formularioRef}>
+        <div className="col-lg-8">
+          <div className="p-4 border rounded bg-white shadow-sm">
+            <form onSubmit={handleSubmit}>
 
-                <div className="mb-3">
-                  <label className="form-label">DNI Padre</label>
-                  <input
-                    type="text"
-                    name="DNI_Padre"
-                    className="form-control"
-                    value={form.DNI_Padre}
-                    onChange={handleChange}
-                    maxLength={13}
-                  />
-                </div>
+              {/* Padre o Encargado */}
+              <div className="mb-3">
+                <label className="form-label">Padre o Encargado</label>
+                
 
-                <div className="mb-3">
-                  <label className="form-label">Nombre</label>
-                  <input
-                    type="text"
-                    name="Nombre"
-                    className="form-control"
-                    value={form.Nombre}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
+              <PadreAutocomplete
+  padreSeleccionado={padreEditar}
+  onSelect={(padre) => {
+    setPadreEditar(padre);
 
-                <div className="mb-3">
-                  <label className="form-label">Apellido</label>
-                  <input
-                    type="text"
-                    name="Apellido"
-                    className="form-control"
-                    value={form.Apellido}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
+    setForm((prev) => ({
+      ...prev,
+      DNI_Padre: padre ? padre.DNI : "",
+    }));
+  }}
+                />
+              </div>
 
+              {/* DNI del Alumno */}
+              <div className="mb-3">
+                <label className="form-label">
+                  Número de identidad del alumno
+                </label>
+
+                <input
+                  type="text"
+                  name="DNI"
+                  className="form-control"
+                  value={form.DNI}
+                  onChange={handleChange}
+                  maxLength={13}
+                  required
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">Nombre</label>
+                <input
+                  type="text"
+                  name="Nombre"
+                  className="form-control"
+                  value={form.Nombre}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">Apellido</label>
+                <input
+                  type="text"
+                  name="Apellido"
+                  className="form-control"
+                  value={form.Apellido}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
                 <div className="mb-3">
                   <label className="form-label">Fecha de nacimiento</label>
                   <input
@@ -298,7 +290,7 @@ const Alumnos = () => {
                     <option value="">Seleccione grado</option>
                     {grados.map((grado) => (
                       <option key={grado.ID_Grado} value={grado.ID_Grado}>
-                        {grado.Nombre_Grado || grado.Nombre}
+                        {grado.Nombre_Grado || grado.Nombre} - {grado.Seccion}
                       </option>
                     ))}
                   </select>
@@ -308,7 +300,7 @@ const Alumnos = () => {
                   <button type="submit" className="common_btn">
                     {editando ? "Actualizar Alumno" : "Guardar Alumno"}
                   </button>
-
+ 
                   {editando && (
                     <button
                       type="button"
@@ -339,10 +331,9 @@ const Alumnos = () => {
                         {alumno.Nombre} {alumno.Apellido}
                       </h3>
                       <p>
-                        <strong>Identidad:</strong> {alumno.Identidad}
+                        <strong>Identidad:</strong> {alumno.DNI}
                       </p>
 
-                      <p><strong>DNI:</strong> {alumno.DNI}</p>
                       <p><strong>Dirección:</strong> {alumno.Direccion}</p>
                       <p><strong>Género:</strong> {alumno.Genero}</p>
                       <p>
@@ -378,7 +369,9 @@ const Alumnos = () => {
         </div>
       </div>
     </section>
-  );
-};
+    
+    );
+  };
+
 
 export default Alumnos;

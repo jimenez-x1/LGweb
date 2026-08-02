@@ -26,6 +26,22 @@ api.interceptors.request.use(
         Promise.reject(error)
     });
 
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        const status = error?.response?.status;
+        const url = error?.config?.url || "";
+        const esEndpointLogin =
+            url.includes("/signIn") || url.includes("/signUp");
+
+        if (status === 401 && !esEndpointLogin) {
+            localStorage.clear();
+            window.location.href = "/";
+        }
+
+        return Promise.reject(error);
+    });
+
 async function getData(props: TypeUtilities) {
     return await api.get(props.url).then(response => {
         const responseData = crearRespuestaVacia();
@@ -186,35 +202,57 @@ async function signUp(props: TypeUtilities) {
 }
 
 async function LogIn(props: TypeUtilities) {
+
     if (config.headers) {
-        config.headers['content-type'] = 'application/x-www-form-urlencoded'
+        config.headers['content-type'] = 'application/x-www-form-urlencoded';
     }
+
     delete api.defaults.headers.common['Authorization'];
+
     const { data, url } = props;
+
     return await api.post(url, data)
         .then(response => {
+
             const responseData = crearRespuestaVacia();
-            if (response['status'] === 401) {
+
+            if (response.status === 401) {
                 responseData.status = 401;
-                return responseData
-            };
-            responseData.singleData = response.data;
-            responseData.status = response.status;
-            localStorage.setItem('SECURE', responseData.singleData["token"]);
-            return responseData;
-        })
-        .catch(error => {
-            const responseData = crearRespuestaVacia();
-            const response = error["response"];
-            if (response["status"] === 401 || response["status"] === 404) {
-                responseData.error.code = parseInt(response["status"], 10);
-                responseData.error.message = response["statusText"];
                 return responseData;
             }
-            responseData.error.code = 503;
-            responseData.error.message = error["statusText"];
+
+            responseData.data = response.data;
+            responseData.status = response.status;
+
+            localStorage.setItem(
+                "SECURE",
+                response.data.token
+            );
+
             return responseData;
+
+        })
+        .catch(error => {
+
+            const responseData = crearRespuestaVacia();
+            const response = error.response;
+
+            if (response?.status === 401 || response?.status === 404) {
+
+                responseData.error.code = response.status;
+                responseData.error.message = response.statusText;
+
+                return responseData;
+
+            }
+
+            responseData.error.code = 503;
+            responseData.error.message = error.message;
+
+            return responseData;
+
         });
+
 }
 
 async function LogOut() {

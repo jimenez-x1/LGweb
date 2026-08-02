@@ -1,56 +1,41 @@
 import React from "react";
-import { useEduorContext } from "../../context/EduorContext";
+import { Link } from "react-router-dom";
 
-import Navlink from "./Navlink";
+const NavigationSection = () => {
 
-const NavigationSection = ({ position, navRef }) => {
-  const { isMobileNavOpen } = useEduorContext();
+  const rol = Number(localStorage.getItem("ROL"));
+  const esPadre = rol === 3;
+
+  const enlaces = esPadre
+    ? [
+        { href: "/mis-calificaciones", label: "Calificaciones" },
+        { href: "/pagos", label: "Pagos" },
+        { href: "/archivos", label: "Constancias" }
+      ]
+    : [
+        { href: "/home", label: "Inicio" },
+        { href: "/clase", label: "Clase" },
+        { href: "/grado", label: "Grado" },
+        { href: "/alumnos", label: "Alumnos" },
+        { href: "/maestros", label: "Maestros" },
+        { href: "/calificaciones", label: "Calificaciones" },
+        { href: "/pagos", label: "Pagos" },
+        { href: "/padre", label: "Padres" },
+        { href: "/archivos", label: "Archivos" }
+      ];
 
   return (
-    <div
-      ref={navRef}
-      className={`collapse navbar-collapse ${isMobileNavOpen ? "show" : ""}`}
-      id="navbarNav"
-    >
-      <ul className={`navbar-nav ${position}`}>
-        <li className="nav-item">
-          <Navlink href="/">Inicio</Navlink>
+    <>
+      {enlaces.map((enlace) => (
+        <li key={enlace.href}>
+          <Link className="dropdown-item" to={enlace.href}>
+            {enlace.label}
+          </Link>
         </li>
-
-        <li className="nav-item">
-          <Navlink href="/clase">Clase</Navlink>
-        </li>
-
-        <li className="nav-item">
-          <Navlink href="/grado">Grado</Navlink>
-        </li>
-
-        <li className="nav-item">
-          <Navlink href="/alumnos">Alumnos</Navlink>
-        </li>
-
-        <li className="nav-item">
-          <Navlink href="/maestros">Maestros</Navlink>
-        </li>
-
-        <li className="nav-item">
-          <Navlink href="/calificaciones">Calificaciones</Navlink>
-        </li>
-
-        <li className="nav-item">
-          <Navlink href="/pagos">Pagos</Navlink>
-        </li>
-
-        <li className="nav-item">
-          <Navlink href="/padre">Padres</Navlink>
-        </li>
-
-        <li className="nav-item">
-          <Navlink href="/archivos">Archivos</Navlink>
-        </li>
-      </ul>
-    </div>
+      ))}
+    </>
   );
+
 };
 
 export default NavigationSection;

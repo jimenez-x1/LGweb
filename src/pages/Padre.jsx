@@ -79,11 +79,6 @@ const Padre = () => {
     }));
     alert("Eliminado correctamente");
 
-    dispatch(fetchers.getPadres({ url: "/padres" }))
-      .then((res) => {
-        setPadres(res.payload?.padresInfo ?? []);
-      });
-
   } catch (error) {
     alert("Error al eliminar");
   }
