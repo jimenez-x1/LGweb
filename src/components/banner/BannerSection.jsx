@@ -1,52 +1,77 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import "../../assets/css/dashboard.css";
 
 const BannerSection = ({ stats }) => {
   return (
-    <section className="dashboard-hero-section">
-      <div className="container-fluid banner-full">
-        <div className="dashboard-hero-card">
-        <div className="dashboard-hero-left">           
-         <div className="dashboard-badge">🎓 Módulo académico</div>
+    <section className="dashboard-home-section">
+      <div className="container-fluid dashboard-home-container">
 
-            <h1>Gestión de Alumnos</h1>
+        {/* Bienvenida */}
+        <div className="dashboard-welcome-card">
+          <div>
+            <h1>Bienvenido al Sistema Escolar</h1>
 
             <p>
-              Administra, consulta y organiza la información de los estudiantes
-              de forma clara, rápida y ordenada.
+              Administra la información académica y financiera de la Escuela
+              Luis Gamero desde un solo lugar.
             </p>
-
-            <div className="dashboard-hero-actions">
-              <Link to="/alumnos" className="hero-btn hero-btn-primary">
-                Ver alumnos
-              </Link>
-
-      
-            </div>
-          </div>
-
-          <div className="dashboard-hero-right">            
-          <h3>Resumen del módulo</h3>
-
-            <div className="summary-item">
-              <div className="summary-icon blue">👥</div>
-              <div>
-                <h4>{stats?.totalAlumnos || 0}</h4>
-                <p>Total alumnos</p>
-                <span>Registrados en el sistema</span>
-              </div>
-            </div>
-
-            <div className="summary-item">
-              <div className="summary-icon orange">🎓</div>
-              <div>
-                <h4>{stats?.gradosRegistrados || 0}</h4>
-                <p>Grados registrados</p>
-                <span>Con alumnos asociados</span>
-              </div>
-            </div>
           </div>
         </div>
+
+        {/* Resumen */}
+        <div className="dashboard-summary-section">
+          <h2>Resumen general</h2>
+
+          <div className="row g-4">
+
+            {/* Alumnos */}
+            <div className="col-12 col-md-6 col-xl-4">
+              <div className="dashboard-stat-card card-blue">
+                <div className="dashboard-stat-icon icon-blue">
+                  👥
+                </div>
+
+                <div className="dashboard-stat-content">
+                  <h3>{stats?.totalAlumnos || 0}</h3>
+                  <h4>Alumnos</h4>
+                  <p>Registrados en el sistema</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Maestros */}
+            <div className="col-12 col-md-6 col-xl-4">
+              <div className="dashboard-stat-card card-green">
+                <div className="dashboard-stat-icon icon-green">
+                  👨‍🏫
+                </div>
+
+                <div className="dashboard-stat-content">
+                  <h3>{stats?.totalMaestros || 0}</h3>
+                  <h4>Maestros</h4>
+                  <p>Registrados en el sistema</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Grados */}
+            <div className="col-12 col-md-6 col-xl-4">
+              <div className="dashboard-stat-card card-orange">
+                <div className="dashboard-stat-icon icon-orange">
+                  🎓
+                </div>
+
+                <div className="dashboard-stat-content">
+                  <h3>{stats?.gradosRegistrados || 0}</h3>
+                  <h4>Grados</h4>
+                  <p>Activos actualmente</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
       </div>
     </section>
   );

@@ -201,208 +201,274 @@ if (!confirmar.isConfirmed) return;
 };
 
   return (
-    <section className="pt_100 pb_100">
-      <div className="container">
-        <div className="row mb_40">
-          <div className="col-12 text-center">
-            <div className="tf__heading_area">
-              <h5>Formulario</h5>
-              <h2>{editando ? "Editar Grado" : "Registrar Grado"}</h2>
+  <section className="module-page">
+    <div className="module-container">
+
+      {/* ENCABEZADO */}
+      <div className="module-header">
+        <span className="module-label">Gestión académica</span>
+
+        <h1>Grados</h1>
+
+        <p>
+          Administra los grados, secciones, maestros titulares y clases
+          asignadas.
+        </p>
+      </div>
+
+      {/* FORMULARIO */}
+      <div ref={formularioRef} className="module-card">
+        <h2 className="module-card-title">
+          {editando ? "Editar grado" : "Registrar grado"}
+        </h2>
+
+        <form onSubmit={handleSubmit}>
+          <div className="row g-3">
+
+            <div className="col-12 col-md-6">
+              <label className="form-label">Nombre del grado</label>
+
+              <select
+                className="form-select"
+                name="Nombre_Grado"
+                value={form.Nombre_Grado}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Seleccione un grado...</option>
+                <option value="Primero">Primero</option>
+                <option value="Segundo">Segundo</option>
+                <option value="Tercero">Tercero</option>
+                <option value="Cuarto">Cuarto</option>
+                <option value="Quinto">Quinto</option>
+                <option value="Sexto">Sexto</option>
+              </select>
             </div>
+
+            <div className="col-12 col-md-6">
+              <label className="form-label">Sección</label>
+
+              <select
+                className="form-select"
+                name="Seccion"
+                value={form.Seccion}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Seleccione una sección...</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+              </select>
+            </div>
+
+            <div className="col-12 col-md-6">
+              <label className="form-label">Año académico</label>
+
+              <input
+                type="number"
+                className="form-control"
+                name="Anio"
+                placeholder="Ej: 2026"
+                value={form.Anio}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="col-12 col-md-6">
+              <label className="form-label">Maestro titular</label>
+
+              <select
+                className="form-select"
+                name="DNI_Maestro"
+                value={form.DNI_Maestro}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Seleccione un maestro...</option>
+
+                {maestros.map((maestro) => (
+                  <option key={maestro.DNI} value={maestro.DNI}>
+                    {maestro.Nombre} {maestro.Apellido}
+                  </option>
+                ))}
+              </select>
+            </div>
+
           </div>
-        </div>
 
-        <div className="row justify-content-center">
-          <div className="col-lg-8">
-            <div ref={formularioRef} className="p-4 border rounded bg-white shadow-sm">
-              <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                  <label className="form-label">Nombre Grado</label>
-                  <select
-                    className="form-control"
-                    name="Nombre_Grado"
-                    value={form.Nombre_Grado}
-                    onChange={handleChange}
-                    required
+          {/* CLASES */}
+          <div className="grade-classes-section">
+            <h3>Clases asignadas</h3>
+
+            {clases.length === 0 ? (
+              <p className="text-muted mb-0">
+                No hay clases registradas.
+              </p>
+            ) : (
+              <div className="row g-2">
+                {clases.map((clase) => (
+                  <div
+                    className="col-12 col-sm-6 col-lg-4"
+                    key={clase.ID_Clase}
                   >
-                    <option value="">Seleccione un grado...</option>
-                    <option value="Primero">Primero</option>
-                    <option value="Segundo">Segundo</option>
-                    <option value="Tercero">Tercero</option>
-                    <option value="Cuarto">Cuarto</option>
-                    <option value="Quinto">Quinto</option>
-                    <option value="Sexto">Sexto</option>
-                  </select>
-                </div>
+                    <label className="grade-class-option">
+                      <input
+                        type="checkbox"
+                        checked={form.clases.includes(clase.ID_Clase)}
+                        onChange={() =>
+                          handleClaseChange(clase.ID_Clase)
+                        }
+                      />
 
-                <div className="mb-3">
-                  <label className="form-label">Sección</label>
-                  <select
-                    className="form-control"
-                    name="Seccion"
-                    value={form.Seccion}
-                    onChange={handleChange}
-                    required
-                  >
-                    <option value="">Seleccione una Sección...</option>
-                    <option value="A">A</option>
-                    <option value="B">B</option>
-                  </select>
-                </div>
-
-                <div className="mb-3">
-                  <label className="form-label">Año</label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    name="Anio"
-                    placeholder="Ej: 2026"
-                    value={form.Anio}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <label className="form-label">Maestro Titular</label>
-                  <select
-                    className="form-control"
-                    name="DNI_Maestro"
-                    value={form.DNI_Maestro}
-                    onChange={handleChange}
-                    required
-                  >
-                    <option value="">Seleccione un maestro...</option>
-                    {maestros.map((maestro) => (
-                      <option key={maestro.DNI} value={maestro.DNI}>
-                        {maestro.Nombre} {maestro.Apellido}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="mb-3">
-                  <label className="form-label">Clases</label>
-
-                  <div className="row">
-                    {clases.map((clase) => (
-                      <div className="col-md-4 mb-2" key={clase.ID_Clase}>
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            checked={form.clases.includes(clase.ID_Clase)}
-                            onChange={() => handleClaseChange(clase.ID_Clase)}
-                          />
-                          <label className="form-check-label">
-                            {clase.Nombre_Clase}
-                          </label>
-                        </div>
-                      </div>
-                    ))}
+                      <span>{clase.Nombre_Clase}</span>
+                    </label>
                   </div>
-                </div>
+                ))}
+              </div>
+            )}
+          </div>
 
-                <div className="d-flex gap-3">
-                  <button type="submit" className="btn btn-primary">
-                    {editando ? "Actualizar Grado" : "Guardar Grado"}
-                  </button>
+          {/* BOTONES FORMULARIO */}
+          <div className="d-flex flex-wrap gap-2 mt-4">
+            <button
+              type="submit"
+              className="module-primary-btn"
+            >
+              {editando ? "Actualizar grado" : "Guardar grado"}
+            </button>
 
-                  {editando && (
-                    <button
-                      type="button"
-                      className="btn btn-secondary"
-                      onClick={cancelar}
-                    >
-                      Cancelar
-                    </button>
-                  )}
-                </div>
-              </form>
-            </div>
+            {editando && (
+              <button
+                type="button"
+                className="btn btn-secondary module-secondary-btn"
+                onClick={cancelar}
+              >
+                Cancelar
+              </button>
+            )}
+          </div>
+        </form>
+      </div>
+
+      {/* LISTADO */}
+      <div className="module-card">
+        <div className="module-card-header">
+          <div>
+            <h2 className="module-card-title mb-1">
+              Grados registrados
+            </h2>
+
+            <p className="module-card-description">
+              Total de grados: {grados.length}
+            </p>
           </div>
         </div>
 
-        <div className="row mt_50">
-          <div className="col-12">
-            <div className="tf__heading_area mb_30">
-              <h2>Grados Registrados</h2>
-            </div>
+        <div className="table-responsive">
+          <table className="table module-table grade-table">
+            <thead>
+              <tr>
+                <th>Grado</th>
+                <th>Sección</th>
+                <th>Año</th>
+                <th>Maestro titular</th>
+                <th>Clases asignadas</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
 
-            <table className="table table-bordered table-striped">
-              <thead className="table-dark">
+            <tbody>
+              {grados.length === 0 ? (
                 <tr>
-                  <th>ID</th>
-                  <th>Nombre Grado</th>
-                  <th>Sección</th>
-                  <th>Año</th>
-                  <th>Maestro Titular</th>
-                  <th>Clases Asignadas</th>
-                  <th>Acciones</th>
+                  <td
+                    colSpan="6"
+                    className="text-center text-muted py-4"
+                  >
+                    No hay grados registrados.
+                  </td>
                 </tr>
-              </thead>
+              ) : (
+                grados.map((grado) => (
+                  <tr key={grado.ID_Grado}>
+                    <td>
+                      <strong>{grado.Nombre_Grado}</strong>
+                    </td>
 
-              <tbody>
-                {grados.map((g) => (
-                  <tr key={g.ID_Grado}>
-                    <td>{g.ID_Grado}</td>
-                    <td>{g.Nombre_Grado}</td>
-                    <td>{g.Seccion}</td>
-                    <td>{g.Anio}</td>
+                    <td>{grado.Seccion}</td>
+
+                    <td>{grado.Anio}</td>
 
                     <td>
-                      {g.Maestros && g.Maestros.length > 0 ? (
-                        g.Maestros.map((maestro) => (
-                          <div key={maestro.DNI}>
+                      {grado.Maestros &&
+                      grado.Maestros.length > 0 ? (
+                        grado.Maestros.map((maestro) => (
+                          <div
+                            key={maestro.DNI}
+                            className="grade-teacher-name"
+                          >
                             {maestro.Nombre} {maestro.Apellido}
                           </div>
                         ))
                       ) : (
-                        <span className="text-muted">Sin maestro</span>
+                        <span className="text-muted">
+                          Sin maestro
+                        </span>
                       )}
                     </td>
 
                     <td>
-                      {g.Clases && g.Clases.length > 0 ? (
-                        <div className="d-flex flex-wrap gap-2">
-                          {g.Clases.map((clase) => (
+                      {grado.Clases &&
+                      grado.Clases.length > 0 ? (
+                        <div className="grade-badges">
+                          {grado.Clases.map((clase) => (
                             <span
                               key={clase.ID_Clase}
-                              className="badge bg-primary px-3 py-2"
+                              className="grade-class-badge"
                             >
                               {clase.Nombre_Clase}
                             </span>
                           ))}
                         </div>
                       ) : (
-                        <span className="text-muted">Sin clases</span>
+                        <span className="text-muted">
+                          Sin clases
+                        </span>
                       )}
                     </td>
 
                     <td>
-                      <button
-                        className="btn btn-warning btn-sm me-2"
-                        onClick={() => editar(g)}
-                      >
-                        Editar
-                      </button>
+                      <div className="d-flex flex-nowrap gap-2">
+                        <button
+                          type="button"
+                          className="btn btn-warning module-action-btn"
+                          onClick={() => editar(grado)}
+                        >
+                          Editar
+                        </button>
 
-                      <button
-                        className="btn btn-danger btn-sm"
-                        onClick={() => eliminar(g.ID_Grado)}
-                      >
-                        Eliminar
-                      </button>
+                        <button
+                          type="button"
+                          className="btn btn-danger module-action-btn"
+                          onClick={() =>
+                            eliminar(grado.ID_Grado)
+                          }
+                        >
+                          Eliminar
+                        </button>
+                      </div>
                     </td>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
-    </section>
-  );
+
+    </div>
+  </section>
+);
 };
 
 export default Grado;

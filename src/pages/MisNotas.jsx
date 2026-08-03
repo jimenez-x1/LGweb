@@ -478,310 +478,376 @@ if (!confirmar.isConfirmed) return;
 
     const cargando = cargandoAlumnos || cargandoClases || cargandoNotas;
 
-    return (
-
-        <div className="container-fluid mt-4">
-
-            <h3 className="mb-4">Calificaciones</h3>
-
-            <div className="row mb-3">
-
-                <div className="col-md-3">
-
-                    <label className="form-label">Grado</label>
-
-                    <select
-                        className="form-select"
-                        value={gradoSeleccionado}
-                        onChange={(e) => cambiarGrado(e.target.value)}
-                    >
-
-                        <option value="">Seleccione un grado</option>
-
-                      {grados.map((item) => (
-    <option
-        key={item.grado.ID_Grado}
-        value={item.grado.ID_Grado}
-    >
-        {item.grado.Nombre_Grado}
-        {item.grado.Seccion
-            ? ` - Sección ${item.grado.Seccion}`
-            : ""}
-    </option>
-))}
-
-                    </select>
-
-                </div>
-
-                <div className="col-md-3">
-
-                    <label className="form-label">Clase</label>
-
-                    <select
-                        className="form-select"
-                        value={claseSeleccionada}
-                        onChange={(e) => cambiarClase(e.target.value)}
-                        disabled={gradoSeleccionado === "" || cargandoClases}
-                    >
-
-                        <option value="">
-                            {cargandoClases ? "Cargando clases..." : "Seleccione una clase"}
-                        </option>
-
-                        {clases.map((item) => (
-
-                            <option
-                                key={item.ID_Clase}
-                                value={item.ID_Clase}
-                            >
-                                {item.Clase.Nombre_Clase}
-                            </option>
-
-                        ))}
-
-                    </select>
-
-                </div>
-
-                <div className="col-md-4">
-
-                    <label className="form-label">Buscar alumno</label>
-
-                    <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Nombre o DNI"
-                        value={busqueda}
-                        onChange={(e) => setBusqueda(e.target.value)}
-                    />
-
-                </div>
-
-                <div className="col-md-2 d-flex align-items-end">
-
-                    <button
-                        className="btn btn-primary w-100"
-                        onClick={guardarCambios}
-                        disabled={guardando || cargando}
-                    >
-                        {guardando ? "Guardando..." : "Guardar"}
-                    </button>
-
-                </div>
-
-            </div>
-
-            <div className="table-responsive">
-
-                <table className="table table-bordered table-hover align-middle">
-
-                    <thead className="table-dark">
-
-                        <tr>
-                            <th>DNI</th>
-                            <th>Nombre</th>
-                            <th>Parcial 1</th>
-                            <th>Parcial 2</th>
-                            <th>Parcial 3</th>
-                            <th>Parcial 4</th>
-                            <th>Recuperación</th>
-                            <th>Promedio</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
-                        </tr>
-
-                    </thead>
-
-                    <tbody>
-
-    {cargando ? (
-
-        <tr>
-
-            <td colSpan="10" className="text-center">
-                Cargando...
-            </td>
-
-        </tr>
-
-    ) : alumnosFiltrados.length === 0 ? (
-
-        <tr>
-
-            <td colSpan="10" className="text-center">
-                No hay alumnos para este grado
-            </td>
-
-        </tr>
-
-    ) : (
-
-        alumnosFiltrados.map((alumno) => {
-
-            const nota = notas[alumno.DNI] || {};
-
-            const parciales = [
-                nota.Parcial1,
-                nota.Parcial2,
-                nota.Parcial3,
-                nota.Parcial4
-            ].filter((valor) => valor !== "" && valor != null);
-
-            const promedio = parciales.length === 0
-                ? null
-                : parciales.reduce((suma, valor) => suma + Number(valor), 0) / parciales.length;
-
-            return (
-
-                <tr key={alumno.DNI}>
-
-                    <td>{alumno.DNI}</td>
-
-                    <td>
-                        {alumno.Nombre} {alumno.Apellido}
-                    </td>
-
-                    <td>
-                        <input
-                            type="number"
-                            min="0"
-                            max="100"
-                            className="form-control"
-                            value={notas[alumno.DNI]?.Parcial1 ?? ""}
-                            onChange={(e) =>
-                                cambiarNota(
-                                    alumno.DNI,
-                                    "Parcial1",
-                                    e.target.value
-                                )
-                            }
-                        />
-                    </td>
-
-                    <td>
-                        <input
-                            type="number"
-                            min="0"
-                            max="100"
-                            className="form-control"
-                            value={notas[alumno.DNI]?.Parcial2 ?? ""}
-                            onChange={(e) =>
-                                cambiarNota(
-                                    alumno.DNI,
-                                    "Parcial2",
-                                    e.target.value
-                                )
-                            }
-                        />
-                    </td>
-
-                    <td>
-                        <input
-                            type="number"
-                            min="0"
-                            max="100"
-                            className="form-control"
-                            value={notas[alumno.DNI]?.Parcial3 ?? ""}
-                            onChange={(e) =>
-                                cambiarNota(
-                                    alumno.DNI,
-                                    "Parcial3",
-                                    e.target.value
-                                )
-                            }
-                        />
-                    </td>
-
-                    <td>
-                        <input
-                            type="number"
-                            min="0"
-                            max="100"
-                            className="form-control"
-                            value={notas[alumno.DNI]?.Parcial4 ?? ""}
-                            onChange={(e) =>
-                                cambiarNota(
-                                    alumno.DNI,
-                                    "Parcial4",
-                                    e.target.value
-                                )
-                            }
-                        />
-                    </td>
-
-                    <td>
-                        <input
-                            type="number"
-                            min="0"
-                            max="100"
-                            className="form-control"
-                            value={notas[alumno.DNI]?.Reposicion ?? ""}
-                            onChange={(e) =>
-                                cambiarNota(
-                                    alumno.DNI,
-                                    "Reposicion",
-                                    e.target.value
-                                )
-                            }
-                        />
-                    </td>
-
-                    <td>
-                        {promedio === null ? "-" : promedio.toFixed(2)}
-                    </td>
-
-                    <td>
-                        {promedio === null ? (
-                            "-"
-                        ) : (
-                            <span
-                                className={
-                                    promedio >= 70
-                                        ? "badge bg-success"
-                                        : "badge bg-danger"
-                                }
-                            >
-                                {promedio >= 70
-                                    ? "Aprobado"
-                                    : "Reprobado"}
-                            </span>
-                        )}
-                    </td>
-
-                    <td>
-                        <button
-                            className="btn btn-sm btn-outline-danger"
-                            onClick={() => eliminarCalificacion(alumno)}
-                            disabled={!notas[alumno.DNI]?.ID_Calificacion}
-                            title={
-                                notas[alumno.DNI]?.ID_Calificacion
-                                    ? "Eliminar este registro de calificación"
-                                    : "Este alumno aún no tiene calificación guardada"
-                            }
-                        >
-                            Eliminar
-                        </button>
-                    </td>
-
-                </tr>
-
-            );
-
-        })
-
-    )}
-
-</tbody>
-
-                </table>
-
-            </div>
+   return (
+  <section className="module-page">
+    <div className="module-container">
+
+      <div className="module-header">
+        <div>
+          <span className="module-label">
+            Panel del Maestro
+          </span>
+
+          <h1>Gestionar Calificaciones</h1>
+
+          <p>
+            Registre y administre las calificaciones de sus alumnos.
+          </p>
+        </div>
+      </div>
+
+      <div className="module-card">
+
+        <div className="module-card-header">
+          <div>
+            <h2 className="module-card-title">
+              Registro de calificaciones
+            </h2>
+
+            <p className="module-card-description">
+              Seleccione un grado y una asignatura para comenzar.
+            </p>
+          </div>
+        </div>
+
+        <div className="row g-4 align-items-end mb-4">
+
+          <div className="col-lg-3 col-md-6">
+            <label className="form-label fw-semibold">
+              Grado
+            </label>
+
+            <select
+              className="form-select"
+              value={gradoSeleccionado}
+              onChange={(e) => cambiarGrado(e.target.value)}
+            >
+              <option value="">
+                Seleccione un grado
+              </option>
+
+              {grados.map((item) => (
+                <option
+                  key={item.grado.ID_Grado}
+                  value={item.grado.ID_Grado}
+                >
+                  {item.grado.Nombre_Grado}
+                  {item.grado.Seccion
+                    ? ` - Sección ${item.grado.Seccion}`
+                    : ""}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="col-lg-3 col-md-6">
+            <label className="form-label fw-semibold">
+              Clase
+            </label>
+
+            <select
+              className="form-select"
+              value={claseSeleccionada}
+              onChange={(e) => cambiarClase(e.target.value)}
+              disabled={
+                gradoSeleccionado === "" || cargandoClases
+              }
+            >
+              <option value="">
+                {cargandoClases
+                  ? "Cargando clases..."
+                  : "Seleccione una clase"}
+              </option>
+
+              {clases.map((item) => (
+                <option
+                  key={item.ID_Clase}
+                  value={item.ID_Clase}
+                >
+                  {item.Clase.Nombre_Clase}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="col-lg-4 col-md-8">
+            <label className="form-label fw-semibold">
+              Buscar alumno
+            </label>
+
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Buscar por nombre o DNI..."
+              value={busqueda}
+              onChange={(e) =>
+                setBusqueda(e.target.value)
+              }
+            />
+          </div>
+
+          <div className="col-lg-2 col-md-4">
+            <button
+              className="module-primary-btn w-100"
+              onClick={guardarCambios}
+              disabled={guardando || cargando}
+            >
+              <i className="fas fa-save me-2"></i>
+
+              {guardando
+                ? "Guardando..."
+                : "Guardar"}
+            </button>
+          </div>
 
         </div>
 
-    );
+            <div className="table-responsive">
 
-};
+  <table className="table table-hover align-middle module-table">
 
-export default MisNotas;
+    <thead>
+      <tr>
+        <th>DNI</th>
+        <th>Alumno</th>
+        <th>P1</th>
+        <th>P2</th>
+        <th>P3</th>
+        <th>P4</th>
+        <th>Rec.</th>
+        <th>Prom.</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+
+    <tbody>
+
+      {cargando ? (
+
+        <tr>
+          <td colSpan="10" className="text-center py-5">
+            <i className="fas fa-spinner fa-spin me-2"></i>
+            Cargando alumnos...
+          </td>
+        </tr>
+
+      ) : alumnosFiltrados.length === 0 ? (
+
+        <tr>
+          <td colSpan="10" className="text-center py-5">
+            <i className="fas fa-user-slash me-2"></i>
+            No hay alumnos registrados para este grado.
+          </td>
+        </tr>
+
+      ) : (
+
+        alumnosFiltrados.map((alumno) => {
+
+          const nota = notas[alumno.DNI] || {};
+
+          const parciales = [
+            nota.Parcial1,
+            nota.Parcial2,
+            nota.Parcial3,
+            nota.Parcial4,
+          ].filter(
+            (valor) =>
+              valor !== "" &&
+              valor !== null &&
+              valor !== undefined
+          );
+
+          const promedio =
+            parciales.length === 0
+              ? null
+              : parciales.reduce(
+                  (suma, valor) => suma + Number(valor),
+                  0
+                ) / parciales.length;
+
+          return (
+
+            <tr key={alumno.DNI}>
+
+              <td>
+                <strong>{alumno.DNI}</strong>
+              </td>
+
+              <td>
+                <div className="d-flex align-items-center gap-3">
+
+                  <div className="teacher-avatar">
+                    {alumno.Nombre?.charAt(0)}
+                    {alumno.Apellido?.charAt(0)}
+                  </div>
+
+                  <div>
+                    <strong>
+                      {alumno.Nombre} {alumno.Apellido}
+                    </strong>
+                  </div>
+
+                </div>
+              </td>
+
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  className="form-control text-center"
+                  value={nota.Parcial1 ?? ""}
+                  onChange={(e) =>
+                    cambiarNota(
+                      alumno.DNI,
+                      "Parcial1",
+                      e.target.value
+                    )
+                  }
+                />
+              </td>
+
+                    <td>
+  <input
+    type="number"
+    min="0"
+    max="100"
+    className="form-control text-center"
+    value={nota.Parcial2 ?? ""}
+    onChange={(e) =>
+      cambiarNota(
+        alumno.DNI,
+        "Parcial2",
+        e.target.value
+      )
+    }
+  />
+</td>
+
+<td>
+  <input
+    type="number"
+    min="0"
+    max="100"
+    className="form-control text-center"
+    value={nota.Parcial3 ?? ""}
+    onChange={(e) =>
+      cambiarNota(
+        alumno.DNI,
+        "Parcial3",
+        e.target.value
+      )
+    }
+  />
+</td>
+
+<td>
+  <input
+    type="number"
+    min="0"
+    max="100"
+    className="form-control text-center"
+    value={nota.Parcial4 ?? ""}
+    onChange={(e) =>
+      cambiarNota(
+        alumno.DNI,
+        "Parcial4",
+        e.target.value
+      )
+    }
+  />
+</td>
+
+<td>
+  <input
+    type="number"
+    min="0"
+    max="100"
+    className="form-control text-center"
+    value={nota.Reposicion ?? ""}
+    onChange={(e) =>
+      cambiarNota(
+        alumno.DNI,
+        "Reposicion",
+        e.target.value
+      )
+    }
+  />
+</td>
+
+<td className="text-center">
+  {promedio === null ? (
+    "-"
+  ) : (
+    <span
+      className="badge bg-primary"
+      style={{
+        fontSize: "14px",
+        padding: "8px 14px",
+        borderRadius: "20px",
+      }}
+    >
+      {promedio.toFixed(2)}
+    </span>
+  )}
+</td>
+
+<td className="text-center">
+  {promedio === null ? (
+    "-"
+  ) : (
+    <span
+      className={
+        promedio >= 70
+          ? "badge rounded-pill bg-success"
+          : "badge rounded-pill bg-danger"
+      }
+      style={{
+        fontSize: "13px",
+        padding: "8px 14px",
+      }}
+    >
+      {promedio >= 70
+        ? "Aprobado"
+        : "Reprobado"}
+    </span>
+  )}
+</td>
+
+<td className="text-center">
+
+  <button
+    className="btn btn-danger teacher-btn"
+    onClick={() => eliminarCalificacion(alumno)}
+    disabled={!nota.ID_Calificacion}
+  >
+    <i className="fas fa-trash me-2"></i>
+    Eliminar
+  </button>
+
+</td>
+
+</tr>
+
+);
+
+})
+
+)}
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+);
+}; export default MisNotas;

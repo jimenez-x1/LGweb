@@ -151,70 +151,173 @@ const Archivos = () => {
   };
 
   return (
-    <div className="container mt-5">
-      <h2>Documentos del Alumno</h2>
+  <section className="module-page">
+    <div className="module-container">
 
-      <div className="mb-3 position-relative" ref={contenedorRef} style={{ maxWidth: "500px" }}>
-        <label className="form-label">DNI del alumno</label>
-        <input
-          type="text"
-          className="form-control"
-          value={dni}
-          onChange={handleChangeDni}
-          onFocus={() => sugerencias.length > 0 && setMostrarSugerencias(true)}
-          placeholder="Ej: 0801-1990-00000"
-          autoComplete="off"
-          required
-        />
+      {/* ENCABEZADO */}
+      <div className="module-header">
+        <span className="module-label">Gestión documental</span>
 
-        {mostrarSugerencias && (
-          <ul
-            className="list-group position-absolute w-100 shadow"
-            style={{
-              zIndex: 1050,
-              top: "100%",
-              left: 0,
-              maxHeight: "165px",
-              overflowY: "auto",
-            }}
-          >
-            {sugerencias.map((alumno) => (
-              <li
-                key={alumno.DNI}
-                className="list-group-item list-group-item-action"
-                style={{
-                  cursor: "pointer",
-                  padding: "10px 14px",
-                  fontSize: "0.95rem",
-                }}
-                onClick={() => seleccionarSugerencia(alumno)}
-              >
-                <strong>{alumno.DNI}</strong> — {alumno.Nombre} {alumno.Apellido}
-              </li>
-            ))}
-          </ul>
+        <h1>Archivos</h1>
+
+        <p>
+          Genera y descarga documentos académicos de los alumnos.
+        </p>
+      </div>
+
+      {/* BUSCADOR */}
+      <div className="module-card documents-search-card">
+        <div className="module-card-header">
+          <div>
+            <h2 className="module-card-title mb-1">
+              Seleccionar alumno
+            </h2>
+
+            <p className="module-card-description">
+              Busca al alumno por número de identidad, nombre o apellido.
+            </p>
+          </div>
+        </div>
+
+        <div
+          className="documents-search-wrapper position-relative"
+          ref={contenedorRef}
+        >
+          <label className="form-label">
+            Alumno
+          </label>
+
+          <input
+            type="text"
+            className="form-control"
+            value={dni}
+            onChange={handleChangeDni}
+            onFocus={() =>
+              sugerencias.length > 0 &&
+              setMostrarSugerencias(true)
+            }
+            placeholder="Buscar por DNI, nombre o apellido..."
+            autoComplete="off"
+          />
+
+          {mostrarSugerencias && (
+            <ul className="documents-suggestions">
+              {sugerencias.map((alumno) => (
+                <li
+                  key={alumno.DNI}
+                  onClick={() =>
+                    seleccionarSugerencia(alumno)
+                  }
+                >
+                  <div className="documents-suggestion-avatar">
+                    {alumno.Nombre?.charAt(0)}
+                    {alumno.Apellido?.charAt(0)}
+                  </div>
+
+                  <div>
+                    <strong>
+                      {alumno.Nombre} {alumno.Apellido}
+                    </strong>
+
+                    <span>{alumno.DNI}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        {dni && (
+          <div className="documents-selected-student">
+            <i className="fas fa-check-circle"></i>
+
+            <span>
+              Alumno seleccionado: <strong>{dni}</strong>
+            </span>
+          </div>
         )}
       </div>
 
-      <div className="d-flex gap-3 mt-4">
-        <button
-          className="btn btn-success"
-          onClick={generarConstancia}
-          disabled={generandoConstancia}
-        >
-          {generandoConstancia ? "Generando..." : "Generar Constancia de Matrícula"}
-        </button>
+      {/* DOCUMENTOS */}
+      <div className="module-card">
+        <div className="module-card-header">
+          <div>
+            <h2 className="module-card-title mb-1">
+              Documentos disponibles
+            </h2>
 
-        <button
-          className="btn btn-primary"
-          onClick={generarCertificacion}
-          disabled={generandoCertificacion}
-        >
-          {generandoCertificacion ? "Generando..." : "Generar Certificación de Estudios"}
-        </button>
+            <p className="module-card-description">
+              Selecciona el documento que deseas generar.
+            </p>
+          </div>
+        </div>
+
+        <div className="row g-4">
+
+          {/* CONSTANCIA */}
+          <div className="col-12 col-lg-6">
+            <div className="document-option-card">
+              <div className="document-option-icon document-icon-green">
+                <i className="fas fa-file-alt"></i>
+              </div>
+
+              <div className="document-option-content">
+                <h3>Constancia de matrícula</h3>
+
+                <p>
+                  Genera una constancia que acredita que el alumno está
+                  matriculado en el centro educativo.
+                </p>
+
+                <button
+                  type="button"
+                  className="btn document-btn document-btn-green"
+                  onClick={generarConstancia}
+                  disabled={generandoConstancia}
+                >
+                  {generandoConstancia
+                    ? "Generando..."
+                    : "Generar constancia"}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* CERTIFICACIÓN */}
+          <div className="col-12 col-lg-6">
+            <div className="document-option-card">
+              <div className="document-option-icon document-icon-blue">
+                <i className="fas fa-file-pdf"></i>
+              </div>
+
+              <div className="document-option-content">
+                <h3>Certificación de estudios</h3>
+
+                <p>
+                  Genera una certificación con la información académica del
+                  alumno.
+                </p>
+
+                <button
+                  type="button"
+                  className="btn document-btn document-btn-blue"
+                  onClick={generarCertificacion}
+                  disabled={generandoCertificacion}
+                >
+                  {generandoCertificacion
+                    ? "Generando..."
+                    : "Generar certificación"}
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
       </div>
+
     </div>
-  );
+  </section>
+);
 };
 
 export default Archivos;

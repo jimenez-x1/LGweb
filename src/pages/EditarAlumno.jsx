@@ -139,115 +139,209 @@ navigate("/alumnos");
   };
 
   return (
-    <section className="pt_100 pb_100">
-      <div className="container">
-        <h2 className="mb_40">Editar Alumno</h2>
+  <section className="module-page">
+    <div className="module-container">
+
+      <div className="module-header">
+        <span className="module-label">
+          Gestión académica
+        </span>
+
+        <h1>Editar Alumno</h1>
+
+        <p>
+          Modifique la información del alumno.
+        </p>
+      </div>
+
+      <div className="module-card">
+
+        <div className="module-card-header">
+          <div>
+            <h2 className="module-card-title">
+              Información del alumno
+            </h2>
+
+            <p className="module-card-description">
+              Actualice los datos del alumno seleccionado.
+            </p>
+          </div>
+        </div>
 
         <form onSubmit={actualizarAlumno}>
-          <div className="mb-3">
-          <label className="form-label">DNI</label>
-          <input
-            type="text"
-            className="form-control"
-            value={form.DNI}
-            disabled
-          />
-        </div>
-          <input
-            type="text"
-            name="Nombre"
-            placeholder="Nombre"
-            value={form.Nombre}
-            onChange={handleChange}
-            className="form-control mb-3"
-            required
-          />
 
-          <input
-            type="text"
-            name="Apellido"
-            placeholder="Apellido"
-            value={form.Apellido}
-            onChange={handleChange}
-            className="form-control mb-3"
-            required
-          />
+          <div className="row">
 
-          <input
-            type="date"
-            name="Fecha_Nacimiento"
-            value={form.Fecha_Nacimiento}
-            onChange={handleChange}
-            className="form-control mb-3"
-            required
-          />
+            <div className="col-md-6 mb-4">
+              <label className="form-label fw-semibold">
+                DNI
+              </label>
 
-          <input
-            type="text"
-            name="Direccion"
-            placeholder="Dirección"
-            value={form.Direccion}
-            onChange={handleChange}
-            className="form-control mb-3"
-          />
+              <input
+                type="text"
+                className="form-control"
+                value={form.DNI}
+                disabled
+              />
+            </div>
 
-          <select
-            name="Genero"
-            value={form.Genero}
-            onChange={handleChange}
-            className="form-control mb-3"
-            required
-          >
-            <option value="">Seleccione género</option>
-            <option value="M">Masculino</option>
-            <option value="F">Femenino</option>
-          </select>
+            <div className="col-md-6 mb-4">
+              <label className="form-label fw-semibold">
+                Padre
+              </label>
 
-          <div className="mb-3">
-            <label className="form-label">Padre</label>
+              <input
+                type="text"
+                className="form-control"
+                name="DNI_Padre"
+                value={form.DNI_Padre}
+                onChange={handleChange}
+                required
+              />
+            </div>
 
-            <input
-              type="text"
-              name="DNI_Padre"
-              value={form.DNI_Padre}
-              onChange={handleChange}
-              className="form-control"
-              placeholder="DNI del padre"
-              maxLength={13}
-              required
-            />
+            <div className="col-md-6 mb-4">
+              <label className="form-label fw-semibold">
+                Nombre
+              </label>
+
+              <input
+                type="text"
+                className="form-control"
+                name="Nombre"
+                value={form.Nombre}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="col-md-6 mb-4">
+              <label className="form-label fw-semibold">
+                Apellido
+              </label>
+
+              <input
+                type="text"
+                className="form-control"
+                name="Apellido"
+                value={form.Apellido}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="col-md-6 mb-4">
+              <label className="form-label fw-semibold">
+                Fecha de nacimiento
+              </label>
+
+              <input
+                type="date"
+                className="form-control"
+                name="Fecha_Nacimiento"
+                value={form.Fecha_Nacimiento}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="col-md-6 mb-4">
+              <label className="form-label fw-semibold">
+                Género
+              </label>
+
+              <select
+                className="form-select"
+                name="Genero"
+                value={form.Genero}
+                onChange={handleChange}
+                required
+              >
+                <option value="">
+                  Seleccione género
+                </option>
+
+                <option value="M">
+                  Masculino
+                </option>
+
+                <option value="F">
+                  Femenino
+                </option>
+              </select>
+            </div>
+
+            <div className="col-md-6 mb-4">
+              <label className="form-label fw-semibold">
+                Dirección
+              </label>
+
+              <input
+                type="text"
+                className="form-control"
+                name="Direccion"
+                value={form.Direccion}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="col-md-6 mb-4">
+              <label className="form-label fw-semibold">
+                Grado
+              </label>
+
+              <select
+                className="form-select"
+                name="ID_Grado"
+                value={form.ID_Grado}
+                onChange={handleChange}
+                required
+              >
+                <option value="">
+                  Seleccione grado
+                </option>
+
+                {grados.map((grado) => (
+                  <option
+                    key={grado.ID_Grado}
+                    value={grado.ID_Grado}
+                  >
+                    {grado.Nombre_Grado} - {grado.Seccion}
+                  </option>
+                ))}
+              </select>
+            </div>
+
           </div>
 
-          <select
-            name="ID_Grado"
-            value={form.ID_Grado}
-            onChange={handleChange}
-            className="form-control mb-3"
-            required
-          >
-            <option value="">Seleccione grado</option>
-            {grados.map((grado) => (
-              <option key={grado.ID_Grado} value={grado.ID_Grado}>
-                {grado.Nombre_Grado} - {grado.Seccion}
-              </option>
-            ))}
-          </select>
+          <div className="teacher-actions mt-4">
 
-          <button type="submit" className="common_btn">
-            Actualizar
-          </button>
+            <button
+              type="submit"
+              className="btn btn-primary teacher-btn"
+            >
+              <i className="fas fa-save me-2"></i>
+              Actualizar Alumno
+            </button>
 
-          <button
-            type="button"
-            className="btn btn-secondary ms-3"
-            onClick={() => navigate("/alumnos")}
-          >
-            Cancelar
-          </button>
+            <button
+              type="button"
+              className="btn btn-secondary teacher-btn"
+              onClick={() => navigate("/alumnos")}
+            >
+              <i className="fas fa-arrow-left me-2"></i>
+              Cancelar
+            </button>
+
+          </div>
+
         </form>
+
       </div>
-    </section>
-  );
+
+    </div>
+  </section>
+);
 };
 
 export default EditarAlumno;

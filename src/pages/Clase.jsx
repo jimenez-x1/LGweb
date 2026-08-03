@@ -89,84 +89,109 @@ if (!confirmar.isConfirmed) return;
     }
   };
 
-  return (
-    <section className="pt_100 pb_100">
-      <div className="container">
-        <div className="row mb_40">
-          <div className="col-12 text-center">
-            <div className="tf__heading_area">
-              <h5>Formulario</h5>
-              <h2>{editando ? "Editar Clase" : "Registrar Clase"}</h2>
-            </div>
-          </div>
-        </div>
+ return (
+  <section className="module-page">
+    <div className="module-container">
 
-        <div className="row justify-content-center">
-          <div className="col-lg-8">
-            <div className="p-4 border rounded bg-white shadow-sm">
-              <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                  <label className="form-label">Nombre Clase</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="Nombre_Clase"
-                    placeholder="Ej: Contabilidad"
-                    value={form.Nombre_Clase}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-                <div className="d-flex gap-3">
-                  <button type="submit" className="btn btn-primary">
-                    {editando ? "Actualizar Clase" : "Guardar Clase"}
-                  </button>
-                  {editando && (
+      <div className="module-header">
+        <span className="module-label">Gestión académica</span>
+        <h1>Clases</h1>
+        <p>Registra, actualiza y administra las clases del sistema.</p>
+      </div>
+
+      <div className="module-card">
+        <h2 className="module-card-title">
+          {editando ? "Editar clase" : "Registrar clase"}
+        </h2>
+
+        <form onSubmit={handleSubmit}>
+          <div className="mb-3">
+            <label className="form-label">Nombre de la clase</label>
+
+            <input
+              type="text"
+              className="form-control"
+              name="Nombre_Clase"
+              placeholder="Ej: Contabilidad"
+              value={form.Nombre_Clase}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="d-flex gap-2">
+            <button type="submit" className="module-primary-btn">
+              {editando ? "Actualizar clase" : "Guardar clase"}
+            </button>
+
+            {editando && (
+              <button
+                type="button"
+                className="btn btn-secondary module-secondary-btn"
+                onClick={() => {
+                  setEditando(false);
+                  setIdEditar(null);
+                  setForm({ Nombre_Clase: "" });
+                }}
+              >
+                Cancelar
+              </button>
+            )}
+          </div>
+        </form>
+      </div>
+
+      <div className="module-card">
+        <h2 className="module-card-title">Clases registradas</h2>
+
+        <div className="table-responsive">
+          <table className="table module-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nombre de la clase</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {clases.map((clase) => (
+                <tr key={clase.ID_Clase}>
+                  <td>{clase.ID_Clase}</td>
+                  <td>{clase.Nombre_Clase}</td>
+                  <td>
                     <button
-                      type="button"
-                      className="btn btn-secondary"
-                      onClick={() => { setEditando(false); setForm({ Nombre_Clase: "" }); }}
+                      className="btn btn-warning btn-sm module-action-btn me-2"
+                      onClick={() => editar(clase)}
                     >
-                      Cancelar
+                      Editar
                     </button>
-                  )}
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
 
-        <div className="row mt_50">
-          <div className="col-12">
-            <div className="tf__heading_area mb_30">
-              <h2>Clases Registradas</h2>
-            </div>
-            <table className="table table-bordered table-striped">
-              <thead className="table-dark">
-                <tr>
-                  <th>ID</th>
-                  <th>Nombre Clase</th>
-                  <th>Acciones</th>
+                    <button
+                      className="btn btn-danger btn-sm module-action-btn"
+                      onClick={() => eliminar(clase.ID_Clase)}
+                    >
+                      Eliminar
+                    </button>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {clases.map((c) => (
-                  <tr key={c.ID_Clase}>
-                    <td>{c.ID_Clase}</td>
-                    <td>{c.Nombre_Clase}</td>
-                    <td>
-                      <button className="btn btn-warning btn-sm me-2" onClick={() => editar(c)}>Editar</button>
-                      <button className="btn btn-danger btn-sm" onClick={() => eliminar(c.ID_Clase)}>Eliminar</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+
+              {clases.length === 0 && (
+                <tr>
+                  <td colSpan="3" className="text-center text-muted py-4">
+                    No hay clases registradas.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
-    </section>
-  );
+
+    </div>
+  </section>
+);
 };
 
 export default Clase;
