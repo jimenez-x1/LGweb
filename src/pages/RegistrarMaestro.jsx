@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const RegistrarMaestro = () => {
 
@@ -36,45 +37,52 @@ const [grados, setGrados] = useState([]);
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    try {
-
-      const res = await fetch(
-        "http://localhost:3000/api/insertMaestro",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(form),
-        }
-      );
-
-      if (!res.ok) {
-        throw new Error("Error al registrar maestro");
+  try {
+    const res = await fetch(
+      "http://localhost:3000/api/insertMaestro",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
       }
+    );
 
-      alert("Maestro registrado correctamente");
-
-      setForm({
-  DNI: "",
-  Nombre: "",
-  Apellido: "",
-  Telefono: "",
-  Correo: "",
-  Cargo: "Docente",
-  ID_Grado: "",
-});
-
-    } catch (error) {
-
-      console.error(error);
-      alert("Error al registrar maestro");
-
+    if (!res.ok) {
+      throw new Error("Error al registrar maestro");
     }
-  };
+
+    await Swal.fire({
+      icon: "success",
+      title: "Registrado",
+      text: "Maestro registrado correctamente",
+      confirmButtonText: "Aceptar",
+    });
+
+    setForm({
+      DNI: "",
+      Nombre: "",
+      Apellido: "",
+      Telefono: "",
+      Correo: "",
+      Cargo: "Docente",
+      ID_Grado: "",
+    });
+  } catch (error) {
+    console.error(error);
+
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "No se pudo registrar el maestro",
+      confirmButtonText: "Aceptar",
+    });
+  }
+};
 
   return (
     <section className="pt_100 pb_100">

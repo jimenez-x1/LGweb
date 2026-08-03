@@ -5,7 +5,7 @@ import calificacionFetchers from "../store/slices/Calificaciones/fetchers";
 import gradoFetchers from "../store/slices/Grado/fetchers";
 import claseFetchers from "../store/slices/Clase/fetchers";
 import alumnoFetchers from "../store/slices/Alumnos/fetchers";
-
+import Swal from "sweetalert2";
 const MisNotas = () => {
 
     const dispatch = useDispatch();
@@ -229,15 +229,19 @@ const MisNotas = () => {
     // Cambiar grado / clase (con aviso de cambios sin guardar)
     // ============================
 
-    const cambiarGrado = (valor) => {
-
+    const cambiarGrado = async (valor) => {
         if (cambiosSinGuardar) {
 
-            const confirmar = window.confirm(
-                "Tienes cambios sin guardar. Si continúas, se perderán. ¿Deseas continuar?"
-            );
+           const confirmar = await Swal.fire({
+  icon: "warning",
+  title: "Cambios sin guardar",
+  text: "Si continúas perderás los cambios realizados.",
+  showCancelButton: true,
+  confirmButtonText: "Continuar",
+  cancelButtonText: "Cancelar",
+});
 
-            if (!confirmar) return;
+if (!confirmar.isConfirmed) return;
 
         }
 
@@ -245,15 +249,20 @@ const MisNotas = () => {
 
     };
 
-    const cambiarClase = (valor) => {
+    const cambiarClase = async (valor) => {
 
         if (cambiosSinGuardar) {
 
-            const confirmar = window.confirm(
-                "Tienes cambios sin guardar. Si continúas, se perderán. ¿Deseas continuar?"
-            );
+            const confirmar = await Swal.fire({
+  icon: "warning",
+  title: "Cambios sin guardar",
+  text: "Si continúas, se perderán los cambios realizados.",
+  showCancelButton: true,
+  confirmButtonText: "Continuar",
+  cancelButtonText: "Cancelar",
+});
 
-            if (!confirmar) return;
+if (!confirmar.isConfirmed) return;
 
         }
 
@@ -300,14 +309,24 @@ const MisNotas = () => {
 
         if (claseSeleccionada === "") {
 
-            alert("Seleccione una clase");
+            await Swal.fire({
+  icon: "warning",
+  title: "Clase requerida",
+  text: "Seleccione una clase",
+  confirmButtonText: "Aceptar",
+});
             return;
 
         }
 
         if (alumnos.length === 0) {
 
-            alert("No hay alumnos para guardar.");
+           await Swal.fire({
+  icon: "warning",
+  title: "Sin alumnos",
+  text: "No hay alumnos para guardar.",
+  confirmButtonText: "Aceptar",
+});
             return;
 
         }
@@ -367,15 +386,24 @@ const MisNotas = () => {
 
             }
 
-            alert("Calificaciones guardadas correctamente");
-
+           await Swal.fire({
+  icon: "success",
+  title: "Guardado",
+  text: "Calificaciones guardadas correctamente",
+  confirmButtonText: "Aceptar",
+});
             await cargarCalificaciones();
 
         } catch (error) {
 
             console.error(error);
 
-            alert("Error al guardar");
+            Swal.fire({
+  icon: "error",
+  title: "Error",
+  text: "No se pudieron guardar las calificaciones",
+  confirmButtonText: "Aceptar",
+});
 
         } finally {
 
@@ -395,11 +423,16 @@ const MisNotas = () => {
 
         if (!idCalificacion) return;
 
-        const confirmar = window.confirm(
-            `¿Eliminar por completo el registro de calificación de ${alumno.Nombre} ${alumno.Apellido} en esta clase? Esta acción no se puede deshacer.`
-        );
+        const confirmar = await Swal.fire({
+  icon: "warning",
+  title: "¿Eliminar calificación?",
+  text: `¿Eliminar por completo el registro de ${alumno.Nombre} ${alumno.Apellido}?`,
+  showCancelButton: true,
+  confirmButtonText: "Sí, eliminar",
+  cancelButtonText: "Cancelar",
+});
 
-        if (!confirmar) return;
+if (!confirmar.isConfirmed) return;
 
         try {
 
@@ -414,7 +447,12 @@ const MisNotas = () => {
         } catch (error) {
 
             console.error(error);
-            alert("Error al eliminar");
+            Swal.fire({
+  icon: "error",
+  title: "Error",
+  text: "No se pudo eliminar la calificación",
+  confirmButtonText: "Aceptar",
+});
 
         }
 

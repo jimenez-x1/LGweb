@@ -4,6 +4,7 @@ import fetchers from "../store/slices/Grado/fetchers";
 import Selector from "../store/slices/Grado/selectors";
 import maestroFetchers from "../store/slices/Maestros/fetchers";
 import MaestroSelector from "../store/slices/Maestros/selectors";
+import Swal from "sweetalert2";
 
 const Grado = () => {
   const dispatch = useDispatch();
@@ -65,7 +66,12 @@ const Grado = () => {
           })
         );
 
-        alert("Grado actualizado");
+        await Swal.fire({
+  icon: "success",
+  title: "Actualizado",
+  text: "Grado actualizado correctamente",
+  confirmButtonText: "Aceptar",
+});
       } else {
         const res = await dispatch(
           fetchers.insertGrado({
@@ -79,7 +85,12 @@ const Grado = () => {
         );
 console.log(res);
         idGrado = res?.payload?.gradosInfo?.ID_Grado;
-        alert("Grado registrado");
+        await Swal.fire({
+  icon: "success",
+  title: "Registrado",
+  text: "Grado registrado correctamente",
+  confirmButtonText: "Aceptar",
+});
       }
 
       if (idGrado) {
@@ -110,7 +121,14 @@ console.log(res);
       dispatch(fetchers.getGrados({ url: "/grados" }));
     } catch (error) {
       console.error(error);
-      alert("Error al guardar");
+     Swal.fire({
+  icon: "error",
+  title: "Error",
+  text: editando
+    ? "No se pudo actualizar el grado"
+    : "No se pudo registrar el grado",
+  confirmButtonText: "Aceptar",
+});
     }
   };
 
@@ -144,8 +162,16 @@ console.log(res);
   };
 
 const eliminar = async (id) => {
-  if (!window.confirm("¿Eliminar este grado?")) return;
+  const confirmar = await Swal.fire({
+  icon: "warning",
+  title: "¿Eliminar grado?",
+  text: "Esta acción no se puede deshacer.",
+  showCancelButton: true,
+  confirmButtonText: "Sí, eliminar",
+  cancelButtonText: "Cancelar",
+});
 
+if (!confirmar.isConfirmed) return;
   try {
     await dispatch(
       fetchers.deleteGrado({
@@ -153,16 +179,24 @@ const eliminar = async (id) => {
       })
     ).unwrap();
 
-    alert("Grado eliminado correctamente");
-
+    await Swal.fire({
+  icon: "success",
+  title: "Eliminado",
+  text: "Grado eliminado correctamente",
+  confirmButtonText: "Aceptar",
+});
     dispatch(fetchers.getGrados({ url: "/grados" }));
 
   } catch (error) {
-    alert(
-      error?.message ||
-      error?.error ||
-      "No se puede eliminar este grado porque tiene clases o un docente asignado."
-    );
+    Swal.fire({
+  icon: "error",
+  title: "No se pudo eliminar",
+  text:
+    error?.message ||
+    error?.error ||
+    "No se puede eliminar este grado porque tiene clases o un docente asignado.",
+  confirmButtonText: "Aceptar",
+});
   }
 };
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const Archivos = () => {
   const [dni, setDni] = useState("");
@@ -77,17 +78,34 @@ const Archivos = () => {
 
   const generarConstancia = async (e) => {
     e.preventDefault();
-    if (!dni) return alert("Ingresa el DNI del alumno");
-
+    if (!dni) {
+  await Swal.fire({
+    icon: "warning",
+    title: "DNI requerido",
+    text: "Ingresa el DNI del alumno",
+    confirmButtonText: "Aceptar",
+  });
+  return;
+}
     setGenerandoConstancia(true);
     try {
       await descargarPdf("constancia", "constancia");
     } catch (error) {
       console.error(error);
       if (error.response?.status === 404) {
-        alert("No se encontró un alumno con ese DNI");
+        Swal.fire({
+  icon: "warning",
+  title: "Alumno no encontrado",
+  text: "No se encontró un alumno con ese DNI",
+  confirmButtonText: "Aceptar",
+});
       } else {
-        alert("Error al generar la constancia");
+       Swal.fire({
+  icon: "error",
+  title: "Error",
+  text: "No se pudo generar la constancia",
+  confirmButtonText: "Aceptar",
+}); 
       }
     } finally {
       setGenerandoConstancia(false);
@@ -96,7 +114,15 @@ const Archivos = () => {
 
   const generarCertificacion = async (e) => {
     e.preventDefault();
-    if (!dni) return alert("Ingresa el DNI del alumno");
+   if (!dni) {
+  await Swal.fire({
+    icon: "warning",
+    title: "DNI requerido",
+    text: "Ingresa el DNI del alumno",
+    confirmButtonText: "Aceptar",
+  });
+  return;
+}
 
     setGenerandoCertificacion(true);
     try {
@@ -104,9 +130,20 @@ const Archivos = () => {
     } catch (error) {
       console.error(error);
       if (error.response?.status === 404) {
-        alert("No se encontró un alumno con ese DNI");
+        Swal.fire({
+  icon: "warning",
+  title: "Alumno no encontrado",
+  text: "No se encontró un alumno con ese DNI",
+  confirmButtonText: "Aceptar",
+});
+
       } else {
-        alert("Error al generar la certificación");
+        Swal.fire({
+  icon: "error",
+  title: "Error",
+  text: "No se pudo generar la certificación",
+  confirmButtonText: "Aceptar",
+});
       }
     } finally {
       setGenerandoCertificacion(false);

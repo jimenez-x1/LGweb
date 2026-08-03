@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const EditarMaestro = () => {
   const navigate = useNavigate();
@@ -59,14 +60,30 @@ const EditarMaestro = () => {
       });
 
       if (res.ok) {
-        alert("Maestro actualizado correctamente");
-        navigate("/maestros");
+        await Swal.fire({
+  icon: "success",
+  title: "Actualizado",
+  text: "Maestro actualizado correctamente",
+  confirmButtonText: "Aceptar",
+});
+
+navigate("/maestros");
       } else {
-        alert("Error al actualizar maestro");
+        await Swal.fire({
+  icon: "error",
+  title: "Error",
+  text: "No se pudo actualizar el maestro",
+  confirmButtonText: "Aceptar",
+});
       }
     } catch (error) {
       console.error(error);
-      alert("Error al actualizar maestro");
+      Swal.fire({
+  icon: "error",
+  title: "Error",
+  text: "No se pudo actualizar el maestro",
+  confirmButtonText: "Aceptar",
+});
     }
   };
 
@@ -91,8 +108,8 @@ const EditarMaestro = () => {
                   <input
                     type="text"
                     className="form-control"
-                    name="ID_Maestro"
-                    value={form.ID_Maestro}
+                    name="DNI"
+value={form.DNI}
                     disabled
                   />
                 </div>

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "../store";
 import fetchers from "../store/slices/Clase/fetchers";
 import Selector from "../store/slices/Clase/selectors";
+import Swal from "sweetalert2";
 
 const Clase = () => {
   const dispatch = useDispatch();
@@ -21,17 +22,34 @@ const Clase = () => {
     try {
       if (editando) {
         await dispatch(fetchers.updateClase({ url: "/updateClase", data: { ...form, ID_Clase: idEditar } }));
-        alert("Clase actualizada");
+        await Swal.fire({
+  icon: "success",
+  title: "Actualizada",
+  text: "Clase actualizada correctamente",
+  confirmButtonText: "Aceptar",
+});
       } else {
         await dispatch(fetchers.insertClase({ url: "/insertClase", data: { Nombre_Clase: form.Nombre_Clase } }));
-        alert("Clase registrada");
+        await Swal.fire({
+  icon: "success",
+  title: "Registrada",
+  text: "Clase registrada correctamente",
+  confirmButtonText: "Aceptar",
+});
       }
       setForm({ Nombre_Clase: "" });
       setEditando(false);
       setIdEditar(null);
       dispatch(fetchers.getClases({ url: "/clases" }));
     } catch (error) {
-      alert("Error al guardar");
+      Swal.fire({
+  icon: "error",
+  title: "Error",
+  text: editando
+    ? "No se pudo actualizar la clase"
+    : "No se pudo registrar la clase",
+  confirmButtonText: "Aceptar",
+});
     }
   };
 
@@ -42,13 +60,32 @@ const Clase = () => {
   };
 
   const eliminar = async (id) => {
-    if (!window.confirm("¿Eliminar esta clase?")) return;
+    const confirmar = await Swal.fire({
+  icon: "warning",
+  title: "¿Eliminar clase?",
+  text: "Esta acción no se puede deshacer.",
+  showCancelButton: true,
+  confirmButtonText: "Sí, eliminar",
+  cancelButtonText: "Cancelar",
+});
+
+if (!confirmar.isConfirmed) return;
     try {
       await dispatch(fetchers.deleteClase({ url: `/deleteClase/${id}` }));
-      alert("Eliminada correctamente");
+      await Swal.fire({
+  icon: "success",
+  title: "Eliminada",
+  text: "Clase eliminada correctamente",
+  confirmButtonText: "Aceptar",
+});
       dispatch(fetchers.getClases({ url: "/clases" }));
     } catch (error) {
-      alert("Error al eliminar");
+      Swal.fire({
+  icon: "error",
+  title: "Error",
+  text: "No se pudo eliminar la clase",
+  confirmButtonText: "Aceptar",
+});
     }
   };
 

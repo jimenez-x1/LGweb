@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "../store";
 import fetchers from "../store/slices/Padre/fetchers";
 import Selector from "../store/slices/Padre/selectors";
+import Swal from "sweetalert2";
 
 const Padre = () => {
   const dispatch = useDispatch();
@@ -27,31 +28,79 @@ const Padre = () => {
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      if (editando) {
-        await dispatch(fetchers.updatePadre({ url: "/updatePadre", data: { ...form, DNI: idEditar } }));
-        alert("Padre actualizado");
-      } else {
-        await dispatch(fetchers.insertPadre({ url: "/insertPadre", data: form }));
-        alert("Padre registrado");
-      }
-      setForm({ 
-         DNI: "",
-         Nombre: "", 
-         Apellido: "", 
-         Telefono: "",
-          Correo: "", 
-          Direccion: "" 
-        });
-      setEditando(false);
-      setIdEditar(null);
-      dispatch(fetchers.getPadres({ url: "/padres" }));
-    } catch (error) {
-      alert("Error al guardar");
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    let res;
+
+    if (editando) {
+      res = await dispatch(
+        fetchers.updatePadre({
+          url: "/updatePadre",
+          data: {
+            ...form,
+            DNI: idEditar,
+          },
+        })
+      );
+    } else {
+      res = await dispatch(
+        fetchers.insertPadre({
+          url: "/insertPadre",
+          data: form,
+        })
+      );
     }
-  };
+
+    console.log("RESPUESTA PADRE:", res);
+
+    if (res.payload?.error) {
+      throw new Error(
+        res.payload.error.message ||
+          (editando
+            ? "No se pudo actualizar el padre"
+            : "No se pudo registrar el padre")
+      );
+    }
+
+    await Swal.fire({
+      icon: "success",
+      title: editando ? "Actualizado" : "Registrado",
+      text: editando
+        ? "Padre actualizado correctamente"
+        : "Padre registrado correctamente",
+      confirmButtonText: "Aceptar",
+    });
+
+    setForm({
+      DNI: "",
+      Nombre: "",
+      Apellido: "",
+      Telefono: "",
+      Correo: "",
+      Direccion: "",
+    });
+
+    setEditando(false);
+    setIdEditar(null);
+
+    await dispatch(fetchers.getPadres({ url: "/padres" }));
+  } catch (error) {
+    console.error("ERROR PADRE:", error);
+
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text:
+        error.message ||
+        (editando
+          ? "No se pudo actualizar el padre"
+          : "No se pudo registrar el padre"),
+      confirmButtonText: "Aceptar",
+    });
+  }
+};
 
   const editar = (padre) => {
    setForm({
@@ -67,8 +116,16 @@ const Padre = () => {
   };
 
   const eliminar = async (id) => {
-  if (!window.confirm("¿Eliminar este padre?")) return;
+ const confirmar = await Swal.fire({
+  icon: "warning",
+  title: "¿Eliminar padre?",
+  text: "Esta acción no se puede deshacer.",
+  showCancelButton: true,
+  confirmButtonText: "Sí, eliminar",
+  cancelButtonText: "Cancelar",
+});
 
+if (!confirmar.isConfirmed) return;
   try {
     await dispatch(fetchers.deletePadre({
       url: `/deletePadre/${id}`
@@ -77,10 +134,20 @@ const Padre = () => {
     await dispatch(fetchers.getPadres({
       url: "/padres"
     }));
-    alert("Eliminado correctamente");
+    await Swal.fire({
+  icon: "success",
+  title: "Eliminado",
+  text: "Padre eliminado correctamente",
+  confirmButtonText: "Aceptar",
+});
 
   } catch (error) {
-    alert("Error al eliminar");
+    Swal.fire({
+  icon: "error",
+  title: "Error",
+  text: "No se pudo eliminar el padre",
+  confirmButtonText: "Aceptar",
+});
   }
 };
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const Pagos = () => {
   const [pagos, setPagos] = useState([]);
@@ -23,16 +24,34 @@ const Pagos = () => {
 
   // Elimina un pago (solo admin/maestro)
   const deletePago = async (id) => {
-    const confirmar = window.confirm("¿Seguro que quieres eliminar este pago?");
-    if (!confirmar) return;
+   const confirmar = await Swal.fire({
+  icon: "warning",
+  title: "¿Eliminar pago?",
+  text: "Esta acción no se puede deshacer.",
+  showCancelButton: true,
+  confirmButtonText: "Sí, eliminar",
+  cancelButtonText: "Cancelar",
+});
+
+if (!confirmar.isConfirmed) return;
 
     try {
       await axios.delete(`http://localhost:3000/api/deletePago/${id}`);
-      alert("Pago eliminado correctamente");
+      await Swal.fire({
+  icon: "success",
+  title: "Eliminado",
+  text: "Pago eliminado correctamente",
+  confirmButtonText: "Aceptar",
+});
       getPagos();
     } catch (error) {
       console.error("Error al eliminar pago:", error);
-      alert("Error al eliminar el pago");
+     Swal.fire({
+  icon: "error",
+  title: "Error",
+  text: "No se pudo eliminar el pago",
+  confirmButtonText: "Aceptar",
+});
     }
   };
 

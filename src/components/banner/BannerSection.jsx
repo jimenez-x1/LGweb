@@ -21,9 +21,7 @@ const BannerSection = ({ stats }) => {
                 Ver alumnos
               </Link>
 
-              <Link to="/registrar-alumno" className="hero-btn hero-btn-outline">
-                + Registrar alumno
-              </Link>
+      
             </div>
           </div>
 

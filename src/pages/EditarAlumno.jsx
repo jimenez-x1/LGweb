@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const EditarAlumno = () => {
   const { id } = useParams();
@@ -46,12 +47,23 @@ const EditarAlumno = () => {
           ID_Grado: alumnoEncontrado.ID_Grado || "",
         });
       } else {
-        alert("Alumno no encontrado");
-        navigate("/alumnos");
+        await Swal.fire({
+  icon: "warning",
+  title: "Alumno no encontrado",
+  text: "No se encontró el alumno solicitado",
+  confirmButtonText: "Aceptar",
+});
+
+navigate("/alumnos");
       }
     } catch (error) {
       console.error("Error al obtener alumno:", error);
-      alert("Error al cargar el alumno");
+      Swal.fire({
+  icon: "error",
+  title: "Error",
+  text: "No se pudo cargar la información del alumno",
+  confirmButtonText: "Aceptar",
+});
     }
   };
 
@@ -107,11 +119,22 @@ const EditarAlumno = () => {
         throw new Error("No se pudo actualizar");
       }
 
-      alert("Alumno actualizado correctamente");
-      navigate("/alumnos");
+      await Swal.fire({
+  icon: "success",
+  title: "Actualizado",
+  text: "Alumno actualizado correctamente",
+  confirmButtonText: "Aceptar",
+});
+
+navigate("/alumnos");
     } catch (error) {
       console.error("Error al actualizar:", error);
-      alert("Error al actualizar alumno");
+      Swal.fire({
+  icon: "error",
+  title: "Error",
+  text: "No se pudo actualizar el alumno",
+  confirmButtonText: "Aceptar",
+});
     }
   };
 

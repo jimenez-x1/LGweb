@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
+import Swal from "sweetalert2";
 
 const Maestros = () => {
 
@@ -41,8 +41,16 @@ const esAdministrador = rol === 1;
 
   const handleEliminar = async (dni) => {
 
-    if (!window.confirm("¿Seguro que deseas eliminar este maestro?")) return;
+    const confirmar = await Swal.fire({
+  icon: "warning",
+  title: "¿Eliminar maestro?",
+  text: "Esta acción no se puede deshacer.",
+  showCancelButton: true,
+  confirmButtonText: "Sí, eliminar",
+  cancelButtonText: "Cancelar",
+});
 
+if (!confirmar.isConfirmed) return;
     try {
 
       const res = await fetch(
@@ -56,19 +64,34 @@ const esAdministrador = rol === 1;
 
       if (res.ok) {
 
-        alert("Maestro eliminado correctamente");
+        await Swal.fire({
+  icon: "success",
+  title: "Eliminado",
+  text: "Maestro eliminado correctamente",
+  confirmButtonText: "Aceptar",
+});
         cargarDatos();
 
       } else {
 
-        alert(data.message);
+        await Swal.fire({
+  icon: "error",
+  title: "No se pudo eliminar",
+  text: data.message || "Ocurrió un error al eliminar el maestro",
+  confirmButtonText: "Aceptar",
+});
 
       }
 
     } catch (error) {
 
       console.error(error);
-      alert("Error al eliminar maestro");
+      Swal.fire({
+  icon: "error",
+  title: "Error",
+  text: "No se pudo eliminar el maestro",
+  confirmButtonText: "Aceptar",
+});
 
     }
 

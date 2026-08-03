@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 import AlumnoAutocomplete from "../components/AlumnoAutocomplete";
 
@@ -79,18 +80,36 @@ const RegistrarPago = () => {
 
     try {
       if (!form.DNI_Alumno || !form.DNI_Padre) {
-        alert("Debe seleccionar un alumno");
-        return;
+       await Swal.fire({
+  icon: "warning",
+  title: "Alumno requerido",
+  text: "Debe seleccionar un alumno",
+  confirmButtonText: "Aceptar",
+});
+
+return;
       }
 
       if (!form.Mes_Correspondiente) {
-        alert("El alumno no tiene mensualidades pendientes");
-        return;
+        await Swal.fire({
+  icon: "info",
+  title: "Sin mensualidades pendientes",
+  text: "El alumno no tiene mensualidades pendientes",
+  confirmButtonText: "Aceptar",
+});
+
+return;
       }
 
       if (!comprobante) {
-        alert("Debe subir el comprobante de pago");
-        return;
+        await Swal.fire({
+  icon: "warning",
+  title: "Comprobante requerido",
+  text: "Debe subir el comprobante de pago",
+  confirmButtonText: "Aceptar",
+});
+
+return;
       }
 
       const urlComprobante = await subirComprobanteCloudinary();
@@ -106,7 +125,12 @@ const RegistrarPago = () => {
 
       await axios.post("http://localhost:3000/api/insertPago", datosPago);
 
-      alert("Pago registrado correctamente");
+      await Swal.fire({
+  icon: "success",
+  title: "Pago registrado",
+  text: "El pago fue registrado correctamente",
+  confirmButtonText: "Aceptar",
+});
 
       await handleAlumnoSeleccionado({
   DNI: form.DNI_Alumno,
@@ -126,7 +150,12 @@ setComprobante(null);
 
     } catch (error) {
       console.error(error);
-      alert(error.response?.data?.message || "Error al guardar pago");
+     Swal.fire({
+  icon: "error",
+  title: "Error",
+  text: error.response?.data?.message || "No se pudo guardar el pago",
+  confirmButtonText: "Aceptar",
+});
     }
   };
 

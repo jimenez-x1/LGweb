@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useDispatch } from "../store";
 import fetchers from "../store/slices/Alumnos/fetchers";
 import PadreAutocomplete from "../components/work/PadreAutocomplete";
+import Swal from "sweetalert2";
 
 const Alumnos = () => {
   const dispatch = useDispatch();
@@ -90,7 +91,12 @@ const [busquedaConsulta, setBusquedaConsulta] = useState("");
       })
     ).catch((error) => {
       console.error("Error:", error);
-      alert("Error al guardar alumno");
+      Swal.fire({
+  icon: "error",
+  title: "Error",
+  text: "Error al guardar alumno",
+  confirmButtonText: "Aceptar",
+});
       return null;
     });
 
@@ -98,17 +104,31 @@ const [busquedaConsulta, setBusquedaConsulta] = useState("");
 
     if (res.payload?.error) {
       console.error("Error:", res.payload.error);
-      alert(
-        res.payload.error.message ||
-          (editando ? "Error al actualizar alumno" : "Error al registrar alumno")
-      );
+     Swal.fire({
+  icon: "error",
+  title: "Error",
+  text:
+    res.payload.error.message ||
+    (editando
+      ? "Error al actualizar alumno"
+      : "Error al registrar alumno"),
+  confirmButtonText: "Aceptar",
+});
       return;
     }
 
-    alert(editando ? "Alumno actualizado correctamente" : "Alumno registrado correctamente");
-    limpiarFormulario();
-    cargarAlumnos();
-  };
+    Swal.fire({
+  icon: "success",
+  title: "¡Éxito!",
+  text: editando
+    ? "Alumno actualizado correctamente"
+    : "Alumno registrado correctamente",
+  confirmButtonText: "Aceptar",
+});
+
+limpiarFormulario();
+cargarAlumnos();
+};
 
   const editar = (alumno) => {
   setForm({
@@ -140,8 +160,18 @@ const [busquedaConsulta, setBusquedaConsulta] = useState("");
 
 
   const eliminar = async (id) => {
-    const confirmar = window.confirm("¿Eliminar este alumno?");
-    if (!confirmar) return;
+    const confirmar = await Swal.fire({
+  title: "¿Eliminar alumno?",
+  text: "Esta acción no se puede deshacer.",
+  icon: "warning",
+  showCancelButton: true,
+  confirmButtonColor: "#d33",
+  cancelButtonColor: "#6c757d",
+  confirmButtonText: "Sí, eliminar",
+  cancelButtonText: "Cancelar",
+});
+
+if (!confirmar.isConfirmed) return;
 
     try {
       await dispatch(
@@ -149,11 +179,21 @@ const [busquedaConsulta, setBusquedaConsulta] = useState("");
           url: `/deleteAlumno/${id}`,
         })
       );
-      alert("Alumno eliminado correctamente");
+      Swal.fire({
+  icon: "success",
+  title: "Eliminado",
+  text: "Alumno eliminado correctamente",
+  confirmButtonText: "Aceptar",
+});
       cargarAlumnos();
     } catch (error) {
       console.error(error);
-      alert("Error al eliminar alumno");
+      Swal.fire({
+  icon: "error",
+  title: "Error",
+  text: "Error al eliminar alumno",
+  confirmButtonText: "Aceptar",
+});
     }
   };
 
