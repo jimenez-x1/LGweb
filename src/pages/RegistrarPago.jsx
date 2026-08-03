@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 import AlumnoAutocomplete from "../components/AlumnoAutocomplete";
 
@@ -79,18 +80,36 @@ const RegistrarPago = () => {
 
     try {
       if (!form.DNI_Alumno || !form.DNI_Padre) {
-        alert("Debe seleccionar un alumno");
-        return;
+       await Swal.fire({
+  icon: "warning",
+  title: "Alumno requerido",
+  text: "Debe seleccionar un alumno",
+  confirmButtonText: "Aceptar",
+});
+
+return;
       }
 
       if (!form.Mes_Correspondiente) {
-        alert("El alumno no tiene mensualidades pendientes");
-        return;
+        await Swal.fire({
+  icon: "info",
+  title: "Sin mensualidades pendientes",
+  text: "El alumno no tiene mensualidades pendientes",
+  confirmButtonText: "Aceptar",
+});
+
+return;
       }
 
       if (!comprobante) {
-        alert("Debe subir el comprobante de pago");
-        return;
+        await Swal.fire({
+  icon: "warning",
+  title: "Comprobante requerido",
+  text: "Debe subir el comprobante de pago",
+  confirmButtonText: "Aceptar",
+});
+
+return;
       }
 
       const urlComprobante = await subirComprobanteCloudinary();
@@ -106,7 +125,12 @@ const RegistrarPago = () => {
 
       await axios.post("http://localhost:3000/api/insertPago", datosPago);
 
-      alert("Pago registrado correctamente");
+      await Swal.fire({
+  icon: "success",
+  title: "Pago registrado",
+  text: "El pago fue registrado correctamente",
+  confirmButtonText: "Aceptar",
+});
 
       await handleAlumnoSeleccionado({
   DNI: form.DNI_Alumno,
@@ -126,157 +150,204 @@ setComprobante(null);
 
     } catch (error) {
       console.error(error);
-      alert(error.response?.data?.message || "Error al guardar pago");
+     Swal.fire({
+  icon: "error",
+  title: "Error",
+  text: error.response?.data?.message || "No se pudo guardar el pago",
+  confirmButtonText: "Aceptar",
+});
     }
   };
 
-  return (
-    <section className="container py-5">
-      <div className="row justify-content-center">
-        <div className="col-lg-7 col-md-9 col-12">
-          <div className="card shadow-sm border-0 rounded-4">
-            <div className="card-body p-4 p-md-5">
-              <div className="text-center mb-4">
-                <h2 className="fw-bold">Registrar Pago</h2>
-                <p className="text-muted mb-0">
-                  Complete la información del pago
-                </p>
-              </div>
+ return (
+  <section className="module-page">
+    <div className="module-container">
 
-              <form onSubmit={insertPago}>
-                <div className="mb-3">
-                  <label className="form-label fw-semibold">Alumno</label>
-                  <AlumnoAutocomplete onSelect={handleAlumnoSeleccionado} />
-                </div>
+      <div className="module-header">
+        <span className="module-label">
+          Gestión financiera
+        </span>
 
-                {estadoCuenta && (
-                  <div className="card border-primary mt-3 mb-3">
-                    <div className="card-header bg-primary text-white">
-                      Estado de Cuenta
-                    </div>
+        <h1>Registrar pago</h1>
 
-                    <div className="card-body">
-                      <p>
-                        <strong>Solvente hasta:</strong>{" "}
-                        {estadoCuenta.solventeHasta
-                          ? `${estadoCuenta.solventeHasta.nombre} ${estadoCuenta.solventeHasta.anio}`
-                          : "Sin mensualidades pagadas"}
-                      </p>
+        <p>
+          Complete la información del pago del alumno.
+        </p>
+      </div>
 
-                      <p>
-                        <strong>Próxima mensualidad:</strong>{" "}
-                        {estadoCuenta.siguienteMensualidad
-                          ? `${estadoCuenta.siguienteMensualidad.nombre} ${estadoCuenta.siguienteMensualidad.anio}`
-                          : "No tiene mensualidades pendientes"}
-                      </p>
+      <div className="module-card">
 
-                      <p className="mb-1">
-                        <strong>Mensualidades pendientes:</strong>
-                      </p>
+        <div className="module-card-header">
+          <div>
+            <h2 className="module-card-title mb-1">
+              Información del pago
+            </h2>
 
-                      <ul className="mb-0">
-                        {estadoCuenta.pendientes.map((mes) => (
-                          <li key={`${mes.mes}-${mes.anio}`}>
-                            {mes.nombre} {mes.anio}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                )}
-
-                <div className="mb-3">
-                  <label className="form-label fw-semibold">Fecha de pago</label>
-                  <input
-                    type="date"
-                    name="Fecha_Pago"
-                    value={form.Fecha_Pago}
-                    onChange={handleChange}
-                    required
-                    className="form-control"
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <label className="form-label fw-semibold">Monto</label>
-                  <input
-                    type="number"
-                    name="Monto"
-                    value={form.Monto}
-                    readOnly
-                    required
-                    className="form-control"
-                    placeholder="Ingrese el monto"
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <label className="form-label fw-semibold">
-                    Número de referencia
-                  </label>
-                  <input
-                    type="text"
-                    name="Numero_Referencia"
-                    value={form.Numero_Referencia}
-                    onChange={handleChange}
-                    required
-                    className="form-control"
-                    placeholder="Ingrese el número de referencia"
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <label className="form-label fw-semibold">
-                    Mes correspondiente
-                  </label>
-                  <input
-                    type="text"
-                    value={
-                      estadoCuenta?.siguienteMensualidad
-                        ? `${estadoCuenta.siguienteMensualidad.nombre} ${estadoCuenta.siguienteMensualidad.anio}`
-                        : ""
-                    }
-                    readOnly
-                    required
-                    className="form-control"
-                    placeholder="Se selecciona automáticamente"
-                  />
-                </div>
-
-                <div className="mb-4">
-                  <label className="form-label fw-semibold">
-                    Comprobante de pago
-                  </label>
-                  <input
-                        key={comprobante ? "con-archivo" : "sin-archivo"}
-                        type="file"
-                        accept="image/*"
-                        onChange={handleComprobante}
-                        required
-                        className="form-control"
-                      />
-                  <small className="text-muted">
-                    Suba una foto del recibo o comprobante de la mensualidad.
-                  </small>
-                </div>
-
-                <div className="d-flex flex-column flex-sm-row gap-2 justify-content-center">
-                  <button type="submit" className="btn btn-primary px-4">
-                    Guardar Pago
-                  </button>
-
-                  <Link to="/pagos" className="btn btn-secondary px-4">
-                    Volver a Pagos
-                  </Link>
-                </div>
-              </form>
-
-            </div>
+            <p className="module-card-description">
+              Registre una nueva mensualidad.
+            </p>
           </div>
         </div>
+
+        <form onSubmit={insertPago}>
+
+          <div className="row g-3">
+
+            <div className="col-12">
+              <label className="form-label">
+                Alumno
+              </label>
+
+              <AlumnoAutocomplete
+                onSelect={handleAlumnoSeleccionado}
+              />
+            </div>
+
+            {estadoCuenta && (
+              <div className="col-12">
+                <div className="alert alert-primary rounded-4">
+
+                  <h6 className="fw-bold mb-3">
+                    Estado de cuenta
+                  </h6>
+
+                  <p className="mb-2">
+                    <strong>Solvente hasta:</strong>{" "}
+                    {estadoCuenta.solventeHasta
+                      ? `${estadoCuenta.solventeHasta.nombre} ${estadoCuenta.solventeHasta.anio}`
+                      : "Sin mensualidades pagadas"}
+                  </p>
+
+                  <p className="mb-2">
+                    <strong>Próxima mensualidad:</strong>{" "}
+                    {estadoCuenta.siguienteMensualidad
+                      ? `${estadoCuenta.siguienteMensualidad.nombre} ${estadoCuenta.siguienteMensualidad.anio}`
+                      : "No tiene mensualidades pendientes"}
+                  </p>
+
+                  <strong>Mensualidades pendientes:</strong>
+
+                  <ul className="mb-0 mt-2">
+                    {estadoCuenta.pendientes.map((mes) => (
+                      <li key={`${mes.mes}-${mes.anio}`}>
+                        {mes.nombre} {mes.anio}
+                      </li>
+                    ))}
+                  </ul>
+
+                </div>
+              </div>
+            )}
+
+            <div className="col-md-6">
+              <label className="form-label">
+                Fecha de pago
+              </label>
+
+              <input
+                type="date"
+                name="Fecha_Pago"
+                value={form.Fecha_Pago}
+                onChange={handleChange}
+                className="form-control"
+                required
+              />
+            </div>
+
+            <div className="col-md-6">
+              <label className="form-label">
+                Monto
+              </label>
+
+              <input
+                type="number"
+                name="Monto"
+                value={form.Monto}
+                readOnly
+                className="form-control"
+              />
+            </div>
+
+            <div className="col-md-6">
+              <label className="form-label">
+                Número de referencia
+              </label>
+
+              <input
+                type="text"
+                name="Numero_Referencia"
+                value={form.Numero_Referencia}
+                onChange={handleChange}
+                className="form-control"
+                placeholder="Ingrese el número de referencia"
+                required
+              />
+            </div>
+
+            <div className="col-md-6">
+              <label className="form-label">
+                Mensualidad
+              </label>
+
+              <input
+                type="text"
+                className="form-control"
+                readOnly
+                value={
+                  estadoCuenta?.siguienteMensualidad
+                    ? `${estadoCuenta.siguienteMensualidad.nombre} ${estadoCuenta.siguienteMensualidad.anio}`
+                    : ""
+                }
+                placeholder="Se selecciona automáticamente"
+              />
+            </div>
+
+            <div className="col-12">
+              <label className="form-label">
+                Comprobante de pago
+              </label>
+
+              <input
+                key={comprobante ? "con-archivo" : "sin-archivo"}
+                type="file"
+                accept="image/*"
+                onChange={handleComprobante}
+                className="form-control"
+                required
+              />
+
+              <small className="text-muted">
+                Adjunte una fotografía del comprobante.
+              </small>
+            </div>
+
+          </div>
+
+          <div className="d-flex gap-2 mt-4">
+
+            <button
+              type="submit"
+              className="module-primary-btn"
+            >
+              Guardar pago
+            </button>
+
+            <Link
+              to="/pagos"
+              className="btn btn-outline-secondary"
+            >
+              Cancelar
+            </Link>
+
+          </div>
+
+        </form>
+
       </div>
-    </section>
-  );
+
+    </div>
+  </section>
+);
 };
 
 export default RegistrarPago;

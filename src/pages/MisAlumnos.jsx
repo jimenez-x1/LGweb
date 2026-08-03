@@ -55,162 +55,159 @@ const toggleGrado = (idGrado) => {
 
 
 
-  return (
-    <section className="pt_100 pb_100">
-      <div className="container">
+ return (
+  <section className="module-page">
+    <div className="module-container">
 
-        <div className="row mb_40">
-          <div className="col-12 text-center">
-            <div className="tf__heading_area">
-              <h5>Consulta</h5>
-              <h2>Mis alumnos</h2>
-              <p>Alumnos organizados por grado asignado.</p>
-            </div>
-          </div>
+      <div className="module-header">
+        <span className="module-label">
+          Gestión académica
+        </span>
+
+        <h1>Mis alumnos</h1>
+
+        <p>
+          Consulte los alumnos organizados por grado asignado.
+        </p>
+      </div>
+
+      {mensaje && (
+        <div className="alert alert-danger">
+          {mensaje}
         </div>
+      )}
 
-        {mensaje && (
-          <p className="text-center text-danger">{mensaje}</p>
-        )}
-{grados.map((item) => {
-  const idGrado = item.grado.ID_Grado;
-  const estaAbierto = !!gradosAbiertos[idGrado];
+      {grados.map((item) => {
+        const idGrado = item.grado.ID_Grado;
+        const estaAbierto = !!gradosAbiertos[idGrado];
 
-  const alumnosOrdenados = [...item.alumnos].sort((a, b) => {
-    const nombreA = `${a.Nombre} ${a.Apellido}`.toLowerCase();
-    const nombreB = `${b.Nombre} ${b.Apellido}`.toLowerCase();
+        const alumnosOrdenados = [...item.alumnos].sort((a, b) => {
+          const nombreA = `${a.Nombre} ${a.Apellido}`.toLowerCase();
+          const nombreB = `${b.Nombre} ${b.Apellido}`.toLowerCase();
 
-    return nombreA.localeCompare(nombreB);
-  });
+          return nombreA.localeCompare(nombreB);
+        });
 
-  return (
-    <div
-      key={idGrado}
-      className="mb_40"
-    >
-      <div
-        className="p-4 rounded shadow-sm"
-        onClick={() => toggleGrado(idGrado)}
-        style={{
-          background: "linear-gradient(135deg, #1e3a8a, #3158b8)",
-          color: "white",
-          borderLeft: "8px solid #ff8c1a",
-          cursor: "pointer",
-        }}
-      >
-        <div className="d-flex justify-content-between align-items-center flex-wrap gap-3">
-          <div>
-            <p className="mb-1" style={{ opacity: 0.85 }}>
-              Grado asignado
-            </p>
-
-            <h3 className="mb-0 text-white">
-              {item.grado.Nombre_Grado}
-              {item.grado.Seccion
-                ? ` - Sección ${item.grado.Seccion}`
-                : ""}
-            </h3>
-          </div>
-
-          <div className="d-flex align-items-center gap-3">
-            <div
-              className="rounded p-3 text-center"
-              style={{
-                backgroundColor: "rgba(255,255,255,0.15)",
-                minWidth: "150px",
-              }}
-            >
-              <h2 className="mb-0 text-white">
-                {item.alumnos.length}
-              </h2>
-
-              <p className="mb-0 text-white">
-                {item.alumnos.length === 1
-                  ? "Alumno asignado"
-                  : "Alumnos asignados"}
-              </p>
-            </div>
-
-            <span
-              style={{
-                fontSize: "1.5rem",
-                transition: "transform 0.2s ease",
-                transform: estaAbierto
-                  ? "rotate(180deg)"
-                  : "rotate(0deg)",
-              }}
-            >
-              ▼
-            </span>
-          </div>
-        </div>
-
-        {estaAbierto && (
+        return (
           <div
-            className="row mt-4 pt-4"
-            style={{
-              borderTop: "1px solid rgba(255,255,255,0.3)",
-            }}
-            onClick={(e) => e.stopPropagation()}
+            key={idGrado}
+            className="module-card mb-4"
           >
-            {alumnosOrdenados.length === 0 ? (
-              <div className="col-12">
-                <p className="text-center text-white mb-0">
-                  No hay alumnos registrados en este grado.
+            <div
+              className="module-card-header"
+              style={{ cursor: "pointer" }}
+              onClick={() => toggleGrado(idGrado)}
+            >
+              <div>
+                <h2 className="module-card-title">
+                  {item.grado.Nombre_Grado}
+                  {item.grado.Seccion
+                    ? ` - Sección ${item.grado.Seccion}`
+                    : ""}
+                </h2>
+
+                <p className="module-card-description mb-0">
+                  {item.alumnos.length}{" "}
+                  {item.alumnos.length === 1
+                    ? "alumno asignado"
+                    : "alumnos asignados"}
                 </p>
               </div>
-            ) : (
-              alumnosOrdenados.map((alumno, index) => (
-                <div
-                  className="col-md-6 col-lg-4 mb-3"
-                  key={alumno.DNI}
-                >
-                  <div
-                    className="p-3 rounded h-100"
-                    style={{
-                      backgroundColor: "rgba(255,255,255,0.95)",
-                      color: "#17213b",
-                      borderTop: "4px solid #ff8c1a",
-                    }}
-                  >
-                    <div className="d-flex align-items-center gap-3">
-                      <div
-                        className="rounded-circle d-flex align-items-center justify-content-center"
-                        style={{
-                          width: "45px",
-                          height: "45px",
-                          backgroundColor: "#e8efff",
-                          color: "#1e3a8a",
-                          fontWeight: "bold",
-                          flexShrink: 0,
-                        }}
-                      >
-                        {index + 1}
-                      </div>
 
-                      <div>
-                        <h4 className="mb-1">
-                          {alumno.Nombre} {alumno.Apellido}
-                        </h4>
+              <div
+                style={{
+                  fontSize: "26px",
+                  transition: ".3s",
+                  transform: estaAbierto
+                    ? "rotate(180deg)"
+                    : "rotate(0deg)",
+                }}
+              >
+                ▼
+              </div>
+            </div>
 
-                        <p className="mb-0">
-                          <strong>DNI:</strong> {alumno.DNI}
-                        </p>
-                      </div>
+            {estaAbierto && (
+              <div className="row g-4 mt-2">
+
+                {alumnosOrdenados.length === 0 ? (
+                  <div className="col-12">
+                    <div className="module-empty-state">
+                      <i className="fas fa-user-graduate"></i>
+
+                      <h3>
+                        No hay alumnos registrados
+                      </h3>
+
+                      <p>
+                        Este grado aún no tiene alumnos asignados.
+                      </p>
                     </div>
                   </div>
-                </div>
-              ))
+                ) : (
+                  alumnosOrdenados.map((alumno) => (
+                    <div
+                      className="col-12 col-md-6 col-xl-4"
+                      key={alumno.DNI}
+                    >
+                      <div className="teacher-card">
+
+                        <div className="teacher-card-top">
+
+                          <div className="teacher-avatar">
+                            {alumno.Nombre?.charAt(0)}
+                            {alumno.Apellido?.charAt(0)}
+                          </div>
+
+                          <div className="teacher-info">
+                            <h3>
+                              {alumno.Nombre} {alumno.Apellido}
+                            </h3>
+
+                            <span className="teacher-role">
+                              Alumno
+                            </span>
+                          </div>
+
+                        </div>
+
+                        <div className="teacher-details">
+
+                          <div className="teacher-detail-item">
+                            <span>DNI</span>
+                            <strong>{alumno.DNI}</strong>
+                          </div>
+
+                          <div className="teacher-detail-item">
+                            <span>Grado</span>
+                            <strong>
+                              {item.grado.Nombre_Grado}
+                            </strong>
+                          </div>
+
+                          <div className="teacher-detail-item">
+                            <span>Sección</span>
+                            <strong>
+                              {item.grado.Seccion || "-"}
+                            </strong>
+                          </div>
+
+                        </div>
+
+                      </div>
+                    </div>
+                  ))
+                )}
+
+              </div>
             )}
           </div>
-        )}
-      </div>
+        );
+      })}
+
     </div>
-  );
-})}
-      </div>
-    </section>
-  );
+  </section>
+);
 };
 
 export default MisAlumnos;

@@ -3,185 +3,114 @@ import { Link } from "react-router-dom";
 
 const PanelMaestro = () => {
   return (
-    <section className="pt_100 pb_100">
-      <div className="container">
+  <section className="module-page">
+    <div className="module-container">
 
-        <div className="row mb_50">
-          <div className="col-12 text-center">
-            <div className="tf__heading_area">
-              <h5>Panel</h5>
-              <h2>Panel del Maestro</h2>
-              <p>
-                Bienvenido. Seleccione una opción para administrar sus
-                alumnos y calificaciones.
-              </p>
+      <div className="module-header">
+        <span className="module-label">
+          Panel del Maestro
+        </span>
+
+        <h1>Bienvenido</h1>
+
+        <p>
+          Seleccione una opción para administrar sus alumnos y registrar calificaciones.
+        </p>
+      </div>
+
+      <div className="row g-4">
+
+        <div className="col-lg-6">
+          <Link
+            to="/mis-alumnos"
+            style={{ textDecoration: "none" }}
+          >
+            <div className="teacher-card teacher-panel-card">
+
+              <div className="teacher-card-top">
+
+                <div className="teacher-avatar">
+                  👨‍🎓
+                </div>
+
+                <div className="teacher-info">
+                  <h3>Mis alumnos</h3>
+
+                  <span className="teacher-role">
+                    Consulta de alumnos
+                  </span>
+                </div>
+
+              </div>
+
+              <div className="teacher-details">
+
+                <div className="teacher-detail-item">
+                  <span>
+                    Consulte los alumnos asignados organizados por grado.
+                  </span>
+                </div>
+
+              </div>
+
+              <div className="teacher-actions">
+                <button className="btn btn-primary teacher-btn">
+                  Ingresar
+                </button>
+              </div>
+
             </div>
-          </div>
+          </Link>
         </div>
 
-        <div className="row g-4">
+        <div className="col-lg-6">
+          <Link
+            to="/mis-notas"
+            style={{ textDecoration: "none" }}
+          >
+            <div className="teacher-card teacher-panel-card">
 
-          {/* MIS ALUMNOS */}
-          <div className="col-lg-6">
-            <Link
-              to="/mis-alumnos"
-              style={{ textDecoration: "none" }}
-            >
-              <div
-                style={{
-                  background:
-                    "linear-gradient(135deg,#1e3a8a,#3158b8)",
-                  borderLeft: "8px solid #ff8c1a",
-                  borderRadius: "16px",
-                  padding: "35px",
-                  color: "#fff",
-                  boxShadow: "0 12px 28px rgba(0,0,0,.15)",
-                  transition: ".3s",
-                  cursor: "pointer",
-                  height: "100%"
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform =
-                    "translateY(-8px)";
-                  e.currentTarget.style.boxShadow =
-                    "0 20px 40px rgba(0,0,0,.25)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform =
-                    "translateY(0)";
-                  e.currentTarget.style.boxShadow =
-                    "0 12px 28px rgba(0,0,0,.15)";
-                }}
-              >
-                <div className="d-flex justify-content-between align-items-center">
+              <div className="teacher-card-top">
 
-                  <div>
-                    <div
-                      style={{
-                        fontSize: "55px",
-                        marginBottom: "15px"
-                      }}
-                    >
-                      👨‍🎓
-                    </div>
-
-                    <h3
-                      style={{
-                        color: "#fff",
-                        marginBottom: "15px"
-                      }}
-                    >
-                      Mis alumnos
-                    </h3>
-
-                    <p
-                      style={{
-                        color: "#eef3ff",
-                        marginBottom: 0
-                      }}
-                    >
-                      Consulte los alumnos asignados y
-                      organizados por grado.
-                    </p>
-                  </div>
-
-                  <div
-                    style={{
-                      fontSize: "40px",
-                      color: "#fff"
-                    }}
-                  >
-                    →
-                  </div>
-
+                <div className="teacher-avatar">
+                  📝
                 </div>
-              </div>
-            </Link>
-          </div>
 
-          {/* NOTAS */}
-          <div className="col-lg-6">
-            <Link
-              to="/mis-notas"
-              style={{ textDecoration: "none" }}
-            >
-              <div
-                style={{
-                  background:
-                    "linear-gradient(135deg,#1e3a8a,#3158b8)",
-                  borderLeft: "8px solid #ff8c1a",
-                  borderRadius: "16px",
-                  padding: "35px",
-                  color: "#fff",
-                  boxShadow: "0 12px 28px rgba(0,0,0,.15)",
-                  transition: ".3s",
-                  cursor: "pointer",
-                  height: "100%"
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform =
-                    "translateY(-8px)";
-                  e.currentTarget.style.boxShadow =
-                    "0 20px 40px rgba(0,0,0,.25)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform =
-                    "translateY(0)";
-                  e.currentTarget.style.boxShadow =
-                    "0 12px 28px rgba(0,0,0,.15)";
-                }}
-              >
-                <div className="d-flex justify-content-between align-items-center">
+                <div className="teacher-info">
+                  <h3>Gestionar notas</h3>
 
-                  <div>
-                    <div
-                      style={{
-                        fontSize: "55px",
-                        marginBottom: "15px"
-                      }}
-                    >
-                      📝
-                    </div>
-
-                    <h3
-                      style={{
-                        color: "#fff",
-                        marginBottom: "15px"
-                      }}
-                    >
-                      Gestionar notas
-                    </h3>
-
-                    <p
-                      style={{
-                        color: "#eef3ff",
-                        marginBottom: 0
-                      }}
-                    >
-                      Registre, edite y consulte las
-                      calificaciones de sus alumnos.
-                    </p>
-                  </div>
-
-                  <div
-                    style={{
-                      fontSize: "40px",
-                      color: "#fff"
-                    }}
-                  >
-                    →
-                  </div>
-
+                  <span className="teacher-role">
+                    Registro de calificaciones
+                  </span>
                 </div>
-              </div>
-            </Link>
-          </div>
 
+              </div>
+
+              <div className="teacher-details">
+
+                <div className="teacher-detail-item">
+                  <span>
+                    Registre, modifique y consulte las notas de sus alumnos.
+                  </span>
+                </div>
+
+              </div>
+
+              <div className="teacher-actions">
+                <button className="btn btn-primary teacher-btn">
+                  Ingresar
+                </button>
+              </div>
+
+            </div>
+          </Link>
         </div>
 
       </div>
-    </section>
-  );
+
+    </div>
+  </section>
+);
 };
 
 export default PanelMaestro;

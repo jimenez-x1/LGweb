@@ -26,6 +26,22 @@ api.interceptors.request.use(
         Promise.reject(error)
     });
 
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        const status = error?.response?.status;
+        const url = error?.config?.url || "";
+        const esEndpointLogin =
+            url.includes("/signIn") || url.includes("/signUp");
+
+        if (status === 401 && !esEndpointLogin) {
+            localStorage.clear();
+            window.location.href = "/";
+        }
+
+        return Promise.reject(error);
+    });
+
 async function getData(props: TypeUtilities) {
     return await api.get(props.url).then(response => {
         const responseData = crearRespuestaVacia();

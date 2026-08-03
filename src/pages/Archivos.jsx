@@ -1,139 +1,323 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const Archivos = () => {
-  const [formData, setFormData] = useState({
-    Nombre_Archivo: "",
-    Tipo_Archivo: "",
-    Fecha_Subida: "",
-  });
-
   const [dni, setDni] = useState("");
-  const [generando, setGenerando] = useState(false);
+  const [generandoConstancia, setGenerandoConstancia] = useState(false);
+  const [generandoCertificacion, setGenerandoCertificacion] = useState(false);
+  const [alumnos, setAlumnos] = useState([]);
+  const [sugerencias, setSugerencias] = useState([]);
+  const [mostrarSugerencias, setMostrarSugerencias] = useState(false);
+  const contenedorRef = useRef(null);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+  useEffect(() => {
+    const cargarAlumnos = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/api/alumnos");
+        setAlumnos(response.data || []);
+      } catch (error) {
+        console.error("Error al cargar alumnos:", error);
+      }
+    };
+    cargarAlumnos();
+  }, []);
+
+  useEffect(() => {
+    const manejarClicFuera = (e) => {
+      if (contenedorRef.current && !contenedorRef.current.contains(e.target)) {
+        setMostrarSugerencias(false);
+      }
+    };
+    document.addEventListener("mousedown", manejarClicFuera);
+    return () => document.removeEventListener("mousedown", manejarClicFuera);
+  }, []);
+
+  const handleChangeDni = (e) => {
+    const valor = e.target.value;
+    setDni(valor);
+
+    if (valor.trim().length === 0) {
+      setSugerencias([]);
+      setMostrarSugerencias(false);
+      return;
+    }
+
+    const texto = valor.toLowerCase();
+    const filtrados = alumnos.filter((alumno) => {
+      const nombreCompleto = `${alumno.Nombre} ${alumno.Apellido}`.toLowerCase();
+      return (
+        alumno.DNI?.toLowerCase().includes(texto) ||
+        nombreCompleto.includes(texto)
+      );
+    }).slice(0, 6);
+
+    setSugerencias(filtrados);
+    setMostrarSugerencias(filtrados.length > 0);
   };
 
-  const guardarArchivo = async (e) => {
-    e.preventDefault();
+  const seleccionarSugerencia = (alumno) => {
+    setDni(alumno.DNI);
+    setMostrarSugerencias(false);
+  };
 
-    try {
-      await axios.post("http://localhost:3000/api/archivos", formData);
-      alert("Archivo guardado correctamente");
+  const descargarPdf = async (endpoint, prefijoArchivo) => {
+    const response = await axios.get(
+      `http://localhost:3000/api/alumno/${dni}/${endpoint}`,
+      { responseType: "blob" }
+    );
 
-      setFormData({
-        Nombre_Archivo: "",
-        Tipo_Archivo: "",
-        Fecha_Subida: "",
-      });
-    } catch (error) {
-      console.error(error);
-      alert("Error al guardar archivo");
-    }
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `${prefijoArchivo}_${dni}.pdf`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
   };
 
   const generarConstancia = async (e) => {
     e.preventDefault();
-    if (!dni) return alert("Ingresa el DNI del alumno");
-
-    setGenerando(true);
+    if (!dni) {
+  await Swal.fire({
+    icon: "warning",
+    title: "DNI requerido",
+    text: "Ingresa el DNI del alumno",
+    confirmButtonText: "Aceptar",
+  });
+  return;
+}
+    setGenerandoConstancia(true);
     try {
-      const response = await axios.get(
-        `http://localhost:3000/api/alumno/${dni}/constancia`,
-        { responseType: "blob" }
-      );
-
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `constancia_${dni}.pdf`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+      await descargarPdf("constancia", "constancia");
     } catch (error) {
       console.error(error);
       if (error.response?.status === 404) {
-        alert("No se encontró un alumno con ese DNI");
+        Swal.fire({
+  icon: "warning",
+  title: "Alumno no encontrado",
+  text: "No se encontró un alumno con ese DNI",
+  confirmButtonText: "Aceptar",
+});
       } else {
-        alert("Error al generar la constancia");
+       Swal.fire({
+  icon: "error",
+  title: "Error",
+  text: "No se pudo generar la constancia",
+  confirmButtonText: "Aceptar",
+}); 
       }
     } finally {
-      setGenerando(false);
+      setGenerandoConstancia(false);
+    }
+  };
+
+  const generarCertificacion = async (e) => {
+    e.preventDefault();
+   if (!dni) {
+  await Swal.fire({
+    icon: "warning",
+    title: "DNI requerido",
+    text: "Ingresa el DNI del alumno",
+    confirmButtonText: "Aceptar",
+  });
+  return;
+}
+
+    setGenerandoCertificacion(true);
+    try {
+      await descargarPdf("certificacion", "certificacion");
+    } catch (error) {
+      console.error(error);
+      if (error.response?.status === 404) {
+        Swal.fire({
+  icon: "warning",
+  title: "Alumno no encontrado",
+  text: "No se encontró un alumno con ese DNI",
+  confirmButtonText: "Aceptar",
+});
+
+      } else {
+        Swal.fire({
+  icon: "error",
+  title: "Error",
+  text: "No se pudo generar la certificación",
+  confirmButtonText: "Aceptar",
+});
+      }
+    } finally {
+      setGenerandoCertificacion(false);
     }
   };
 
   return (
-    <div className="container mt-5">
-      <h2>Registro de Archivos</h2>
+  <section className="module-page">
+    <div className="module-container">
 
-      <form onSubmit={guardarArchivo} className="mt-4">
-        <div className="mb-3">
-          <label className="form-label">Nombre del archivo</label>
-          <input
-            type="text"
-            className="form-control"
-            name="Nombre_Archivo"
-            value={formData.Nombre_Archivo}
-            onChange={handleChange}
-            required
-          />
+      {/* ENCABEZADO */}
+      <div className="module-header">
+        <span className="module-label">Gestión documental</span>
+
+        <h1>Archivos</h1>
+
+        <p>
+          Genera y descarga documentos académicos de los alumnos.
+        </p>
+      </div>
+
+      {/* BUSCADOR */}
+      <div className="module-card documents-search-card">
+        <div className="module-card-header">
+          <div>
+            <h2 className="module-card-title mb-1">
+              Seleccionar alumno
+            </h2>
+
+            <p className="module-card-description">
+              Busca al alumno por número de identidad, nombre o apellido.
+            </p>
+          </div>
         </div>
 
-        <div className="mb-3">
-          <label className="form-label">Tipo de archivo</label>
-          <input
-            type="text"
-            className="form-control"
-            name="Tipo_Archivo"
-            value={formData.Tipo_Archivo}
-            onChange={handleChange}
-            required
-          />
-        </div>
+        <div
+          className="documents-search-wrapper position-relative"
+          ref={contenedorRef}
+        >
+          <label className="form-label">
+            Alumno
+          </label>
 
-        <div className="mb-3">
-          <label className="form-label">Fecha de subida</label>
-          <input
-            type="date"
-            className="form-control"
-            name="Fecha_Subida"
-            value={formData.Fecha_Subida}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <button type="submit" className="btn btn-primary">
-          Guardar Archivo
-        </button>
-      </form>
-
-      <hr className="my-5" />
-
-      <h2>Constancia de Matrícula</h2>
-      <form onSubmit={generarConstancia} className="mt-4">
-        <div className="mb-3">
-          <label className="form-label">DNI del alumno</label>
           <input
             type="text"
             className="form-control"
             value={dni}
-            onChange={(e) => setDni(e.target.value)}
-            placeholder="Ej: 0801-1990-00000"
-            required
+            onChange={handleChangeDni}
+            onFocus={() =>
+              sugerencias.length > 0 &&
+              setMostrarSugerencias(true)
+            }
+            placeholder="Buscar por DNI, nombre o apellido..."
+            autoComplete="off"
           />
+
+          {mostrarSugerencias && (
+            <ul className="documents-suggestions">
+              {sugerencias.map((alumno) => (
+                <li
+                  key={alumno.DNI}
+                  onClick={() =>
+                    seleccionarSugerencia(alumno)
+                  }
+                >
+                  <div className="documents-suggestion-avatar">
+                    {alumno.Nombre?.charAt(0)}
+                    {alumno.Apellido?.charAt(0)}
+                  </div>
+
+                  <div>
+                    <strong>
+                      {alumno.Nombre} {alumno.Apellido}
+                    </strong>
+
+                    <span>{alumno.DNI}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
-        <button type="submit" className="btn btn-success" disabled={generando}>
-          {generando ? "Generando..." : "Generar Constancia"}
-        </button>
-      </form>
+
+        {dni && (
+          <div className="documents-selected-student">
+            <i className="fas fa-check-circle"></i>
+
+            <span>
+              Alumno seleccionado: <strong>{dni}</strong>
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* DOCUMENTOS */}
+      <div className="module-card">
+        <div className="module-card-header">
+          <div>
+            <h2 className="module-card-title mb-1">
+              Documentos disponibles
+            </h2>
+
+            <p className="module-card-description">
+              Selecciona el documento que deseas generar.
+            </p>
+          </div>
+        </div>
+
+        <div className="row g-4">
+
+          {/* CONSTANCIA */}
+          <div className="col-12 col-lg-6">
+            <div className="document-option-card">
+              <div className="document-option-icon document-icon-green">
+                <i className="fas fa-file-alt"></i>
+              </div>
+
+              <div className="document-option-content">
+                <h3>Constancia de matrícula</h3>
+
+                <p>
+                  Genera una constancia que acredita que el alumno está
+                  matriculado en el centro educativo.
+                </p>
+
+                <button
+                  type="button"
+                  className="btn document-btn document-btn-green"
+                  onClick={generarConstancia}
+                  disabled={generandoConstancia}
+                >
+                  {generandoConstancia
+                    ? "Generando..."
+                    : "Generar constancia"}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* CERTIFICACIÓN */}
+          <div className="col-12 col-lg-6">
+            <div className="document-option-card">
+              <div className="document-option-icon document-icon-blue">
+                <i className="fas fa-file-pdf"></i>
+              </div>
+
+              <div className="document-option-content">
+                <h3>Certificación de estudios</h3>
+
+                <p>
+                  Genera una certificación con la información académica del
+                  alumno.
+                </p>
+
+                <button
+                  type="button"
+                  className="btn document-btn document-btn-blue"
+                  onClick={generarCertificacion}
+                  disabled={generandoCertificacion}
+                >
+                  {generandoCertificacion
+                    ? "Generando..."
+                    : "Generar certificación"}
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
     </div>
-  );
+  </section>
+);
 };
 
 export default Archivos;

@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PadreAutocomplete from "../components/work/PadreAutocomplete";
+import Swal from "sweetalert2";
+
 const RegistrarAlumno = () => {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
     DNI: "",
-    DNI_Padre: "",
+    DNI_Padre: form.DNI_Padre || null,
     Nombre: "",
     Apellido: "",
     Fecha_Nacimiento: "",
@@ -68,15 +70,32 @@ const RegistrarAlumno = () => {
       console.log("Respuesta servidor:", result);
 
       if (!response.ok) {
-        alert("No se pudo registrar el alumno");
-        return;
+        await Swal.fire({
+  icon: "error",
+  title: "Error",
+  text: "No se pudo registrar el alumno",
+  confirmButtonText: "Aceptar",
+});
+
+return;
       }
 
-      alert("Alumno registrado correctamente");
-      navigate("/alumnos");
+      await Swal.fire({
+  icon: "success",
+  title: "Registrado",
+  text: "Alumno registrado correctamente",
+  confirmButtonText: "Aceptar",
+});
+
+navigate("/alumnos");
     } catch (error) {
       console.error("Error al registrar alumno:", error);
-      alert("Ocurrió un error al registrar alumno");
+      Swal.fire({
+  icon: "error",
+  title: "Error",
+  text: "Ocurrió un error al registrar el alumno",
+  confirmButtonText: "Aceptar",
+});
     }
   };
 
@@ -183,7 +202,7 @@ const RegistrarAlumno = () => {
                     <option value="">Seleccione grado</option>
                     {grados.map((grado) => (
                       <option key={grado.ID_Grado} value={grado.ID_Grado}>
-                        {grado.Nombre_Grado}
+                        {grado.Nombre_Grado} - {grado.Seccion}
                       </option>
                     ))}
                   </select>

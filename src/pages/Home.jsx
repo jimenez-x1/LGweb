@@ -1,79 +1,74 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
+
 import { useDispatch } from "../store";
-import fetchers from "../store/slices/Alumnos/fetchers";
+import alumnoFetchers from "../store/slices/Alumnos/fetchers";
 import BannerSection from "../components/banner/BannerSection.jsx";
 
 const Home = () => {
   const dispatch = useDispatch();
+
   const [alumnos, setAlumnos] = useState([]);
+  const [maestros, setMaestros] = useState([]);
+  const [grados, setGrados] = useState([]);
 
   useEffect(() => {
-    dispatch(fetchers.getAlumnos({ url: "/alumnos" }))
-      .then((res) => {
-        setAlumnos(res.payload?.alumnosInfo ?? []);
-      })
-      .catch((error) => console.error(error));
+    const cargarDatos = async () => {
+      try {
+        const resultadoAlumnos = await dispatch(
+          alumnoFetchers.getAlumnos({
+            url: "/alumnos",
+          })
+        );
+
+        setAlumnos(resultadoAlumnos.payload?.alumnosInfo ?? []);
+
+        const token = localStorage.getItem("SECURE");
+
+        const [respuestaMaestros, respuestaGrados] = await Promise.all([
+          axios.get("http://localhost:3000/api/maestros", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }),
+
+          axios.get("http://localhost:3000/api/grados", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }),
+        ]);
+
+        setMaestros(
+          Array.isArray(respuestaMaestros.data)
+            ? respuestaMaestros.data
+            : []
+        );
+
+        setGrados(
+          Array.isArray(respuestaGrados.data)
+            ? respuestaGrados.data
+            : []
+        );
+      } catch (error) {
+        console.error("Error al cargar los datos del inicio:", error);
+
+        setAlumnos([]);
+        setMaestros([]);
+        setGrados([]);
+      }
+    };
+
+    cargarDatos();
   }, [dispatch]);
 
-const obtenerNombreGrado = (idGrado) => {
-  const grados = {
-    1: "Primero",
-    2: "Segundo",
-    3: "Tercero",
-    4: "Cuarto",
-    5: "Quinto",
-    6: "Sexto",
-  };
-
-  return grados[idGrado] || "";
-};
-
-  const totalAlumnos = alumnos.length; // Cantidad total de alumnos
-
-  const gradosRegistrados = new Set(
-    alumnos.map((alumno) => alumno.ID_Grado).filter(Boolean)
-  ).size; // Cuenta cuántos grados diferentes hay
-
   const stats = {
-    totalAlumnos, // Total de alumnos
-    gradosRegistrados, // Total de grados únicos
+    totalAlumnos: alumnos.length,
+    totalMaestros: maestros.length,
+    gradosRegistrados: grados.length,
   };
 
-  return (
-    <>
-      <BannerSection stats={stats} /> {/* Componente que muestra estadísticas */}
-
-      <section className="pt_100 pb_100">
-        <div className="container-fluid px-5">
-          <div className="row mb_40">
-            <div className="col-12 text-center">
-              <div className="tf__heading_area">
-                <h5>Listado</h5>
-                <h2>Alumnos registrados</h2>
-              </div>
-            </div>
-          </div>
-
-          <div className="row">
-            {alumnos.map((alumno) => (
-              <div className="col-md-6 col-lg-4 mb_30" key={alumno.DNI}>
-                <div className="tf__single_courses">
-                  <div className="tf__single_courses_text">
-                    <h3>
-                      {alumno.Nombre} {alumno.Apellido} {/* Nombre completo */}
-                    </h3>
-                    <p><strong>Dirección:</strong> {alumno.Direccion}</p>
-                    <p><strong>Género:</strong> {alumno.Genero}</p>
-                    <p><strong>Grado:</strong> {obtenerNombreGrado(alumno.ID_Grado)}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-    </>
-  );
+  return <BannerSection stats={stats} />;
 };
 
 export default Home;

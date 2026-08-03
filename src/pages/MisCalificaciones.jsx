@@ -84,278 +84,200 @@ const MisCalificaciones = () => {
     }));
   };
 
+  const calcularPromedio = (c) => {
+    const parciales = [
+      c.Parcial1,
+      c.Parcial2,
+      c.Parcial3,
+      c.Parcial4
+    ].filter((valor) => valor !== null && valor !== undefined && valor !== "");
+
+    return parciales.length === 0
+      ? null
+      : parciales.reduce((suma, valor) => suma + Number(valor), 0) / parciales.length;
+  };
+
   const grupos = agruparPorAlumno();
 
-  return (
-    <section
-      className="notas-section pt_100 pb_100"
-      style={{
-        background: "linear-gradient(180deg, #eef1f6 0%, #dde3ee 100%)",
-        minHeight: "100vh"
-      }}
-    >
+ return (
+  <section className="module-page">
+    <div className="module-container">
 
-      <style>{`
-        .notas-thead th {
-          background-color: #1e3a8a !important;
-          color: #ffffff !important;
-          font-size: 0.85rem;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-        }
-        .notas-fila-par {
-          background-color: #f8f9fa !important;
-        }
-        .notas-card {
-          background-color: #ffffff;
-          border-radius: 16px;
-          padding: 28px;
-          box-shadow: 0 4px 20px rgba(30, 58, 138, 0.1);
-          border-left: 6px solid #1e3a8a;
-          transition: transform 0.15s ease, box-shadow 0.15s ease;
-        }
-        .notas-card:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 28px rgba(30, 58, 138, 0.16);
-        }
-        .notas-avatar {
-          width: 48px;
-          height: 48px;
-          border-radius: 50%;
-          background: linear-gradient(135deg, #1e3a8a, #3b5fc0);
-          color: #ffffff;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: bold;
-          font-size: 1.1rem;
-          flex-shrink: 0;
-        }
-        .notas-badge {
-          display: inline-block;
-          padding: 4px 14px;
-          border-radius: 20px;
-          font-weight: bold;
-          font-size: 0.9rem;
-          white-space: nowrap;
-        }
-        .notas-badge-aprobado {
-          background-color: #d1f2e0;
-          color: #198754;
-        }
-        .notas-badge-reprobado {
-          background-color: #fbdada;
-          color: #dc3545;
-        }
-        .notas-header-click {
-          cursor: pointer;
-          user-select: none;
-        }
-        .notas-flecha {
-          margin-left: auto;
-          transition: transform 0.2s ease;
-          color: #1e3a8a;
-          font-size: 1.3rem;
-        }
-        .notas-flecha-abierta {
-          transform: rotate(180deg);
-        }
+      <div className="module-header">
+        <span className="module-label">
+          Portal del Padre
+        </span>
 
-        @media (max-width: 768px) {
-          .notas-section {
-            padding-top: 50px !important;
-            padding-bottom: 50px !important;
-          }
-          .notas-card {
-            padding: 20px;
-          }
-          .notas-avatar {
-            width: 42px;
-            height: 42px;
-            font-size: 1rem;
-          }
-        }
+        <h1>Calificaciones</h1>
 
-        @media (max-width: 576px) {
-          .notas-section {
-            padding-top: 30px !important;
-            padding-bottom: 30px !important;
-          }
-          .notas-card {
-            padding: 14px;
-            border-radius: 12px;
-            border-left-width: 4px;
-          }
-          .notas-avatar {
-            width: 36px;
-            height: 36px;
-            font-size: 0.85rem;
-          }
-          .notas-card h3 {
-            font-size: 1rem;
-          }
-          .notas-thead th {
-            font-size: 0.68rem;
-            padding: 6px 4px;
-            white-space: nowrap;
-          }
-          .notas-card td {
-            font-size: 0.8rem;
-            padding: 6px 4px;
-          }
-          .notas-badge {
-            padding: 2px 8px;
-            font-size: 0.75rem;
-          }
-        }
+        <p>
+          Consulte las calificaciones de sus hijos por asignatura.
+        </p>
+      </div>
 
-        @media (max-width: 360px) {
-          .notas-card {
-            padding: 10px;
-          }
-          .notas-avatar {
-            width: 32px;
-            height: 32px;
-            font-size: 0.75rem;
-          }
-          .notas-card h3 {
-            font-size: 0.9rem;
-          }
-        }
-      `}</style>
+      {mensaje && (
+        <div className="alert alert-danger">
+          {mensaje}
+        </div>
+      )}
 
-      <div className="container">
+      {grupos.length === 0 ? (
 
-        <div className="row mb_40">
+        <div className="module-card">
+          <div className="module-empty-state">
+            <i className="fas fa-book-open"></i>
 
-          <div className="col-12 text-center">
+            <h3>No hay calificaciones registradas</h3>
 
-            <div className="tf__heading_area">
-
-              <h5>Consulta</h5>
-              <h2>Calificaciones de tus hijos</h2>
-
-            </div>
-
+            <p>
+              Cuando los docentes registren las notas aparecerán aquí.
+            </p>
           </div>
-
         </div>
 
-        {mensaje && (
-          <p className="text-center text-danger">{mensaje}</p>
-        )}
+      ) : (
 
-        {grupos.length === 0 ? (
+        grupos.map((grupo) => {
 
-          <p className="text-center">
-            No hay calificaciones registradas.
-          </p>
+          const estaAbierto = !!abiertos[grupo.dni];
 
-        ) : (
+          return (
 
-          grupos.map((grupo, index) => {
+            <div
+              key={grupo.dni}
+              className="module-card mb-4"
+            >
 
-            const estaAbierto = !!abiertos[grupo.dni];
+              <div
+                className="module-card-header grade-card"
+                onClick={() => toggleAbierto(grupo.dni)}
+              >
 
-            return (
+                <div className="d-flex align-items-center gap-3">
 
-              <div key={index} className="notas-card mb_40">
-
-                <div
-                  className="d-flex align-items-center gap-3 notas-header-click"
-                  onClick={() => toggleAbierto(grupo.dni)}
-                >
-
-                  <div className="notas-avatar">
+                  <div className="teacher-avatar">
                     {obtenerIniciales(grupo.nombre)}
                   </div>
 
-                  <h3
-                    className="m-0"
-                    style={{ color: "#1e3a8a" }}
-                  >
-                    {grupo.nombre}
-                  </h3>
+                  <div>
 
-                  <span
-                    className={
-                      estaAbierto
-                        ? "notas-flecha notas-flecha-abierta"
-                        : "notas-flecha"
-                    }
-                  >
-                    ▼
-                  </span>
+                    <h2 className="module-card-title mb-1">
+                      {grupo.nombre}
+                    </h2>
+
+                    <p className="module-card-description mb-0">
+                      {grupo.notas.length} asignaturas registradas
+                    </p>
+
+                  </div>
 
                 </div>
 
-                {estaAbierto && (
+                <div
+                  className={
+                    estaAbierto
+                      ? "grade-arrow open"
+                      : "grade-arrow"
+                  }
+                >
+                  ▼
+                </div>
 
-                  <div className="table-responsive mt-3">
+              </div>
 
-                    <table className="table table-bordered text-center mb-0">
+              {estaAbierto && (
 
-                      <thead className="notas-thead">
+                <div className="students-container">
+
+                  <div className="table-responsive">
+
+                    <table className="table align-middle">
+
+                      <thead className="table-light">
+
                         <tr>
                           <th>Clase</th>
-                          <th>Parcial 1</th>
-                          <th>Parcial 2</th>
-                          <th>Parcial 3</th>
-                          <th>Parcial 4</th>
+                          <th>P1</th>
+                          <th>P2</th>
+                          <th>P3</th>
+                          <th>P4</th>
                           <th>Promedio</th>
                         </tr>
+
                       </thead>
 
                       <tbody>
-                        {grupo.notas.map((c, i) => {
 
-                          const aprobado = c.Promedio >= 60;
+                        {grupo.notas.map((c) => {
+
+                          const promedio = calcularPromedio(c);
+
+                          const aprobado =
+                            promedio !== null &&
+                            promedio >= 60;
 
                           return (
-                            <tr
-                              key={c.ID_Calificacion}
-                              className={i % 2 === 0 ? "notas-fila-par" : ""}
-                            >
-                              <td>{c.Clase?.Nombre_Clase}</td>
-                              <td>{c.Parcial1 ?? "—"}</td>
-                              <td>{c.Parcial2 ?? "—"}</td>
-                              <td>{c.Parcial3 ?? "—"}</td>
-                              <td>{c.Parcial4 ?? "—"}</td>
+
+                            <tr key={c.ID_Calificacion}>
+
                               <td>
+                                {c.Clase?.Nombre_Clase}
+                              </td>
+
+                              <td>{c.Parcial1 ?? "-"}</td>
+
+                              <td>{c.Parcial2 ?? "-"}</td>
+
+                              <td>{c.Parcial3 ?? "-"}</td>
+
+                              <td>{c.Parcial4 ?? "-"}</td>
+
+                              <td>
+
                                 <span
                                   className={
                                     aprobado
-                                      ? "notas-badge notas-badge-aprobado"
-                                      : "notas-badge notas-badge-reprobado"
+                                      ? "badge bg-success"
+                                      : "badge bg-danger"
                                   }
+                                  style={{
+                                    padding: "8px 14px",
+                                    fontSize: "14px",
+                                    borderRadius: "20px",
+                                  }}
                                 >
-                                  {c.Promedio}
+                                  {promedio ?? "-"}
                                 </span>
+
                               </td>
+
                             </tr>
+
                           );
 
                         })}
+
                       </tbody>
 
                     </table>
 
                   </div>
 
-                )}
+                </div>
 
-              </div>
+              )}
 
-            );
+            </div>
 
-          })
+          );
 
-        )}
+        })
 
-      </div>
+      )}
 
-    </section>
-  );
+    </div>
+  </section>
+);
 };
 
 export default MisCalificaciones;
