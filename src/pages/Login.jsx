@@ -23,116 +23,88 @@ const Login = () => {
 
   const iniciarSesion = async (e) => {
     e.preventDefault();
-
     setMensaje("");
 
     try {
-
-     const response = await LogIn({
-  url: "/signIn",
-  data: {
-    Id: Usuario,
-    pass: Password,
-  },
-});
+      const response = await LogIn({
+        url: "/signIn",
+        data: {
+          Id: Usuario,
+          pass: Password,
+        },
+      });
 
       if (response.status === 200) {
-
         localStorage.setItem("ROL", response.data.rolId);
         localStorage.setItem("USER_ID", response.data.userId);
 
         switch (response.data.rolId) {
+          case 1:
+            navigate("/home");
+            break;
 
-  case 1:
-    navigate("/home");
-    break;
+          case 2:
+            navigate("/panel-maestro");
+            break;
 
-  case 2:
-    navigate("/maestros");
-    break;
+          case 3:
+            navigate("/mis-calificaciones");
+            break;
 
-  case 3:
-    navigate("/mis-calificaciones");
-    break;
-
-  default:
-    navigate("/");
-    break;
-}
+          default:
+            navigate("/");
+            break;
+        }
       } else {
-
         setMensaje("Usuario o contraseña incorrectos");
-
       }
-
     } catch (error) {
-
+      console.error(error);
       setMensaje("Usuario o contraseña incorrectos");
-
     }
-
   };
-    return (
-    <div className="login-page">
 
+  return (
+    <div className="login-page">
       <div className="login-overlay"></div>
 
       <div className="circle circle-left"></div>
       <div className="circle circle-right"></div>
 
       <div className="login-card">
-
         <img
           src="/images/logologin.png"
           alt="Logo"
           className="login-logo"
         />
 
-        <h5 className="school-title">
-          ESCUELA
-        </h5>
+        <h5 className="school-title">ESCUELA</h5>
 
-        <h1 className="school-name">
-          LUIS GAMERO
-        </h1>
+        <h1 className="school-name">LUIS GAMERO</h1>
 
         <div className="line-title">
-
           <div className="line"></div>
-
           <FaBookOpen className="book-icon" />
-
           <div className="line"></div>
-
         </div>
 
-        <h2 className="login-title">
-          Iniciar sesión
-        </h2>
+        <h2 className="login-title">Iniciar sesión</h2>
 
         <form onSubmit={iniciarSesion}>
-
-          {/* Usuario */}
-
           <div className="input-box">
-
             <FaUser className="input-icon" />
 
             <input
-            type="text"
-            className="login-input"
-            placeholder="Número de identidad"
-            value={Usuario}
-            onChange={(e) => setUsuario(e.target.value)}
-            required
-          />
-
+              type="text"
+              className="login-input"
+              placeholder="Número de identidad"
+              value={Usuario}
+              onChange={(e) => setUsuario(e.target.value)}
+              required
+            />
           </div>
 
-          {/* Contraseña */}
-
           <div className="input-box">
-
             <FaLock className="input-icon" />
 
             <input
@@ -143,74 +115,53 @@ const Login = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-                        {mostrarPassword ? (
 
+            {mostrarPassword ? (
               <FaEyeSlash
                 className="eye-icon"
                 onClick={() => setMostrarPassword(false)}
                 style={{ cursor: "pointer" }}
               />
-
             ) : (
-
               <FaEye
                 className="eye-icon"
                 onClick={() => setMostrarPassword(true)}
                 style={{ cursor: "pointer" }}
               />
-
             )}
-
           </div>
 
-          {/* Opciones */}
-
           <div className="options">
-
             <div className="remember-me">
-
               <input
                 type="checkbox"
                 className="form-check-input"
               />
 
               <label>Recordarme</label>
-
             </div>
-
-            
-
           </div>
 
           {mensaje && (
-
             <div className="alert alert-danger mt-3">
-
               {mensaje}
-
             </div>
-
           )}
-                    <button
+
+          <button
             type="submit"
             className="login-btn"
           >
             <FaSignInAlt className="me-2" />
             <span>ACCEDER</span>
           </button>
-
         </form>
-
       </div>
 
       <div className="secure-text">
-
         <FaShieldAlt />
-
-        <span>Sistema Escolar </span>
-
+        <span>Sistema Escolar</span>
       </div>
-
     </div>
   );
 };
