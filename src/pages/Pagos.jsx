@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const Pagos = () => {
   const [pagos, setPagos] = useState([]);
@@ -23,16 +24,34 @@ const Pagos = () => {
 
   // Elimina un pago (solo admin/maestro)
   const deletePago = async (id) => {
-    const confirmar = window.confirm("¿Seguro que quieres eliminar este pago?");
-    if (!confirmar) return;
+   const confirmar = await Swal.fire({
+  icon: "warning",
+  title: "¿Eliminar pago?",
+  text: "Esta acción no se puede deshacer.",
+  showCancelButton: true,
+  confirmButtonText: "Sí, eliminar",
+  cancelButtonText: "Cancelar",
+});
+
+if (!confirmar.isConfirmed) return;
 
     try {
       await axios.delete(`http://localhost:3000/api/deletePago/${id}`);
-      alert("Pago eliminado correctamente");
+      await Swal.fire({
+  icon: "success",
+  title: "Eliminado",
+  text: "Pago eliminado correctamente",
+  confirmButtonText: "Aceptar",
+});
       getPagos();
     } catch (error) {
       console.error("Error al eliminar pago:", error);
-      alert("Error al eliminar el pago");
+     Swal.fire({
+  icon: "error",
+  title: "Error",
+  text: "No se pudo eliminar el pago",
+  confirmButtonText: "Aceptar",
+});
     }
   };
 
@@ -41,91 +60,159 @@ const Pagos = () => {
   }, []);
 
   return (
-    <section className="container-fluid py-5">
-      <div className="row">
-        <div className="col-12">
-          <h2 className="fw-bold mb-4" style={{ fontSize: "56px" }}>
-            Pagos Registrados
-          </h2>
+  <section className="module-page">
+    <div className="module-container">
 
-          {pagos.length === 0 ? (
-            <p>No hay pagos registrados</p>
-          ) : (
-            <div className="table-responsive">
-              <table className="table table-bordered align-middle">
-                <thead className="table-dark">
-                  <tr>
-                    <th>ID</th>
-                    <th>DNI Alumno</th>
-                    <th>DNI Padre</th>
-                    <th>Monto</th>
-                    <th>Mes</th>
-                    <th>Año</th>
-                    <th>Referencia</th>
-                    <th>Fecha</th>
-                    <th>Comprobante</th>
-                    {!esPadre && <th>Acciones</th>}
-                  </tr>
-                </thead>
+      {/* ENCABEZADO */}
+      <div className="module-header module-header-row">
+        <div>
+          <span className="module-label">
+            Gestión financiera
+          </span>
 
-                <tbody>
-                  {pagos.map((pago) => (
-                    <tr key={pago.ID_Pagos}>
-                      <td>{pago.ID_Pagos}</td>
-                      <td>{pago.DNI_Alumno}</td>
-                      <td>{pago.DNI_Padre}</td>
-                      <td>L. {pago.Monto}</td>
-                      <td>{pago.Mes_Correspondiente}</td>
-                      <td>{pago.Anio_Correspondiente}</td>
-                      <td>{pago.Numero_Referencia}</td>
-                      <td>{pago.Fecha_Pago}</td>
+          <h1>Pagos</h1>
 
-                      <td>
-                        {pago.Comprobante ? (
-                          <a
-                            href={pago.Comprobante}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="btn btn-info btn-sm"
-                          >
-                            Ver comprobante
-                          </a>
-                        ) : (
-                          <span className="text-muted">
-                            Sin comprobante
-                          </span>
-                        )}
-                      </td>
+          <p>
+            Consulta y administra los pagos registrados en el sistema.
+          </p>
+        </div>
 
-                      {!esPadre && (
-                        <td>
-                          <button
-                            className="btn btn-danger btn-sm"
-                            onClick={() => deletePago(pago.ID_Pagos)}
-                          >
-                            Eliminar
-                          </button>
-                        </td>
+        {!esPadre && (
+          <Link
+            to="/registrar-pago"
+            className="module-primary-btn module-header-button"
+          >
+            + Registrar pago
+          </Link>
+        )}
+      </div>
+
+      {/* LISTADO */}
+      <div className="module-card">
+        <div className="module-card-header">
+          <div>
+            <h2 className="module-card-title mb-1">
+              Pagos registrados
+            </h2>
+
+            <p className="module-card-description">
+              Total de pagos: {pagos.length}
+            </p>
+          </div>
+        </div>
+
+        <div className="table-responsive">
+          <table className="table module-table payments-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>DNI alumno</th>
+                <th>DNI padre</th>
+                <th>Monto</th>
+                <th>Mes</th>
+                <th>Año</th>
+                <th>Referencia</th>
+                <th>Fecha</th>
+                <th>Comprobante</th>
+
+                {!esPadre && (
+                  <th>Acciones</th>
+                )}
+              </tr>
+            </thead>
+
+            <tbody>
+              {pagos.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={esPadre ? 9 : 10}
+                    className="text-center text-muted py-5"
+                  >
+                    No hay pagos registrados.
+                  </td>
+                </tr>
+              ) : (
+                pagos.map((pago) => (
+                  <tr key={pago.ID_Pagos}>
+                    <td>
+                      <strong>
+                        {pago.ID_Pagos}
+                      </strong>
+                    </td>
+
+                    <td>
+                      {pago.DNI_Alumno}
+                    </td>
+
+                    <td>
+                      {pago.DNI_Padre}
+                    </td>
+
+                    <td>
+                      <span className="payment-amount">
+                        L. {Number(pago.Monto || 0).toFixed(2)}
+                      </span>
+                    </td>
+
+                    <td>
+                      {pago.Mes_Correspondiente}
+                    </td>
+
+                    <td>
+                      {pago.Anio_Correspondiente}
+                    </td>
+
+                    <td>
+                      {pago.Numero_Referencia || "—"}
+                    </td>
+
+                    <td>
+                      {pago.Fecha_Pago
+                        ? String(pago.Fecha_Pago).slice(0, 10)
+                        : "—"}
+                    </td>
+
+                    <td>
+                      {pago.Comprobante ? (
+                        <a
+                          href={pago.Comprobante}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn payment-proof-btn"
+                        >
+                          Ver comprobante
+                        </a>
+                      ) : (
+                        <span className="text-muted">
+                          Sin comprobante
+                        </span>
                       )}
-                    </tr>
-                  ))}
-                </tbody>
+                    </td>
 
-              </table>
-            </div>
-          )}
-
-          {!esPadre && (
-            <div className="mt-4">
-              <Link to="/registrar-pago" className="btn btn-primary">
-                Registrar Pago
-              </Link>
-            </div>
-          )}
+                    {!esPadre && (
+                      <td>
+                        <button
+                          type="button"
+                          className="btn btn-danger payment-delete-btn"
+                          onClick={() =>
+                            deletePago(pago.ID_Pagos)
+                          }
+                        >
+                          Eliminar
+                        </button>
+                      </td>
+                    )}
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
-    </section>
-  );
+
+    </div>
+  </section>
+);
 };
 
 export default Pagos;

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const EditarMaestro = () => {
   const navigate = useNavigate();
@@ -59,124 +60,192 @@ const EditarMaestro = () => {
       });
 
       if (res.ok) {
-        alert("Maestro actualizado correctamente");
-        navigate("/maestros");
+        await Swal.fire({
+  icon: "success",
+  title: "Actualizado",
+  text: "Maestro actualizado correctamente",
+  confirmButtonText: "Aceptar",
+});
+
+navigate("/maestros");
       } else {
-        alert("Error al actualizar maestro");
+        await Swal.fire({
+  icon: "error",
+  title: "Error",
+  text: "No se pudo actualizar el maestro",
+  confirmButtonText: "Aceptar",
+});
       }
     } catch (error) {
       console.error(error);
-      alert("Error al actualizar maestro");
+      Swal.fire({
+  icon: "error",
+  title: "Error",
+  text: "No se pudo actualizar el maestro",
+  confirmButtonText: "Aceptar",
+});
     }
   };
 
-  return (
-    <section className="pt_100 pb_100">
-      <div className="container">
-        <div className="row mb_40">
-          <div className="col-12 text-center">
-            <div className="tf__heading_area">
-              <h5>Formulario</h5>
-              <h2>Editar Maestro</h2>
-            </div>
-          </div>
-        </div>
+ return (
+  <section className="module-page">
+    <div className="module-container">
 
-        <div className="row justify-content-center">
-          <div className="col-lg-8">
-            <div className="p-4 border rounded bg-white shadow-sm">
-              <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                  <label className="form-label">Código Maestro</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="ID_Maestro"
-                    value={form.ID_Maestro}
-                    disabled
-                  />
-                </div>
+      <div className="module-header">
+        <span className="module-label">Gestión académica</span>
 
-                <div className="mb-3">
-                  <label className="form-label">Nombre</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="Nombre"
-                    value={form.Nombre}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
+        <h1>Editar Maestro</h1>
 
-                <div className="mb-3">
-                  <label className="form-label">Apellido</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="Apellido"
-                    value={form.Apellido}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <label className="form-label">Teléfono</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="Telefono"
-                    value={form.Telefono || ""}
-                    onChange={handleChange}
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <label className="form-label">Correo</label>
-                  <input
-                    type="email"
-                    className="form-control"
-                    name="Correo"
-                    value={form.Correo || ""}
-                    onChange={handleChange}
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <label className="form-label">Grado</label>
-                  <select
-                    className="form-control"
-                    name="ID_Grado"
-                    value={form.ID_Grado}
-                    onChange={handleChange}
-                    required
-                  >
-                    <option value="">Seleccione un grado</option>
-                    {grados.map((g) => (
-                      <option key={g.ID_Grado} value={g.ID_Grado}>
-                        {g.Nombre_Grado} - {g.Seccion}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="d-flex gap-3">
-                  <button type="submit" className="btn btn-warning">
-                    Actualizar Maestro
-                  </button>
-
-                  <Link to="/maestros" className="btn btn-secondary">
-                    Cancelar
-                  </Link>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
+        <p>
+          Modifique la información del personal docente.
+        </p>
       </div>
-    </section>
-  );
+
+      <div className="module-card">
+
+        <div className="module-card-header">
+          <div>
+            <h2 className="module-card-title">
+              Información del maestro
+            </h2>
+
+            <p className="module-card-description">
+              Actualice los datos del maestro seleccionado.
+            </p>
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit}>
+
+          <div className="row">
+
+            <div className="col-md-6 mb-4">
+              <label className="form-label fw-semibold">
+                DNI
+              </label>
+
+              <input
+                type="text"
+                className="form-control"
+                value={form.DNI}
+                disabled
+              />
+            </div>
+
+            <div className="col-md-6 mb-4">
+              <label className="form-label fw-semibold">
+                Grado asignado
+              </label>
+
+              <select
+                className="form-select"
+                name="ID_Grado"
+                value={form.ID_Grado}
+                onChange={handleChange}
+                required
+              >
+                <option value="">
+                  Seleccione un grado
+                </option>
+
+                {grados.map((g) => (
+                  <option
+                    key={g.ID_Grado}
+                    value={g.ID_Grado}
+                  >
+                    {g.Nombre_Grado} - {g.Seccion}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="col-md-6 mb-4">
+              <label className="form-label fw-semibold">
+                Nombre
+              </label>
+
+              <input
+                type="text"
+                className="form-control"
+                name="Nombre"
+                value={form.Nombre}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="col-md-6 mb-4">
+              <label className="form-label fw-semibold">
+                Apellido
+              </label>
+
+              <input
+                type="text"
+                className="form-control"
+                name="Apellido"
+                value={form.Apellido}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="col-md-6 mb-4">
+              <label className="form-label fw-semibold">
+                Teléfono
+              </label>
+
+              <input
+                type="text"
+                className="form-control"
+                name="Telefono"
+                value={form.Telefono}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="col-md-6 mb-4">
+              <label className="form-label fw-semibold">
+                Correo
+              </label>
+
+              <input
+                type="email"
+                className="form-control"
+                name="Correo"
+                value={form.Correo}
+                onChange={handleChange}
+              />
+            </div>
+
+          </div>
+
+          <div className="teacher-actions mt-4">
+
+            <button
+              type="submit"
+              className="btn btn-primary teacher-btn"
+            >
+              <i className="fas fa-save me-2"></i>
+              Actualizar Maestro
+            </button>
+
+            <Link
+              to="/maestros"
+              className="btn btn-secondary teacher-btn"
+            >
+              <i className="fas fa-arrow-left me-2"></i>
+              Cancelar
+            </Link>
+
+          </div>
+
+        </form>
+
+      </div>
+
+    </div>
+  </section>
+);
 };
 
 export default EditarMaestro;

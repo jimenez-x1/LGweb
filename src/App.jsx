@@ -45,6 +45,7 @@ function App() {
           }
         />
 
+<<<<<<< HEAD
         <Route
           path="/panel-maestro"
           element={
@@ -107,6 +108,109 @@ function App() {
             </ProtectedRoute>
           }
         />
+=======
+<Route
+  path="/home"
+  element={
+    <ProtectedRoute>
+      <Home />
+    </ProtectedRoute>
+  }
+/>
+<Route
+  path="/panel-maestro"
+  element={
+    <ProtectedRoute>
+      <PanelMaestro />
+    </ProtectedRoute>
+  }
+/>
+<Route
+  path="/mis-alumnos"
+  element={
+    <ProtectedRoute allowedRoles={[2]}>
+      <MisAlumnos />
+    </ProtectedRoute>
+  }
+/>
+<Route
+  path="/mis-notas"
+  element={
+    <ProtectedRoute allowedRoles={[2]}>
+      <MisNotas />
+    </ProtectedRoute>
+  }
+/>
+  <Route
+    path="/clase"
+    element={
+      <ProtectedRoute>
+        <Clase />
+      </ProtectedRoute>
+    }
+  />
+
+  <Route
+    path="/alumnos"
+    element={
+      <ProtectedRoute>
+        <Alumnos />
+      </ProtectedRoute>
+    }
+  />
+
+  <Route
+    path="/grado"
+    element={
+      <ProtectedRoute>
+        <Grado />
+      </ProtectedRoute>
+    }
+  />
+
+  <Route
+    path="/maestros"
+    element={
+      <ProtectedRoute>
+        <Maestros />
+      </ProtectedRoute>
+    }
+  />
+  <Route                              
+    path="/calificaciones"
+    element={
+      <ProtectedRoute>
+        <Calificaciones />
+      </ProtectedRoute>
+    }
+  />
+  <Route
+    path="/mis-calificaciones"
+    element={
+      <ProtectedRoute allowedRoles={[3]}>
+        <MisCalificaciones />
+      </ProtectedRoute>
+    }
+  />
+
+  <Route
+    path="/registrar-maestro"
+    element={
+      <ProtectedRoute>
+        <RegistrarMaestro />
+      </ProtectedRoute>
+    }
+  />
+
+  <Route
+    path="/editar-maestro/:id"
+    element={
+      <ProtectedRoute>
+        <EditarMaestro />
+      </ProtectedRoute>
+    }
+  />
+>>>>>>> origin/carolina
 
         <Route
           path="/calificaciones"
@@ -117,6 +221,7 @@ function App() {
           }
         />
 
+<<<<<<< HEAD
         <Route
           path="/mis-calificaciones"
           element={
@@ -143,6 +248,34 @@ function App() {
             </ProtectedRoute>
           }
         />
+=======
+  <Route
+    path="/registrar-pago"
+    element={
+      <ProtectedRoute>
+        <RegistrarPago />
+      </ProtectedRoute>
+    }
+  />
+
+  <Route
+    path="/registrar-pago/:id"
+    element={
+      <ProtectedRoute>
+        <RegistrarPago />
+      </ProtectedRoute>
+    }
+  />
+
+  <Route
+    path="/padre"
+    element={
+      <ProtectedRoute>
+        <Padre />
+      </ProtectedRoute>
+    }
+  />
+>>>>>>> origin/carolina
 
         <Route
           path="/pagos"

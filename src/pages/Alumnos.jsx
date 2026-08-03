@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useDispatch } from "../store";
 import fetchers from "../store/slices/Alumnos/fetchers";
 import PadreAutocomplete from "../components/work/PadreAutocomplete";
+import Swal from "sweetalert2";
 
 const Alumnos = () => {
   const dispatch = useDispatch();
@@ -90,7 +91,12 @@ const [busquedaConsulta, setBusquedaConsulta] = useState("");
       })
     ).catch((error) => {
       console.error("Error:", error);
-      alert("Error al guardar alumno");
+      Swal.fire({
+  icon: "error",
+  title: "Error",
+  text: "Error al guardar alumno",
+  confirmButtonText: "Aceptar",
+});
       return null;
     });
 
@@ -98,17 +104,31 @@ const [busquedaConsulta, setBusquedaConsulta] = useState("");
 
     if (res.payload?.error) {
       console.error("Error:", res.payload.error);
-      alert(
-        res.payload.error.message ||
-          (editando ? "Error al actualizar alumno" : "Error al registrar alumno")
-      );
+     Swal.fire({
+  icon: "error",
+  title: "Error",
+  text:
+    res.payload.error.message ||
+    (editando
+      ? "Error al actualizar alumno"
+      : "Error al registrar alumno"),
+  confirmButtonText: "Aceptar",
+});
       return;
     }
 
-    alert(editando ? "Alumno actualizado correctamente" : "Alumno registrado correctamente");
-    limpiarFormulario();
-    cargarAlumnos();
-  };
+    Swal.fire({
+  icon: "success",
+  title: "¡Éxito!",
+  text: editando
+    ? "Alumno actualizado correctamente"
+    : "Alumno registrado correctamente",
+  confirmButtonText: "Aceptar",
+});
+
+limpiarFormulario();
+cargarAlumnos();
+};
 
   const editar = (alumno) => {
   setForm({
@@ -138,10 +158,19 @@ const [busquedaConsulta, setBusquedaConsulta] = useState("");
 };
 
 
-
   const eliminar = async (id) => {
-    const confirmar = window.confirm("¿Eliminar este alumno?");
-    if (!confirmar) return;
+    const confirmar = await Swal.fire({
+  title: "¿Eliminar alumno?",
+  text: "Esta acción no se puede deshacer.",
+  icon: "warning",
+  showCancelButton: true,
+  confirmButtonColor: "#d33",
+  cancelButtonColor: "#6c757d",
+  confirmButtonText: "Sí, eliminar",
+  cancelButtonText: "Cancelar",
+});
+
+if (!confirmar.isConfirmed) return;
 
     try {
       await dispatch(
@@ -149,11 +178,21 @@ const [busquedaConsulta, setBusquedaConsulta] = useState("");
           url: `/deleteAlumno/${id}`,
         })
       );
-      alert("Alumno eliminado correctamente");
+      Swal.fire({
+  icon: "success",
+  title: "Eliminado",
+  text: "Alumno eliminado correctamente",
+  confirmButtonText: "Aceptar",
+});
       cargarAlumnos();
     } catch (error) {
       console.error(error);
-      alert("Error al eliminar alumno");
+      Swal.fire({
+  icon: "error",
+  title: "Error",
+  text: "Error al eliminar alumno",
+  confirmButtonText: "Aceptar",
+});
     }
   };
 
@@ -166,211 +205,261 @@ const [busquedaConsulta, setBusquedaConsulta] = useState("");
   };
 
   return (
-  <section className="pt_100 pb_100">
-    <div className="container">
-      <div className="row mb_40">
-        <div className="col-12 text-center">
-          <div className="tf__heading_area">
-            <h5>Formulario</h5>
-            <h2>{editando ? "Editar Alumno" : "Registrar Alumno"}</h2>
-          </div>
-        </div>
+  <section className="module-page">
+    <div className="module-container">
+
+      <div className="module-header">
+        <span className="module-label">Gestión académica</span>
+        <h1>Alumnos</h1>
+        <p>
+          Registra, consulta y administra la información de los estudiantes.
+        </p>
       </div>
 
-      <div className="row justify-content-center" ref={formularioRef}>
-        <div className="col-lg-8">
-          <div className="p-4 border rounded bg-white shadow-sm">
-            <form onSubmit={handleSubmit}>
+      <div className="module-card">
+        <h2 className="module-card-title">
+          {editando ? "Editar alumno" : "Registrar alumno"}
+        </h2>
 
-              {/* Padre o Encargado */}
-              <div className="mb-3">
-                <label className="form-label">Padre o Encargado</label>
-                
+        <form onSubmit={handleSubmit}>
+          <div className="row g-3">
+
+            <div className="col-12 col-md-6">
+              <label className="form-label">Padre o encargado</label>
 
               <PadreAutocomplete
-  padreSeleccionado={padreEditar}
-  onSelect={(padre) => {
-    setPadreEditar(padre);
-
-    setForm((prev) => ({
-      ...prev,
-      DNI_Padre: padre ? padre.DNI : "",
-    }));
-  }}
-                />
-              </div>
-
-              {/* DNI del Alumno */}
-              <div className="mb-3">
-                <label className="form-label">
-                  Número de identidad del alumno
-                </label>
-
-                <input
-                  type="text"
-                  name="DNI"
-                  className="form-control"
-                  value={form.DNI}
-                  onChange={handleChange}
-                  maxLength={13}
-                  required
-                />
-              </div>
-
-              <div className="mb-3">
-                <label className="form-label">Nombre</label>
-                <input
-                  type="text"
-                  name="Nombre"
-                  className="form-control"
-                  value={form.Nombre}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-
-              <div className="mb-3">
-                <label className="form-label">Apellido</label>
-                <input
-                  type="text"
-                  name="Apellido"
-                  className="form-control"
-                  value={form.Apellido}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-                <div className="mb-3">
-                  <label className="form-label">Fecha de nacimiento</label>
-                  <input
-                    type="date"
-                    name="Fecha_Nacimiento"
-                    className="form-control"
-                    value={form.Fecha_Nacimiento}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <label className="form-label">Dirección</label>
-                  <input
-                    type="text"
-                    name="Direccion"
-                    className="form-control"
-                    value={form.Direccion}
-                    onChange={handleChange}
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <label className="form-label">Género</label>
-                  <select
-                    name="Genero"
-                    className="form-control"
-                    value={form.Genero}
-                    onChange={handleChange}
-                    required
-                  >
-                    <option value="">Seleccione género</option>
-                    <option value="M">Masculino</option>
-                    <option value="F">Femenino</option>
-                  </select>
-                </div>
-
-                <div className="mb-4">
-                  <label className="form-label">Grado</label>
-                  <select
-                    name="ID_Grado"
-                    className="form-control"
-                    value={form.ID_Grado}
-                    onChange={handleChange}
-                    required
-                  >
-                    <option value="">Seleccione grado</option>
-                    {grados.map((grado) => (
-                      <option key={grado.ID_Grado} value={grado.ID_Grado}>
-                        {grado.Nombre_Grado || grado.Nombre} - {grado.Seccion}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="d-flex gap-3">
-                  <button type="submit" className="common_btn">
-                    {editando ? "Actualizar Alumno" : "Guardar Alumno"}
-                  </button>
- 
-                  {editando && (
-                    <button
-                      type="button"
-                      className="btn btn-secondary"
-                      onClick={limpiarFormulario}
-                    >
-                      Cancelar
-                    </button>
-                  )}
-                </div>
-              </form>
+                onSelect={(padre) =>
+                  setForm({
+                    ...form,
+                    DNI_Padre: padre.DNI,
+                  })
+                }
+              />
             </div>
+
+            <div className="col-12 col-md-6">
+              <label className="form-label">
+                Número de identidad del alumno
+              </label>
+
+              <input
+                type="text"
+                className="form-control"
+                name="DNI"
+                value={form.DNI}
+                onChange={handleChange}
+                maxLength={13}
+                required
+              />
+            </div>
+
+            <div className="col-12 col-md-6">
+              <label className="form-label">Nombre</label>
+
+              <input
+                type="text"
+                className="form-control"
+                name="Nombre"
+                value={form.Nombre}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="col-12 col-md-6">
+              <label className="form-label">Apellido</label>
+
+              <input
+                type="text"
+                className="form-control"
+                name="Apellido"
+                value={form.Apellido}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="col-12 col-md-6">
+              <label className="form-label">Fecha de nacimiento</label>
+
+              <input
+                type="date"
+                className="form-control"
+                name="Fecha_Nacimiento"
+                value={form.Fecha_Nacimiento}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="col-12 col-md-6">
+              <label className="form-label">Dirección</label>
+
+              <input
+                type="text"
+                className="form-control"
+                name="Direccion"
+                value={form.Direccion}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="col-12 col-md-6">
+              <label className="form-label">Género</label>
+
+              <select
+                className="form-select"
+                name="Genero"
+                value={form.Genero}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Seleccione género</option>
+                <option value="M">Masculino</option>
+                <option value="F">Femenino</option>
+              </select>
+            </div>
+
+            <div className="col-12 col-md-6">
+              <label className="form-label">Grado</label>
+
+              <select
+                className="form-select"
+                name="ID_Grado"
+                value={form.ID_Grado}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Seleccione grado</option>
+
+                {grados.map((grado) => (
+                  <option
+                    key={grado.ID_Grado}
+                    value={grado.ID_Grado}
+                  >
+                    {grado.Nombre_Grado} - {grado.Seccion}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+          </div>
+
+          <div className="d-flex flex-wrap gap-2 mt-4">
+            <button
+              type="submit"
+              className="module-primary-btn"
+            >
+              {editando ? "Actualizar alumno" : "Guardar alumno"}
+            </button>
+
+          
+          </div>
+        </form>
+      </div>
+
+      <div className="module-card">
+        <div className="module-card-header">
+          <div>
+            <h2 className="module-card-title mb-1">
+              Alumnos registrados
+            </h2>
+
+            <p className="module-card-description">
+              Total de alumnos: {alumnos.length}
+            </p>
           </div>
         </div>
 
-        <div className="row mt_50">
-          <div className="col-12">
-            <div className="tf__heading_area mb_30">
-              <h2>Listado Alumnos Registrados</h2>
-            </div>
+        {alumnos.length === 0 ? (
+          <div className="module-empty-state">
+            <i className="fas fa-user-graduate"></i>
+            <h3>No hay alumnos registrados</h3>
+            <p>Los alumnos registrados aparecerán en esta sección.</p>
+          </div>
+        ) : (
+          <div className="row g-4">
+            {alumnos.map((alumno) => (
+              <div
+                className="col-12 col-md-6 col-xl-4"
+                key={alumno.DNI}
+              >
+                <div className="student-card">
+                  <div className="student-card-top">
+                    <div className="student-avatar">
+                      {alumno.Nombre?.charAt(0)}
+                      {alumno.Apellido?.charAt(0)}
+                    </div>
 
-            <div className="row">
-              {alumnos.map((alumno) => (
-                <div className="col-md-6 col-lg-4 mb_30" key={alumno.DNI}>
-                  <div className="tf__single_courses">
-                    <div className="tf__single_courses_text">
+                    <div className="student-info">
                       <h3>
                         {alumno.Nombre} {alumno.Apellido}
                       </h3>
-                      <p>
-                        <strong>Identidad:</strong> {alumno.DNI}
-                      </p>
 
-                      <p><strong>Dirección:</strong> {alumno.Direccion}</p>
-                      <p><strong>Género:</strong> {alumno.Genero}</p>
-                      <p>
-                        <strong>Fecha de nacimiento:</strong>{" "}
-                        {alumno.Fecha_Nacimiento
-                          ? String(alumno.Fecha_Nacimiento).slice(0, 10)
-                          : ""}
-                      </p>
-                      <p><strong>Grado:</strong> {obtenerNombreGrado(alumno)}</p>
-
-                      <div className="mt-3 d-flex gap-2">
-                        <button
-                          className="btn btn-warning btn-sm"
-                          onClick={() => editar(alumno)}
-                        >
-                          Editar
-                        </button>
-
-                        <button
-                          className="btn btn-danger btn-sm"
-                          onClick={() => eliminar(alumno.DNI)}
-                        >
-                          Eliminar
-                        </button>
-                      </div>
+                      <span className="student-grade">
+                        {alumno.Grado?.Nombre_Grado ||
+                          obtenerNombreGrado(alumno.ID_Grado)}
+                      </span>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
 
+                  <div className="student-details">
+                    <div className="student-detail-item">
+                      <span>Identidad</span>
+                      <strong>{alumno.DNI}</strong>
+                    </div>
+
+                    <div className="student-detail-item">
+                      <span>Dirección</span>
+                      <strong>{alumno.Direccion || "No registrada"}</strong>
+                    </div>
+
+                    <div className="student-detail-item">
+                      <span>Género</span>
+                      <strong>
+                        {alumno.Genero === "F"
+                          ? "Femenino"
+                          : alumno.Genero === "M"
+                            ? "Masculino"
+                            : "No registrado"}
+                      </strong>
+                    </div>
+
+                    <div className="student-detail-item">
+                      <span>Fecha de nacimiento</span>
+                      <strong>
+                        {alumno.Fecha_Nacimiento || "No registrada"}
+                      </strong>
+                    </div>
+                  </div>
+
+                  <div className="student-actions">
+                    <button
+                      type="button"
+                      className="btn btn-warning student-btn"
+                      onClick={() => editar(alumno)}
+                    >
+                      Editar
+                    </button>
+
+                    <button
+                      type="button"
+                      className="btn btn-danger student-btn"
+                      onClick={() => eliminar(alumno.DNI)}
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-        </div>
+        )}
       </div>
-    </section>
-    
-    );
+
+    </div>
+  </section>
+);
   };
 
 

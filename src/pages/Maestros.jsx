@@ -1,12 +1,23 @@
 import React, { useEffect, useState } from "react";
+<<<<<<< HEAD
 import { Link } from "react-router-dom";
+=======
+import { Link, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
+>>>>>>> origin/carolina
 
 const Maestros = () => {
   const [maestros, setMaestros] = useState([]);
+<<<<<<< HEAD
 
   const rol = Number(localStorage.getItem("ROL"));
   const esAdministrador = rol === 1;
   const token = localStorage.getItem("SECURE");
+=======
+   const navigate = useNavigate(); 
+   const rol = Number(localStorage.getItem("ROL"));
+const esAdministrador = rol === 1;
+>>>>>>> origin/carolina
 
   useEffect(() => {
     cargarDatos();
@@ -43,8 +54,20 @@ const Maestros = () => {
       "¿Seguro que deseas eliminar este maestro?"
     );
 
+<<<<<<< HEAD
     if (!confirmar) return;
+=======
+    const confirmar = await Swal.fire({
+  icon: "warning",
+  title: "¿Eliminar maestro?",
+  text: "Esta acción no se puede deshacer.",
+  showCancelButton: true,
+  confirmButtonText: "Sí, eliminar",
+  cancelButtonText: "Cancelar",
+});
+>>>>>>> origin/carolina
 
+if (!confirmar.isConfirmed) return;
     try {
       const res = await fetch(
         `http://localhost:3000/api/deleteMaestro/${dni}`,
@@ -59,18 +82,52 @@ const Maestros = () => {
       const data = await res.json();
 
       if (res.ok) {
+<<<<<<< HEAD
         alert("Maestro eliminado correctamente");
+=======
+
+        await Swal.fire({
+  icon: "success",
+  title: "Eliminado",
+  text: "Maestro eliminado correctamente",
+  confirmButtonText: "Aceptar",
+});
+>>>>>>> origin/carolina
         cargarDatos();
       } else {
+<<<<<<< HEAD
         alert(data.message || "No se pudo eliminar el maestro");
+=======
+
+        await Swal.fire({
+  icon: "error",
+  title: "No se pudo eliminar",
+  text: data.message || "Ocurrió un error al eliminar el maestro",
+  confirmButtonText: "Aceptar",
+});
+
+>>>>>>> origin/carolina
       }
     } catch (error) {
+<<<<<<< HEAD
       console.error("Error al eliminar maestro:", error);
       alert("Error al eliminar maestro");
+=======
+
+      console.error(error);
+      Swal.fire({
+  icon: "error",
+  title: "Error",
+  text: "No se pudo eliminar el maestro",
+  confirmButtonText: "Aceptar",
+});
+
+>>>>>>> origin/carolina
     }
   };
 
   return (
+<<<<<<< HEAD
     <section className="pt_100 pb_100">
       <div className="container">
         <div className="row mb_40">
@@ -158,6 +215,118 @@ const Maestros = () => {
       </div>
     </section>
   );
+=======
+  <section className="module-page">
+    <div className="module-container">
+
+      <div className="module-header module-header-row">
+        <div>
+          <span className="module-label">Gestión académica</span>
+          <h1>Maestros</h1>
+          <p>
+            Consulta, registra y administra la información del personal docente.
+          </p>
+        </div>
+
+        {esAdministrador && (
+          <Link
+            to="/registrar-maestro"
+            className="module-primary-btn module-header-button"
+          >
+            + Registrar maestro
+          </Link>
+        )}
+      </div>
+
+      <div className="module-card">
+        <div className="module-card-header">
+          <div>
+            <h2 className="module-card-title mb-1">Maestros registrados</h2>
+            <p className="module-card-description">
+              Total de maestros: {maestros.length}
+            </p>
+          </div>
+        </div>
+
+        {maestros.length === 0 ? (
+          <div className="module-empty-state">
+            <i className="fas fa-chalkboard-teacher"></i>
+            <h3>No hay maestros registrados</h3>
+            <p>Los maestros registrados aparecerán en esta sección.</p>
+          </div>
+        ) : (
+          <div className="row g-4">
+            {maestros.map((maestro) => (
+              <div
+                className="col-12 col-md-6 col-xl-4"
+                key={maestro.DNI}
+              >
+                <div className="teacher-card">
+                  <div className="teacher-card-top">
+                    <div className="teacher-avatar">
+                      {maestro.Nombre?.charAt(0)}
+                      {maestro.Apellido?.charAt(0)}
+                    </div>
+
+                    <div className="teacher-info">
+                      <h3>
+                        {maestro.Nombre} {maestro.Apellido}
+                      </h3>
+
+                      <span className="teacher-role">
+                        {maestro.Cargo || "Docente"}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="teacher-details">
+                    <div className="teacher-detail-item">
+                      <span>DNI</span>
+                      <strong>{maestro.DNI}</strong>
+                    </div>
+
+                    <div className="teacher-detail-item">
+                      <span>Teléfono</span>
+                      <strong>{maestro.Telefono || "No registrado"}</strong>
+                    </div>
+
+                    <div className="teacher-detail-item">
+                      <span>Correo</span>
+                      <strong>{maestro.Correo || "No registrado"}</strong>
+                    </div>
+                  </div>
+
+                  {esAdministrador && (
+                    <div className="teacher-actions">
+  <Link
+    to={`/editar-maestro/${maestro.DNI}`}
+    className="btn btn-warning teacher-btn"
+  >
+    <i className="fas fa-pen me-2"></i>
+    Editar
+  </Link>
+
+  <button
+    type="button"
+    className="btn btn-danger teacher-btn"
+    onClick={() => handleEliminar(maestro.DNI)}
+  >
+    <i className="fas fa-trash me-2"></i>
+    Eliminar
+  </button>
+</div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+    </div>
+  </section>
+);
+>>>>>>> origin/carolina
 };
 
 export default Maestros;
