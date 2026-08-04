@@ -77,14 +77,12 @@ if (!confirmar.isConfirmed) return;
           </p>
         </div>
 
-        {!esPadre && (
-          <Link
-            to="/registrar-pago"
-            className="module-primary-btn module-header-button"
-          >
-            + Registrar pago
-          </Link>
-        )}
+        <Link
+          to="/registrar-pago"
+          className="module-primary-btn module-header-button"
+        >
+          + Registrar pago
+        </Link>
       </div>
 
       {/* LISTADO */}

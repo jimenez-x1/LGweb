@@ -6,10 +6,19 @@ const NavbarSection = ({ logo }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const nombreUsuario =
+    localStorage.getItem("USUARIO_NOMBRE") || "";
+  const rolUsuario = localStorage.getItem("ROL_NOMBRE") || "";
+  const inicialUsuario = nombreUsuario
+    ? nombreUsuario.trim().charAt(0).toUpperCase()
+    : "";
+
   const cerrarSesion = () => {
     localStorage.removeItem("SECURE");
     localStorage.removeItem("ROL");
     localStorage.removeItem("USER_ID");
+    localStorage.removeItem("USUARIO_NOMBRE");
+    localStorage.removeItem("ROL_NOMBRE");
     navigate("/");
   };
 
@@ -30,11 +39,13 @@ const NavbarSection = ({ logo }) => {
         </Link>
 
         <div className="dashboard-user">
-          <div className="dashboard-user-avatar">C</div>
+          <div className="dashboard-user-avatar">
+            {inicialUsuario}
+          </div>
 
           <div>
-            <strong>Carolina</strong>
-            <span>Administrador</span>
+            <strong>{nombreUsuario}</strong>
+            <span>{rolUsuario}</span>
           </div>
         </div>
       </header>

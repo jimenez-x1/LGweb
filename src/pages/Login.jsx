@@ -35,7 +35,13 @@ const Login = () => {
       });
 
       if (response.status === 200) {
-        const { token, rolId, userId } = response.data;
+        const {
+          token,
+          rolId,
+          userId,
+          nombre,
+          rolNombre,
+        } = response.data;
 
         if (!token) {
           setMensaje("El servidor no devolvió un token válido");
@@ -45,6 +51,11 @@ const Login = () => {
         localStorage.setItem("SECURE", token);
         localStorage.setItem("ROL", String(rolId));
         localStorage.setItem("USER_ID", String(userId));
+        localStorage.setItem(
+          "USUARIO_NOMBRE",
+          nombre || ""
+        );
+        localStorage.setItem("ROL_NOMBRE", rolNombre || "");
 
         switch (Number(rolId)) {
           case 1:
