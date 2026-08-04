@@ -49,6 +49,11 @@ const NavigationSection = ({ currentPath }) => {
             icon: "fas fa-home",
           },
           {
+            href: "/usuarios",
+            label: "Gestión de usuarios",
+            icon: "fas fa-user-cog",
+          },
+          {
             href: "/clase",
             label: "Clases",
             icon: "fas fa-book-open",
@@ -98,7 +103,9 @@ const NavigationSection = ({ currentPath }) => {
         return (
           <li key={enlace.href}>
             <Link
-              className={`dashboard-menu-link ${activo ? "active" : ""}`}
+              className={`dashboard-menu-link ${
+                activo ? "active" : ""
+              }`}
               to={enlace.href}
             >
               <i className={enlace.icon}></i>

@@ -1,23 +1,13 @@
 import React, { useEffect, useState } from "react";
-<<<<<<< HEAD
 import { Link } from "react-router-dom";
-=======
-import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
->>>>>>> origin/carolina
 
 const Maestros = () => {
   const [maestros, setMaestros] = useState([]);
-<<<<<<< HEAD
 
   const rol = Number(localStorage.getItem("ROL"));
   const esAdministrador = rol === 1;
   const token = localStorage.getItem("SECURE");
-=======
-   const navigate = useNavigate(); 
-   const rol = Number(localStorage.getItem("ROL"));
-const esAdministrador = rol === 1;
->>>>>>> origin/carolina
 
   useEffect(() => {
     cargarDatos();
@@ -50,24 +40,17 @@ const esAdministrador = rol === 1;
   };
 
   const handleEliminar = async (dni) => {
-    const confirmar = window.confirm(
-      "¿Seguro que deseas eliminar este maestro?"
-    );
-
-<<<<<<< HEAD
-    if (!confirmar) return;
-=======
     const confirmar = await Swal.fire({
-  icon: "warning",
-  title: "¿Eliminar maestro?",
-  text: "Esta acción no se puede deshacer.",
-  showCancelButton: true,
-  confirmButtonText: "Sí, eliminar",
-  cancelButtonText: "Cancelar",
-});
->>>>>>> origin/carolina
+      icon: "warning",
+      title: "¿Eliminar maestro?",
+      text: "Esta acción no se puede deshacer.",
+      showCancelButton: true,
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+    });
 
-if (!confirmar.isConfirmed) return;
+    if (!confirmar.isConfirmed) return;
+
     try {
       const res = await fetch(
         `http://localhost:3000/api/deleteMaestro/${dni}`,
@@ -82,251 +65,164 @@ if (!confirmar.isConfirmed) return;
       const data = await res.json();
 
       if (res.ok) {
-<<<<<<< HEAD
-        alert("Maestro eliminado correctamente");
-=======
-
         await Swal.fire({
-  icon: "success",
-  title: "Eliminado",
-  text: "Maestro eliminado correctamente",
-  confirmButtonText: "Aceptar",
-});
->>>>>>> origin/carolina
+          icon: "success",
+          title: "Eliminado",
+          text: "Maestro eliminado correctamente",
+          confirmButtonText: "Aceptar",
+        });
+
         cargarDatos();
       } else {
-<<<<<<< HEAD
-        alert(data.message || "No se pudo eliminar el maestro");
-=======
-
         await Swal.fire({
-  icon: "error",
-  title: "No se pudo eliminar",
-  text: data.message || "Ocurrió un error al eliminar el maestro",
-  confirmButtonText: "Aceptar",
-});
-
->>>>>>> origin/carolina
+          icon: "error",
+          title: "No se pudo eliminar",
+          text:
+            data.message ||
+            "Ocurrió un error al eliminar el maestro",
+          confirmButtonText: "Aceptar",
+        });
       }
     } catch (error) {
-<<<<<<< HEAD
       console.error("Error al eliminar maestro:", error);
-      alert("Error al eliminar maestro");
-=======
 
-      console.error(error);
-      Swal.fire({
-  icon: "error",
-  title: "Error",
-  text: "No se pudo eliminar el maestro",
-  confirmButtonText: "Aceptar",
-});
-
->>>>>>> origin/carolina
+      await Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "No se pudo eliminar el maestro",
+        confirmButtonText: "Aceptar",
+      });
     }
   };
 
   return (
-<<<<<<< HEAD
-    <section className="pt_100 pb_100">
-      <div className="container">
-        <div className="row mb_40">
-          <div className="col-12 text-center">
-            <div className="tf__heading_area">
-              <h5>Listado</h5>
-              <h2>Maestros registrados</h2>
-            </div>
-          </div>
-        </div>
+    <section className="module-page">
+      <div className="module-container">
+        <div className="module-header module-header-row">
+          <div>
+            <span className="module-label">
+              Gestión académica
+            </span>
 
-        {esAdministrador && (
-          <div className="d-flex justify-content-end mb_20">
+            <h1>Maestros</h1>
+
+            <p>
+              Consulta, registra y administra la información
+              del personal docente.
+            </p>
+          </div>
+
+          {esAdministrador && (
             <Link
               to="/registrar-maestro"
-              className="btn btn-primary"
+              className="module-primary-btn module-header-button"
             >
-              + Registrar Maestro
+              + Registrar maestro
             </Link>
+          )}
+        </div>
+
+        <div className="module-card">
+          <div className="module-card-header">
+            <div>
+              <h2 className="module-card-title mb-1">
+                Maestros registrados
+              </h2>
+
+              <p className="module-card-description">
+                Total de maestros: {maestros.length}
+              </p>
+            </div>
           </div>
-        )}
 
-        <div className="row">
           {maestros.length === 0 ? (
-            <p className="text-center">
-              No hay maestros registrados.
-            </p>
+            <div className="module-empty-state">
+              <i className="fas fa-chalkboard-teacher"></i>
+
+              <h3>No hay maestros registrados</h3>
+
+              <p>
+                Los maestros registrados aparecerán en esta
+                sección.
+              </p>
+            </div>
           ) : (
-            maestros.map((maestro) => (
-              <div
-                className="col-md-6 col-lg-4 mb_30"
-                key={maestro.DNI}
-              >
-                <div className="tf__single_courses">
-                  <div className="tf__single_courses_text">
-                    <h3>
-                      {maestro.Nombre} {maestro.Apellido}
-                    </h3>
+            <div className="row g-4">
+              {maestros.map((maestro) => (
+                <div
+                  className="col-12 col-md-6 col-xl-4"
+                  key={maestro.DNI}
+                >
+                  <div className="teacher-card">
+                    <div className="teacher-card-top">
+                      <div className="teacher-avatar">
+                        {maestro.Nombre?.charAt(0)}
+                        {maestro.Apellido?.charAt(0)}
+                      </div>
 
-                    <p>
-                      <strong>DNI:</strong> {maestro.DNI}
-                    </p>
+                      <div className="teacher-info">
+                        <h3>
+                          {maestro.Nombre} {maestro.Apellido}
+                        </h3>
 
-                    <p>
-                      <strong>Cargo:</strong>{" "}
-                      {maestro.Cargo || "—"}
-                    </p>
+                        <span className="teacher-role">
+                          {maestro.Cargo || "Docente"}
+                        </span>
+                      </div>
+                    </div>
 
-                    <p>
-                      <strong>Teléfono:</strong>{" "}
-                      {maestro.Telefono || "—"}
-                    </p>
+                    <div className="teacher-details">
+                      <div className="teacher-detail-item">
+                        <span>DNI</span>
+                        <strong>{maestro.DNI}</strong>
+                      </div>
 
-                    <p>
-                      <strong>Correo:</strong>{" "}
-                      {maestro.Correo || "—"}
-                    </p>
+                      <div className="teacher-detail-item">
+                        <span>Teléfono</span>
+                        <strong>
+                          {maestro.Telefono || "No registrado"}
+                        </strong>
+                      </div>
+
+                      <div className="teacher-detail-item">
+                        <span>Correo</span>
+                        <strong>
+                          {maestro.Correo || "No registrado"}
+                        </strong>
+                      </div>
+                    </div>
 
                     {esAdministrador && (
-                      <div className="d-flex gap-2 mt-3">
+                      <div className="teacher-actions">
                         <Link
                           to={`/editar-maestro/${maestro.DNI}`}
-                          className="btn btn-warning btn-sm"
+                          className="btn btn-warning teacher-btn"
                         >
+                          <i className="fas fa-pen me-2"></i>
                           Editar
                         </Link>
 
                         <button
                           type="button"
-                          className="btn btn-danger btn-sm"
+                          className="btn btn-danger teacher-btn"
                           onClick={() =>
                             handleEliminar(maestro.DNI)
                           }
                         >
+                          <i className="fas fa-trash me-2"></i>
                           Eliminar
                         </button>
                       </div>
                     )}
                   </div>
                 </div>
-              </div>
-            ))
+              ))}
+            </div>
           )}
         </div>
       </div>
     </section>
   );
-=======
-  <section className="module-page">
-    <div className="module-container">
-
-      <div className="module-header module-header-row">
-        <div>
-          <span className="module-label">Gestión académica</span>
-          <h1>Maestros</h1>
-          <p>
-            Consulta, registra y administra la información del personal docente.
-          </p>
-        </div>
-
-        {esAdministrador && (
-          <Link
-            to="/registrar-maestro"
-            className="module-primary-btn module-header-button"
-          >
-            + Registrar maestro
-          </Link>
-        )}
-      </div>
-
-      <div className="module-card">
-        <div className="module-card-header">
-          <div>
-            <h2 className="module-card-title mb-1">Maestros registrados</h2>
-            <p className="module-card-description">
-              Total de maestros: {maestros.length}
-            </p>
-          </div>
-        </div>
-
-        {maestros.length === 0 ? (
-          <div className="module-empty-state">
-            <i className="fas fa-chalkboard-teacher"></i>
-            <h3>No hay maestros registrados</h3>
-            <p>Los maestros registrados aparecerán en esta sección.</p>
-          </div>
-        ) : (
-          <div className="row g-4">
-            {maestros.map((maestro) => (
-              <div
-                className="col-12 col-md-6 col-xl-4"
-                key={maestro.DNI}
-              >
-                <div className="teacher-card">
-                  <div className="teacher-card-top">
-                    <div className="teacher-avatar">
-                      {maestro.Nombre?.charAt(0)}
-                      {maestro.Apellido?.charAt(0)}
-                    </div>
-
-                    <div className="teacher-info">
-                      <h3>
-                        {maestro.Nombre} {maestro.Apellido}
-                      </h3>
-
-                      <span className="teacher-role">
-                        {maestro.Cargo || "Docente"}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="teacher-details">
-                    <div className="teacher-detail-item">
-                      <span>DNI</span>
-                      <strong>{maestro.DNI}</strong>
-                    </div>
-
-                    <div className="teacher-detail-item">
-                      <span>Teléfono</span>
-                      <strong>{maestro.Telefono || "No registrado"}</strong>
-                    </div>
-
-                    <div className="teacher-detail-item">
-                      <span>Correo</span>
-                      <strong>{maestro.Correo || "No registrado"}</strong>
-                    </div>
-                  </div>
-
-                  {esAdministrador && (
-                    <div className="teacher-actions">
-  <Link
-    to={`/editar-maestro/${maestro.DNI}`}
-    className="btn btn-warning teacher-btn"
-  >
-    <i className="fas fa-pen me-2"></i>
-    Editar
-  </Link>
-
-  <button
-    type="button"
-    className="btn btn-danger teacher-btn"
-    onClick={() => handleEliminar(maestro.DNI)}
-  >
-    <i className="fas fa-trash me-2"></i>
-    Eliminar
-  </button>
-</div>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-    </div>
-  </section>
-);
->>>>>>> origin/carolina
 };
 
 export default Maestros;

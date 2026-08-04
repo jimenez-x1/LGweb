@@ -34,31 +34,23 @@ const Login = () => {
         },
       });
 
-console.log("RESPONSE:", response);
-console.log("RESPONSE.DATA:", response.data);
-console.log("TOKEN:", response.data?.token);
-
-if (response.data?.token) {
-  localStorage.setItem("SECURE", response.data.token);
-}
-
-console.log("LOCAL:", localStorage.getItem("SECURE"));
-
       if (response.status === 200) {
-<<<<<<< HEAD
-=======
+        const { token, rolId, userId } = response.data;
 
-        localStorage.setItem("TOKEN", response.data.token);
->>>>>>> origin/carolina
-        localStorage.setItem("ROL", response.data.rolId);
-        localStorage.setItem("USER_ID", response.data.userId);
+        if (!token) {
+          setMensaje("El servidor no devolvió un token válido");
+          return;
+        }
 
-        switch (response.data.rolId) {
+        localStorage.setItem("SECURE", token);
+        localStorage.setItem("ROL", String(rolId));
+        localStorage.setItem("USER_ID", String(userId));
+
+        switch (Number(rolId)) {
           case 1:
             navigate("/home");
             break;
 
-<<<<<<< HEAD
           case 2:
             navigate("/panel-maestro");
             break;
@@ -71,32 +63,11 @@ console.log("LOCAL:", localStorage.getItem("SECURE"));
             navigate("/");
             break;
         }
-=======
-  case 1:
-    console.log("ADMIN");
-    navigate("/home");
-    break;
-
-case 2:
-  console.log("MAESTRO");
-  navigate("/panel-maestro");
-  break;
-
-  case 3:
-    console.log("PADRE");
-    navigate("/mis-calificaciones");
-    break;
-
-  default:
-    navigate("/");
-    break;
-}
->>>>>>> origin/carolina
       } else {
         setMensaje("Usuario o contraseña incorrectos");
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error al iniciar sesión:", error);
       setMensaje("Usuario o contraseña incorrectos");
     }
   };
@@ -111,12 +82,11 @@ case 2:
       <div className="login-card">
         <img
           src="/images/logologin.png"
-          alt="Logo"
+          alt="Logo de la Escuela Luis Gamero"
           className="login-logo"
         />
 
         <h5 className="school-title">ESCUELA</h5>
-
         <h1 className="school-name">LUIS GAMERO</h1>
 
         <div className="line-title">
