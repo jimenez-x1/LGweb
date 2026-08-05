@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "../store";
+import { API_URL } from "../utilities/axiosConfig";
 
 import calificacionFetchers from "../store/slices/Calificaciones/fetchers";
 import gradoFetchers from "../store/slices/Grado/fetchers";
@@ -96,7 +97,7 @@ const MisNotas = () => {
         const dniMaestro = localStorage.getItem("USER_ID");
 
         const res = await fetch(
-            `http://localhost:3000/api/maestro-grado/${dniMaestro}/alumnos`,
+            `${API_URL}/maestro-grado/${dniMaestro}/alumnos`,
             {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("SECURE")}`,

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { obtenerSeccionesUnicas } from "../utilities/seccionUnica";
+import { API_URL } from "../utilities/axiosConfig";
 import Swal from "sweetalert2";
 
 const RegistrarMaestro = () => {
@@ -24,7 +25,7 @@ const RegistrarMaestro = () => {
   useEffect(() => {
     const fetchGrados = async () => {
       try {
-        const res = await fetch("http://localhost:3000/api/grados", {
+        const res = await fetch(`${API_URL}/grados`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("SECURE")}`,
           },
@@ -96,7 +97,7 @@ const RegistrarMaestro = () => {
       };
 
       const res = await fetch(
-        "http://localhost:3000/api/insertMaestro",
+        `${API_URL}/insertMaestro`,
         {
           method: "POST",
           headers: {

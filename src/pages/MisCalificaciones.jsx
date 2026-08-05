@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { API_URL } from "../utilities/axiosConfig";
 
 const MisCalificaciones = () => {
 
@@ -17,7 +18,7 @@ const MisCalificaciones = () => {
       const dni = localStorage.getItem("USER_ID");
 
       const res = await fetch(
-        `http://localhost:3000/api/calificaciones/padre/${dni}`,
+        `${API_URL}/calificaciones/padre/${dni}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("SECURE")}`,

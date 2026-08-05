@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { API_URL } from "../utilities/axiosConfig";
 
 const Usuarios = () => {
   const [usuarios, setUsuarios] = useState([]);
@@ -42,7 +43,7 @@ const Usuarios = () => {
       setCargando(true);
       setMensaje("");
 
-      const res = await fetch("http://localhost:3000/api/usuarios", {
+      const res = await fetch(`${API_URL}/usuarios`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -89,7 +90,7 @@ const Usuarios = () => {
       setCargando(true);
 
       const res = await fetch(
-        `http://localhost:3000/api/usuarios/${usuarioSeleccionado.userId}/password`,
+        `${API_URL}/usuarios/${usuarioSeleccionado.userId}/password`,
         {
           method: "PUT",
           headers: {

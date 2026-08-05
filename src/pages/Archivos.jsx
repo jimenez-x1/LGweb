@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
+import api from "../utilities/axiosConfig";
 import Swal from "sweetalert2";
 
 const Archivos = () => {
@@ -14,7 +14,7 @@ const Archivos = () => {
   useEffect(() => {
     const cargarAlumnos = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/alumnos");
+        const response = await api.get("/alumnos");
         setAlumnos(response.data || []);
       } catch (error) {
         console.error("Error al cargar alumnos:", error);
@@ -62,8 +62,8 @@ const Archivos = () => {
   };
 
   const descargarPdf = async (endpoint, prefijoArchivo) => {
-    const response = await axios.get(
-      `http://localhost:3000/api/alumno/${dni}/${endpoint}`,
+    const response = await api.get(
+      `/alumno/${dni}/${endpoint}`,
       { responseType: "blob" }
     );
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "../store";
-import axios from "axios";
+import api from "../utilities/axiosConfig";
 import Swal from "sweetalert2";
 
 import calificacionFetchers from "../store/slices/Calificaciones/fetchers";
@@ -451,8 +451,8 @@ if (!confirmar.isConfirmed) return;
 
         try {
 
-            const response = await axios.get(
-                `http://localhost:3000/api/alumno/${alumno.DNI}/boletin`,
+            const response = await api.get(
+                `/alumno/${alumno.DNI}/boletin`,
                 { responseType: "blob" }
             );
 

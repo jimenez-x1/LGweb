@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { API_URL } from "../utilities/axiosConfig";
 import Swal from "sweetalert2";
 
 const Maestros = () => {
@@ -15,7 +16,7 @@ const Maestros = () => {
 
   const cargarDatos = async () => {
     try {
-      const res = await fetch("http://localhost:3000/api/maestros", {
+      const res = await fetch(`${API_URL}/maestros`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -53,7 +54,7 @@ const Maestros = () => {
 
     try {
       const res = await fetch(
-        `http://localhost:3000/api/deleteMaestro/${dni}`,
+        `${API_URL}/deleteMaestro/${dni}`,
         {
           method: "DELETE",
           headers: {

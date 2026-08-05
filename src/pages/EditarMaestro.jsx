@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { obtenerSeccionesUnicas } from "../utilities/seccionUnica";
+import { API_URL } from "../utilities/axiosConfig";
 import Swal from "sweetalert2";
 
 const EditarMaestro = () => {
@@ -24,7 +25,7 @@ const EditarMaestro = () => {
   useEffect(() => {
     if (!id) return;
 
-    fetch("http://localhost:3000/api/maestros")
+    fetch(`${API_URL}/maestros`)
       .then((res) => res.json())
       .then((data) => {
         const maestro = (data ?? []).find((m) => m.DNI === id);
@@ -42,7 +43,7 @@ const EditarMaestro = () => {
       })
       .catch((error) => console.error(error));
 
-    fetch("http://localhost:3000/api/grados")
+    fetch(`${API_URL}/grados`)
       .then((res) => res.json())
       .then((data) => setGrados(data ?? []))
       .catch((error) => console.error(error));
@@ -56,7 +57,7 @@ const EditarMaestro = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://localhost:3000/api/updateMaestro", {
+      const res = await fetch(`${API_URL}/updateMaestro`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import api from "../utilities/axiosConfig";
 import Swal from "sweetalert2";
 
 import AlumnoAutocomplete from "../components/AlumnoAutocomplete";
@@ -33,8 +34,8 @@ const RegistrarPago = () => {
 
  const handleAlumnoSeleccionado = async (alumno) => {
   try {
-    const res = await axios.get(
-      `http://localhost:3000/api/estado-cuenta/${alumno.Padre.DNI}/2026`
+    const res = await api.get(
+      `/estado-cuenta/${alumno.Padre.DNI}/2026`
     );
 
     const alumnoEstado = res.data.alumnos.find(a => a.DNI === alumno.DNI);
@@ -123,7 +124,7 @@ return;
 
       console.log("Datos que se enviarán:", datosPago);
 
-      await axios.post("http://localhost:3000/api/insertPago", datosPago);
+      await api.post("/insertPago", datosPago);
 
       await Swal.fire({
   icon: "success",

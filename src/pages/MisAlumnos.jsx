@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { API_URL } from "../utilities/axiosConfig";
 
 const MisAlumnos = () => {
   const [grados, setGrados] = useState([]);
@@ -14,7 +15,7 @@ const MisAlumnos = () => {
       const dniMaestro = localStorage.getItem("USER_ID");
 
       const res = await fetch(
-        `http://localhost:3000/api/maestro-grado/${dniMaestro}/alumnos`,
+        `${API_URL}/maestro-grado/${dniMaestro}/alumnos`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("SECURE")}`,

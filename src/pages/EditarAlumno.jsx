@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { obtenerSeccionesUnicas } from "../utilities/seccionUnica";
+import { API_URL } from "../utilities/axiosConfig";
 import Swal from "sweetalert2";
 
 const EditarAlumno = () => {
@@ -29,7 +30,7 @@ const EditarAlumno = () => {
 
   const obtenerAlumno = async () => {
     try {
-      const response = await fetch("http://localhost:3000/api/alumnos");
+      const response = await fetch(`${API_URL}/alumnos`);
       const data = await response.json();
 
       const alumnoEncontrado = data.find(
@@ -72,7 +73,7 @@ navigate("/alumnos");
 
   const obtenerGrados = async () => {
     try {
-      const response = await fetch("http://localhost:3000/api/grados");
+      const response = await fetch(`${API_URL}/grados`);
       const data = await response.json();
       setGrados(data);
     } catch (error) {
@@ -106,7 +107,7 @@ navigate("/alumnos");
     console.log("Datos enviados:", datosActualizados);
 
     try {
-      const response = await fetch("http://localhost:3000/api/updateAlumno", {
+      const response = await fetch(`${API_URL}/updateAlumno`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

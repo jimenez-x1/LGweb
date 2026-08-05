@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../utilities/axiosConfig";
 
 const AlumnoAutocomplete = ({ onSelect }) => {
 
@@ -18,8 +18,8 @@ const AlumnoAutocomplete = ({ onSelect }) => {
 
             try {
 
-                const res = await axios.get(
-                    `http://localhost:3000/api/buscar?texto=${texto}`,
+                const res = await api.get(
+                    `/buscar?texto=${texto}`,
                     {
                         headers: {
                             Authorization: `Bearer ${localStorage.getItem("SECURE")}`,

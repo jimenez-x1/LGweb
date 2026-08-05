@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../utilities/axiosConfig";
 
 const PadreAutocomplete = ({ onSelect, padreSeleccionado }) => {
   const [texto, setTexto] = useState("");
@@ -18,8 +18,8 @@ const PadreAutocomplete = ({ onSelect, padreSeleccionado }) => {
 
     const buscar = async () => {
       try {
-        const res = await axios.get(
-          `http://localhost:3000/api/buscarPadre?texto=${encodeURIComponent(texto)}`
+        const res = await api.get(
+          `/buscarPadre?texto=${encodeURIComponent(texto)}`
         );
 
         setResultados(res.data);

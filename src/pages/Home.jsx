@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 
 import { useDispatch } from "../store";
 import alumnoFetchers from "../store/slices/Alumnos/fetchers";
 import BannerSection from "../components/banner/BannerSection.jsx";
+import api from "../utilities/axiosConfig";
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -26,13 +26,13 @@ const Home = () => {
         const token = localStorage.getItem("SECURE");
 
         const [respuestaMaestros, respuestaGrados] = await Promise.all([
-          axios.get("http://localhost:3000/api/maestros", {
+          api.get("/maestros", {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }),
 
-          axios.get("http://localhost:3000/api/grados", {
+          api.get("/grados", {
             headers: {
               Authorization: `Bearer ${token}`,
             },

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import api from "../utilities/axiosConfig";
 import Swal from "sweetalert2";
 
 const Pagos = () => {
@@ -13,9 +13,9 @@ const Pagos = () => {
     try {
       const dni = localStorage.getItem("USER_ID");
       const url = esPadre
-        ? `http://localhost:3000/api/pagos/padre/${dni}`
-        : "http://localhost:3000/api/pagos";
-      const res = await axios.get(url);
+        ? `/pagos/padre/${dni}`
+        : "/pagos";
+      const res = await api.get(url);
       setPagos(res.data);
     } catch (error) {
       console.error("Error al obtener pagos:", error);
@@ -36,7 +36,7 @@ const Pagos = () => {
 if (!confirmar.isConfirmed) return;
 
     try {
-      await axios.delete(`http://localhost:3000/api/deletePago/${id}`);
+      await api.delete(`/deletePago/${id}`);
       await Swal.fire({
   icon: "success",
   title: "Eliminado",
