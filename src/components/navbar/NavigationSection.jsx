@@ -18,11 +18,6 @@ const NavigationSection = ({ currentPath }) => {
           label: "Pagos",
           icon: "fas fa-money-bill-wave",
         },
-        {
-          href: "/archivos",
-          label: "Constancias",
-          icon: "fas fa-folder",
-        },
       ]
     : esMaestro
       ? [

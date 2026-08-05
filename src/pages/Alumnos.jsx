@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useDispatch } from "../store";
 import fetchers from "../store/slices/Alumnos/fetchers";
 import PadreAutocomplete from "../components/work/PadreAutocomplete";
+import { obtenerSeccionesUnicas } from "../utilities/seccionUnica";
 import Swal from "sweetalert2";
 
 const Alumnos = () => {
@@ -10,6 +11,8 @@ const Alumnos = () => {
 
   const [alumnos, setAlumnos] = useState([]);
   const [grados, setGrados] = useState([]);
+
+  const mapaSecciones = obtenerSeccionesUnicas(grados);
   const [editando, setEditando] = useState(false);
   const [idEditar, setIdEditar] = useState(null);
   const [vista, setVista] = useState("formulario"); //Tesly prueba 
@@ -337,7 +340,7 @@ if (!confirmar.isConfirmed) return;
                     key={grado.ID_Grado}
                     value={grado.ID_Grado}
                   >
-                    {grado.Nombre_Grado} - {grado.Seccion}
+                    {grado.Nombre_Grado} - {mapaSecciones[grado.ID_Grado]}
                   </option>
                 ))}
               </select>

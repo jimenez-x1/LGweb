@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { obtenerSeccionesUnicas } from "../utilities/seccionUnica";
 import Swal from "sweetalert2";
 
 const EditarMaestro = () => {
@@ -17,6 +18,8 @@ const EditarMaestro = () => {
   });
 
   const [grados, setGrados] = useState([]);
+
+  const mapaSecciones = obtenerSeccionesUnicas(grados);
 
   useEffect(() => {
     if (!id) return;
@@ -153,7 +156,7 @@ navigate("/maestros");
                     key={g.ID_Grado}
                     value={g.ID_Grado}
                   >
-                    {g.Nombre_Grado} - {g.Seccion}
+                    {g.Nombre_Grado} - {mapaSecciones[g.ID_Grado]}
                   </option>
                 ))}
               </select>

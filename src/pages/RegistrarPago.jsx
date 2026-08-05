@@ -13,7 +13,7 @@ const RegistrarPago = () => {
     DNI_Alumno: "",
     DNI_Padre: "",
     Fecha_Pago: "",
-    Monto: "1500",
+    Monto: "1000",
     Numero_Referencia: "",
     Mes_Correspondiente: "",
     Anio_Correspondiente: "2026"
@@ -46,7 +46,7 @@ const RegistrarPago = () => {
       ...prev,
       DNI_Alumno: alumno.DNI,
       DNI_Padre: alumno.Padre.DNI,
-      Monto: "2000",
+      Monto: "1000",
       Mes_Correspondiente: estado?.siguienteMensualidad?.mes || "",
       Anio_Correspondiente: estado?.siguienteMensualidad?.anio || "2026"
     }));
@@ -143,7 +143,7 @@ setForm(prev => ({
   ...prev,
   Fecha_Pago: "",
   Numero_Referencia: "",
-  Monto: "2000"
+  Monto: "1000"
 }));
 
 setComprobante(null);

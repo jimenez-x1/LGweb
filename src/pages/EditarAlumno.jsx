@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { obtenerSeccionesUnicas } from "../utilities/seccionUnica";
 import Swal from "sweetalert2";
 
 const EditarAlumno = () => {
@@ -7,6 +8,8 @@ const EditarAlumno = () => {
   const navigate = useNavigate();
 
   const [grados, setGrados] = useState([]);
+
+  const mapaSecciones = obtenerSeccionesUnicas(grados);
 
   const [form, setForm] = useState({
     DNI: "",
@@ -306,7 +309,7 @@ navigate("/alumnos");
                     key={grado.ID_Grado}
                     value={grado.ID_Grado}
                   >
-                    {grado.Nombre_Grado} - {grado.Seccion}
+                    {grado.Nombre_Grado} - {mapaSecciones[grado.ID_Grado]}
                   </option>
                 ))}
               </select>

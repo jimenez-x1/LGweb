@@ -8,14 +8,16 @@ const Padre = () => {
   const dispatch = useDispatch();
   const padres = useSelector(Selector.getPadres);
   const [alumnos, setAlumnos] = useState([]);
- const [form, setForm] = useState({
-  DNI: "",
-  Nombre: "",
-  Apellido: "",
-  Telefono: "",
-  Correo: "",
-  Direccion: ""
-});
+  const [form, setForm] = useState({
+   DNI: "",
+   Nombre: "",
+   Apellido: "",
+   Telefono: "",
+   Correo: "",
+   Direccion: "",
+   Ocupacion: "",
+   TipoResponsable: ""
+ });
   const [editando, setEditando] = useState(false);
   const [idEditar, setIdEditar] = useState(null);
 
@@ -80,6 +82,8 @@ const Padre = () => {
       Telefono: "",
       Correo: "",
       Direccion: "",
+      Ocupacion: "",
+      TipoResponsable: "",
     });
 
     setEditando(false);
@@ -110,6 +114,8 @@ const Padre = () => {
       Telefono: padre.Telefono ?? "",
       Correo: padre.Correo ?? "",
       Direccion: padre.Direccion ?? "",
+      Ocupacion: padre.Ocupacion ?? "",
+      TipoResponsable: padre.TipoResponsable ?? "",
     });
     setEditando(true);
     setIdEditar(padre.DNI);
@@ -266,6 +272,37 @@ if (!confirmar.isConfirmed) return;
               />
             </div>
 
+            <div className="col-12 col-md-6">
+              <label className="form-label">
+                Lugar de trabajo / Ocupación
+              </label>
+
+              <input
+                type="text"
+                className="form-control"
+                name="Ocupacion"
+                placeholder="Ej: Agricultor"
+                value={form.Ocupacion}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="col-12 col-md-6">
+              <label className="form-label">Tipo de responsable</label>
+
+              <select
+                className="form-select"
+                name="TipoResponsable"
+                value={form.TipoResponsable}
+                onChange={handleChange}
+              >
+                <option value="">Seleccione una opción...</option>
+                <option value="Padre">Padre</option>
+                <option value="Madre">Madre</option>
+                <option value="Encargado">Encargado</option>
+              </select>
+            </div>
+
           </div>
 
           <div className="d-flex flex-wrap gap-2 mt-4">
@@ -291,6 +328,8 @@ if (!confirmar.isConfirmed) return;
                     Telefono: "",
                     Correo: "",
                     Direccion: "",
+                    Ocupacion: "",
+                    TipoResponsable: "",
                   });
                 }}
               >
@@ -321,9 +360,11 @@ if (!confirmar.isConfirmed) return;
               <tr>
                 <th>DNI</th>
                 <th>Nombre completo</th>
+                <th>Tipo de responsable</th>
                 <th>Teléfono</th>
                 <th>Correo</th>
                 <th>Dirección</th>
+                <th>Ocupación</th>
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -332,7 +373,7 @@ if (!confirmar.isConfirmed) return;
               {padres.length === 0 ? (
                 <tr>
                   <td
-                    colSpan="6"
+                    colSpan="8"
                     className="text-center text-muted py-4"
                   >
                     No hay padres registrados.
@@ -350,6 +391,10 @@ if (!confirmar.isConfirmed) return;
                     </td>
 
                     <td>
+                      {padre.TipoResponsable || "—"}
+                    </td>
+
+                    <td>
                       {padre.Telefono || "—"}
                     </td>
 
@@ -359,6 +404,10 @@ if (!confirmar.isConfirmed) return;
 
                     <td>
                       {padre.Direccion || "—"}
+                    </td>
+
+                    <td>
+                      {padre.Ocupacion || "—"}
                     </td>
 
                     <td>

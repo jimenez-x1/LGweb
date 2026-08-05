@@ -7,6 +7,7 @@ import calificacionFetchers from "../store/slices/Calificaciones/fetchers";
 import gradoFetchers from "../store/slices/Grado/fetchers";
 import claseFetchers from "../store/slices/Clase/fetchers";
 import alumnoFetchers from "../store/slices/Alumnos/fetchers";
+import { obtenerSeccionesUnicas } from "../utilities/seccionUnica";
 
 const Calificaciones = () => {
 
@@ -19,6 +20,8 @@ const Calificaciones = () => {
     const [grados, setGrados] = useState([]);
     const [clases, setClases] = useState([]);
     const [alumnos, setAlumnos] = useState([]);
+
+    const mapaSecciones = obtenerSeccionesUnicas(grados);
 
     const [gradoSeleccionado, setGradoSeleccionado] = useState("");
     const [claseSeleccionada, setClaseSeleccionada] = useState("");
@@ -542,7 +545,7 @@ if (!confirmar.isConfirmed) return;
                   key={grado.ID_Grado}
                   value={grado.ID_Grado}
                 >
-                  {grado.Nombre_Grado} - {grado.Seccion}
+                  {grado.Nombre_Grado} - {mapaSecciones[grado.ID_Grado]}
                 </option>
               ))}
             </select>

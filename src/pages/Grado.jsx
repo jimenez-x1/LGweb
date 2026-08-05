@@ -4,6 +4,7 @@ import fetchers from "../store/slices/Grado/fetchers";
 import Selector from "../store/slices/Grado/selectors";
 import maestroFetchers from "../store/slices/Maestros/fetchers";
 import MaestroSelector from "../store/slices/Maestros/selectors";
+import { obtenerSeccionesUnicas } from "../utilities/seccionUnica";
 import Swal from "sweetalert2";
 
 const Grado = () => {
@@ -11,6 +12,8 @@ const Grado = () => {
   const grados = useSelector(Selector.getGrados);
   const clases = useSelector(Selector.getClases);
   const maestros = useSelector(MaestroSelector.getMaestros);
+
+  const mapaSecciones = obtenerSeccionesUnicas(grados);
 
   const formularioRef = useRef(null);
 
@@ -395,7 +398,7 @@ if (!confirmar.isConfirmed) return;
                       <strong>{grado.Nombre_Grado}</strong>
                     </td>
 
-                    <td>{grado.Seccion}</td>
+                    <td>{mapaSecciones[grado.ID_Grado]}</td>
 
                     <td>{grado.Anio}</td>
 

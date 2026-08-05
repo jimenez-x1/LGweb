@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PadreAutocomplete from "../components/work/PadreAutocomplete";
+import { obtenerSeccionesUnicas } from "../utilities/seccionUnica";
 import Swal from "sweetalert2";
 
 const RegistrarAlumno = () => {
@@ -18,6 +19,8 @@ const RegistrarAlumno = () => {
   });
 
  const [grados, setGrados] = useState([]);
+
+ const mapaSecciones = obtenerSeccionesUnicas(grados);
 
   useEffect(() => {
     obtenerGrados();
@@ -202,7 +205,7 @@ navigate("/alumnos");
                     <option value="">Seleccione grado</option>
                     {grados.map((grado) => (
                       <option key={grado.ID_Grado} value={grado.ID_Grado}>
-                        {grado.Nombre_Grado} - {grado.Seccion}
+                        {grado.Nombre_Grado} - {mapaSecciones[grado.ID_Grado]}
                       </option>
                     ))}
                   </select>

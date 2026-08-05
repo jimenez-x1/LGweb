@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { obtenerSeccionesUnicas } from "../utilities/seccionUnica";
 import Swal from "sweetalert2";
 
 const RegistrarMaestro = () => {
@@ -17,6 +18,8 @@ const RegistrarMaestro = () => {
 
   const [grados, setGrados] = useState([]);
   const [guardando, setGuardando] = useState(false);
+
+  const mapaSecciones = obtenerSeccionesUnicas(grados);
 
   useEffect(() => {
     const fetchGrados = async () => {
@@ -295,8 +298,8 @@ const RegistrarMaestro = () => {
                       value={grado.ID_Grado}
                     >
                       {grado.Nombre_Grado}
-                      {grado.Seccion
-                        ? ` - Sección ${grado.Seccion}`
+                      {mapaSecciones[grado.ID_Grado]
+                        ? ` - Sección ${mapaSecciones[grado.ID_Grado]}`
                         : ""}
                     </option>
                   ))}
