@@ -20,169 +20,184 @@ import MisCalificaciones from "./pages/MisCalificaciones";
 import PanelMaestro from "./pages/PanelMaestro";
 import MisAlumnos from "./pages/MisAlumnos";
 import MisNotas from "./pages/MisNotas";
-
+import Usuarios from "./pages/Usuarios";
 
 function App() {
   const location = useLocation();
 
   return (
     <>
-     {location.pathname !== "/" && (
-  <NavbarSection
-    style=""
-    logo="/images/logo-escuela-luis-gamero.png"
-  />
-)}
+      {location.pathname !== "/" && (
+        <NavbarSection
+          style=""
+          logo="/images/logo-escuela-luis-gamero.png"
+        />
+      )}
+
       <Routes>
+        <Route path="/" element={<Login />} />
 
-  <Route path="/" element={<Login />} />
+        <Route
+          path="/home"
+          element={
+            <ProtectedRoute allowedRoles={[1]}>
+              <Home />
+            </ProtectedRoute>
+          }
+        />
 
-<Route
-  path="/home"
-  element={
-    <ProtectedRoute>
-      <Home />
-    </ProtectedRoute>
-  }
-/>
-<Route
-  path="/panel-maestro"
-  element={
-    <ProtectedRoute>
-      <PanelMaestro />
-    </ProtectedRoute>
-  }
-/>
-<Route
-  path="/mis-alumnos"
-  element={
-    <ProtectedRoute allowedRoles={[2]}>
-      <MisAlumnos />
-    </ProtectedRoute>
-  }
-/>
-<Route
-  path="/mis-notas"
-  element={
-    <ProtectedRoute allowedRoles={[2]}>
-      <MisNotas />
-    </ProtectedRoute>
-  }
-/>
-  <Route
-    path="/clase"
-    element={
-      <ProtectedRoute>
-        <Clase />
-      </ProtectedRoute>
-    }
-  />
+        <Route
+          path="/usuarios"
+          element={
+            <ProtectedRoute allowedRoles={[1]}>
+              <Usuarios />
+            </ProtectedRoute>
+          }
+        />
 
-  <Route
-    path="/alumnos"
-    element={
-      <ProtectedRoute>
-        <Alumnos />
-      </ProtectedRoute>
-    }
-  />
+        <Route
+          path="/panel-maestro"
+          element={
+            <ProtectedRoute allowedRoles={[2]}>
+              <PanelMaestro />
+            </ProtectedRoute>
+          }
+        />
 
-  <Route
-    path="/grado"
-    element={
-      <ProtectedRoute>
-        <Grado />
-      </ProtectedRoute>
-    }
-  />
+        <Route
+          path="/mis-alumnos"
+          element={
+            <ProtectedRoute allowedRoles={[2]}>
+              <MisAlumnos />
+            </ProtectedRoute>
+          }
+        />
 
-  <Route
-    path="/maestros"
-    element={
-      <ProtectedRoute>
-        <Maestros />
-      </ProtectedRoute>
-    }
-  />
-  <Route                              
-    path="/calificaciones"
-    element={
-      <ProtectedRoute>
-        <Calificaciones />
-      </ProtectedRoute>
-    }
-  />
-  <Route
-    path="/mis-calificaciones"
-    element={
-      <ProtectedRoute allowedRoles={[3]}>
-        <MisCalificaciones />
-      </ProtectedRoute>
-    }
-  />
+        <Route
+          path="/mis-notas"
+          element={
+            <ProtectedRoute allowedRoles={[2]}>
+              <MisNotas />
+            </ProtectedRoute>
+          }
+        />
 
-  <Route
-    path="/registrar-maestro"
-    element={
-      <ProtectedRoute>
-        <RegistrarMaestro />
-      </ProtectedRoute>
-    }
-  />
+        <Route
+          path="/clase"
+          element={
+            <ProtectedRoute allowedRoles={[1, 2]}>
+              <Clase />
+            </ProtectedRoute>
+          }
+        />
 
-  <Route
-    path="/editar-maestro/:id"
-    element={
-      <ProtectedRoute>
-        <EditarMaestro />
-      </ProtectedRoute>
-    }
-  />
+        <Route
+          path="/alumnos"
+          element={
+            <ProtectedRoute allowedRoles={[1, 2]}>
+              <Alumnos />
+            </ProtectedRoute>
+          }
+        />
 
-  <Route
-    path="/pagos"
-    element={
-      <ProtectedRoute>
-        <Pagos />
-      </ProtectedRoute>
-    }
-  />
+        <Route
+          path="/grado"
+          element={
+            <ProtectedRoute allowedRoles={[1, 2]}>
+              <Grado />
+            </ProtectedRoute>
+          }
+        />
 
-  <Route
-    path="/registrar-pago"
-    element={
-      <ProtectedRoute>
-        <RegistrarPago />
-      </ProtectedRoute>
-    }
-  />
+        <Route
+          path="/maestros"
+          element={
+            <ProtectedRoute allowedRoles={[1, 2]}>
+              <Maestros />
+            </ProtectedRoute>
+          }
+        />
 
-  <Route
-    path="/registrar-pago/:id"
-    element={
-      <ProtectedRoute>
-        <RegistrarPago />
-      </ProtectedRoute>
-    }
-  />
+        <Route
+          path="/calificaciones"
+          element={
+            <ProtectedRoute allowedRoles={[1, 2]}>
+              <Calificaciones />
+            </ProtectedRoute>
+          }
+        />
 
-  <Route
-    path="/padre"
-    element={
-      <ProtectedRoute>
-        <Padre />
-      </ProtectedRoute>
-    }
-  />
+        <Route
+          path="/mis-calificaciones"
+          element={
+            <ProtectedRoute allowedRoles={[3]}>
+              <MisCalificaciones />
+            </ProtectedRoute>
+          }
+        />
 
-  <Route
-    path="/archivos"
-    element={
-      <ProtectedRoute>
-        <Archivos />
-      </ProtectedRoute>
-    }
-  />
+        <Route
+          path="/registrar-maestro"
+          element={
+            <ProtectedRoute allowedRoles={[1]}>
+              <RegistrarMaestro />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/editar-maestro/:id"
+          element={
+            <ProtectedRoute allowedRoles={[1]}>
+              <EditarMaestro />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/pagos"
+          element={
+            <ProtectedRoute allowedRoles={[1, 3]}>
+              <Pagos />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/registrar-pago"
+          element={
+            <ProtectedRoute allowedRoles={[1, 3]}>
+              <RegistrarPago />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/registrar-pago/:id"
+          element={
+            <ProtectedRoute allowedRoles={[1, 3]}>
+              <RegistrarPago />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/padre"
+          element={
+            <ProtectedRoute allowedRoles={[1]}>
+              <Padre />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/archivos"
+          element={
+            <ProtectedRoute allowedRoles={[1, 2]}>
+              <Archivos />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </>
   );
