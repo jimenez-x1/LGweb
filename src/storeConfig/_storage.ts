@@ -1,8 +1,6 @@
 import type * as Toolkit from "@reduxjs/toolkit";
 import type { Dispatch, MiddlewareAPI, AnyAction } from "redux";
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import * as dotenv from 'dotenv'
-/* eslint-enable @typescript-eslint/no-unused-vars */
+
 import { NAME, SEP, ACTION } from "./_namespace";
 
 const { NODE_ENV } = import.meta.env;
